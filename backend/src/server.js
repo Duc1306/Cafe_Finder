@@ -1,6 +1,7 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
+// src/server.js
+const express = require('express');
+const cors = require('cors');
+const dotenv = require('dotenv');
 
 // Load environment variables
 dotenv.config();
@@ -13,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
+// Health check / root
 app.get('/', (req, res) => {
   res.json({ message: '☕ Welcome to Café Finder API' });
 });
@@ -22,11 +23,11 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date() });
 });
 
-// Import routes here
-// import userRoutes from './routes/userRoutes.js';
-// app.use('/api/users', userRoutes);
+// Routes
+const userRoutes = require('./routes/userRoutes');
+app.use('/api/users', userRoutes);
 
-// Error handling middleware
+// Error handling middleware (đặt sau các route)
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Something went wrong!' });
@@ -37,4 +38,5 @@ app.listen(PORT, () => {
   console.log(`🚀 Server is running on http://localhost:${PORT}`);
 });
 
-export default app;
+// Nếu sau này cần import app ở chỗ khác (test unit, v.v.)
+module.exports = app;
