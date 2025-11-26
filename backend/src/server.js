@@ -2,8 +2,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
-
-// Load environment variables
+const ownerRouter = require('./routes/ownerRoutes'); // Load environment variables
 dotenv.config();
 
 const app = express();
@@ -26,7 +25,7 @@ app.get('/api/health', (req, res) => {
 // Routes
 const userRoutes = require('./routes/userRoutes');
 app.use('/api/users', userRoutes);
-
+app.use('/api/owner', ownerRouter);
 // Error handling middleware (đặt sau các route)
 app.use((err, req, res, next) => {
   console.error(err.stack);
