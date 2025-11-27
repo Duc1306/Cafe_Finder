@@ -31,15 +31,11 @@ export default function Register() {
           password: form.password,
           confirmPassword: form.confirmPassword,
         },
-        {
-          headers: { "Content-Type": "application/json" },
-        }
+        { headers: { "Content-Type": "application/json" } }
       );
 
       if (res.status === 201) {
         alert("登録成功！ログインページに移動します。");
-
-        // Reset form
         setForm({
           full_name: "",
           email: "",
@@ -47,11 +43,9 @@ export default function Register() {
           password: "",
           confirmPassword: "",
         });
-
         window.location.href = "/signin";
       }
     } catch (error) {
-      console.error("Registration failed:", error);
       const msg =
         error?.response?.data?.message ||
         "登録に失敗しました。もう一度お試しください。";
@@ -62,74 +56,70 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#fff7f5] flex flex-col items-center justify-center px-4">
+      {/* Logo + Title giống hình mẫu */}
+      <div className="text-center mb-8">
+        <div className="flex items-center justify-center gap-2 mb-2">
+          <span className="text-3xl">☕</span>
+          <span className="text-3xl font-bold text-[#8b1a1a]">Cafe Finder</span>
+        </div>
+        <p className="text-gray-600 text-sm">新しいアカウントを作成</p>
+      </div>
+
+      {/* Form Card */}
       <form
         onSubmit={handleRegister}
-        className="w-full max-w-md bg-white shadow-md rounded-2xl p-10 border border-gray-100"
+        className="w-full max-w-md bg-white shadow-md rounded-2xl p-10 border border-[#f3e0dc]"
       >
-        {/* Title */}
-        <h2 className="text-2xl font-semibold text-center">登録</h2>
-        <p className="text-center text-gray-500 mt-2 text-sm">
-          新しいアカウントを作成
-        </p>
-
-        <hr className="my-6" />
-
         {/* Name */}
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          氏名
-        </label>
+        <label className="block text-sm text-gray-700 mb-1">氏名</label>
         <input
-          name="name"
-          value={form.name}
+          name="full_name"
+          value={form.full_name}
           onChange={handleChange}
           placeholder="山田 太郎"
-          className="w-full px-4 py-2 mb-4 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-400 focus:outline-none"
+          className="w-full px-4 py-3 mb-4 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-300 focus:outline-none"
           required
         />
 
         {/* Email */}
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm text-gray-700 mb-1">
           メールアドレス
         </label>
         <input
           name="email"
+          type="email"
           value={form.email}
           onChange={handleChange}
-          placeholder="example@cafe.com"
-          className="w-full px-4 py-2 mb-4 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-400 focus:outline-none"
-          type="email"
+          placeholder="your@email.com"
+          className="w-full px-4 py-3 mb-4 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-300 focus:outline-none"
           required
         />
 
         {/* Phone */}
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          電話番号
-        </label>
+        <label className="block text-sm text-gray-700 mb-1">電話番号</label>
         <input
           name="phone"
           value={form.phone}
           onChange={handleChange}
           placeholder="090-1234-5678"
-          className="w-full px-4 py-2 mb-4 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-400 focus:outline-none"
+          className="w-full px-4 py-3 mb-4 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-300 focus:outline-none"
           required
         />
 
         {/* Password */}
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          パスワード
-        </label>
+        <label className="block text-sm text-gray-700 mb-1">パスワード</label>
         <input
           name="password"
           type="password"
           value={form.password}
           onChange={handleChange}
-          className="w-full px-4 py-2 mb-4 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-400 focus:outline-none"
+          className="w-full px-4 py-3 mb-4 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-300 focus:outline-none"
           required
         />
 
-        {/* Confirm password */}
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        {/* Confirm Password */}
+        <label className="block text-sm text-gray-700 mb-1">
           パスワード確認
         </label>
         <input
@@ -137,25 +127,23 @@ export default function Register() {
           type="password"
           value={form.confirmPassword}
           onChange={handleChange}
-          className="w-full px-4 py-2 mb-6 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-400 focus:outline-none"
+          className="w-full px-4 py-3 mb-6 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-300 focus:outline-none"
           required
         />
 
-        {/* Register button */}
+        {/* Button */}
         <button
           type="submit"
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition font-medium disabled:bg-blue-300"
           disabled={loading}
+          className="w-full bg-[#a8201a] hover:bg-[#901a15] text-white py-3 rounded-lg font-medium shadow-sm transition disabled:bg-red-300"
         >
           {loading ? "登録中..." : "登録"}
         </button>
 
-        <hr className="my-8" />
-
-        {/* Link to login */}
-        <p className="text-center text-sm text-gray-600">
-          すでにアカウントをお持ちの方はこちら{" "}
-          <a href="/signin" className="text-indigo-500 hover:underline">
+        {/* Link */}
+        <p className="text-center text-sm text-gray-600 mt-8">
+          すでにアカウントをお持ちの方は{" "}
+          <a href="/signin" className="text-[#a8201a] hover:underline">
             ログイン
           </a>
         </p>
