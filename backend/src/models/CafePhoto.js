@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         sequelize,
         modelName: 'CafePhoto',
-        tableName: 'cafe_photos',
+        tableName: 'CafePhotos',
         underscored: true,
     });
     return CafePhoto;
