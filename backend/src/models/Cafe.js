@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
             Cafe.hasMany(models.CafePhoto, { foreignKey: 'cafe_id', as: 'photos' });
             Cafe.hasMany(models.Review, { foreignKey: 'cafe_id', as: 'reviews' });
             Cafe.hasMany(models.Promotion, { foreignKey: 'cafe_id', as: 'promotions' });
+            Cafe.hasMany(models.Favorite, { foreignKey: 'cafe_id', as: 'favorites' });
             Cafe.belongsToMany(models.User, {
                 through: models.Favorite,
                 foreignKey: 'cafe_id',
@@ -15,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
         }
     }
     Cafe.init({
+        owner_id: DataTypes.BIGINT,
         name: DataTypes.STRING,
         description: DataTypes.TEXT,
         address_line: DataTypes.STRING,

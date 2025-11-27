@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../services/api";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
@@ -11,11 +11,7 @@ export default function SignIn() {
     try {
       setLoading(true);
 
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/signin",
-        { email, password },
-        { headers: { "Content-Type": "application/json" } }
-      );
+      const res = await api.post("/auth/signin", { email, password });
 
       if (res.status === 200) {
         alert("ログイン成功！");

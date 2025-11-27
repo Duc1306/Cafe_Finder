@@ -3,7 +3,8 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
     class Favorite extends Model {
         static associate(models) {
-            // Bảng trung gian thường không cần associate phức tạp trừ khi muốn query trực tiếp
+            Favorite.belongsTo(models.Cafe, { foreignKey: 'cafe_id', as: 'cafe' });
+            Favorite.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
         }
     }
     Favorite.init({

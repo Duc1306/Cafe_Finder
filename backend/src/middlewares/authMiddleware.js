@@ -1,8 +1,5 @@
 // src/middlewares/authMiddleware.js
-// Ví dụ middleware auth, sau này bạn gắn vào route cần bảo vệ
-
-
-//Xac thuc nguoi dung co ton tai khong bang JWT
+// Xác thực người dùng có tồn tại không bằng JWT
 const jwt = require("jsonwebtoken");
 
 const authMiddleware = (req, res, next) => {
@@ -14,15 +11,13 @@ const authMiddleware = (req, res, next) => {
     if (!token) return res.status(401).json({ error: "Invalid token format" });
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
+    req.user = decoded; // decoded chứa { id, role }
 
     next();
   } catch (err) {
     return res.status(401).json({ error: "Invalid or expired token" });
   }
 };
-
-module.exports = authMiddleware;
 
 // Middleware kiểm tra quyền truy cập dựa trên vai trò người dùng
 const authorize = (requiredRole) => {
@@ -42,5 +37,7 @@ const authorize = (requiredRole) => {
     }
   };
 };
-module.exports = authorize;
+
+module.exports = authMiddleware;
+module.exports.authorize = authorize;
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../services/api";
 
 export default function Register() {
   const [form, setForm] = useState({
@@ -22,17 +22,13 @@ export default function Register() {
     try {
       setLoading(true);
 
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/signup",
-        {
-          full_name: form.full_name,
-          email: form.email,
-          phone: form.phone,
-          password: form.password,
-          confirmPassword: form.confirmPassword,
-        },
-        { headers: { "Content-Type": "application/json" } }
-      );
+      const res = await api.post("/auth/signup", {
+        full_name: form.full_name,
+        email: form.email,
+        phone: form.phone,
+        password: form.password,
+        confirmPassword: form.confirmPassword,
+      });
 
       if (res.status === 201) {
         alert("登録成功！ログインページに移動します。");
