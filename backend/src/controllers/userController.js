@@ -1,6 +1,7 @@
-// Example controller
+// src/controllers/userController.js
+
 // GET /api/users
-export const getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res) => {
   try {
     // TODO: Implement logic to get all users
     res.json({ message: 'Get all users' });
@@ -10,7 +11,7 @@ export const getAllUsers = async (req, res) => {
 };
 
 // GET /api/users/:id
-export const getUserById = async (req, res) => {
+const getUserById = async (req, res) => {
   try {
     const { id } = req.params;
     // TODO: Implement logic to get user by id
@@ -21,11 +22,17 @@ export const getUserById = async (req, res) => {
 };
 
 // POST /api/users
-export const createUser = async (req, res) => {
+const createUser = async (req, res) => {
   try {
     // TODO: Implement logic to create user
     res.status(201).json({ message: 'User created' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+};
+
+module.exports = {
+  getAllUsers,
+  getUserById,
+  createUser,
 };

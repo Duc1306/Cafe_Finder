@@ -44,6 +44,11 @@ copy .env.example .env
 # (Optional) Seed database với dữ liệu mẫu
 npm run seed
 
+#sequelize
+npx sequelize-cli db:create
+npx sequelize-cli db:migrate
+npx sequelize-cli db:seed:all
+
 # Chạy development server
 npm run dev
 ```

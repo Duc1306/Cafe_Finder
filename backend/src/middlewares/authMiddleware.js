@@ -1,7 +1,12 @@
-// Example authentication middleware
-export const authMiddleware = (req, res, next) => {
+// src/middlewares/authMiddleware.js
+// Ví dụ middleware auth, sau này bạn gắn vào route cần bảo vệ
+
+// const jwt = require('jsonwebtoken');
+
+const authMiddleware = (req, res, next) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1];
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.split(' ')[1];
 
     if (!token) {
       return res.status(401).json({ error: 'No token provided' });
@@ -16,3 +21,5 @@ export const authMiddleware = (req, res, next) => {
     res.status(401).json({ error: 'Invalid token' });
   }
 };
+
+module.exports = authMiddleware;

@@ -1,0 +1,9 @@
+// backend/.sequelizerc
+const path = require("path");
+
+module.exports = {
+  config: path.resolve("src", "config", "config.js"),   // file config cho Sequelize CLI
+  "models-path": path.resolve("src", "models"),         // chỗ bạn đã tạo sẵn models
+  "seeders-path": path.resolve("seeders"),              // giữ ngoài root
+  "migrations-path": path.resolve("migrations"),        // giữ ngoài root
+};
