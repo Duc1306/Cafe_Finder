@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         sequelize,
         modelName: 'Favorite',
-        tableName: 'Favorites',
+        tableName: 'favorites',
         underscored: true,
         timestamps: false
     });

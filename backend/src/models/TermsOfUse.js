@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         sequelize,
         modelName: 'TermsOfUse',
-        tableName: 'TermsOfUses',
+        tableName: 'termsOfUses',
         underscored: true,
     });
     return TermsOfUse;

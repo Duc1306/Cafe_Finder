@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         sequelize,
         modelName: 'OwnerProfile',
-        tableName: 'OwnerProfiles',
+        tableName: 'owner_profiles',
         underscored: true,
         timestamps: false
     });
