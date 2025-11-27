@@ -4,34 +4,39 @@ const authController = require("../controllers/authController");
 const authMiddleware = require("../middlewares/authMiddleware");
 const { authorize } = require("../middlewares/authMiddleware");
 
+// 🔐 認証関連
 router.post("/signup", authController.signup);
 router.post("/signin", authController.signin);
 router.post("/logout", authController.logout);
 
-router.get("/owner/dashboard",
+// 🧑‍💼 OWNER 専用ダッシュボード
+router.get(
+  "/owner/dashboard",
   authMiddleware,
   authorize("OWNER"),
   (req, res) => {
-    res.json({ message: "Welcome OWNER" });
+    res.json({ message: "オーナーダッシュボードへようこそ。" });
   }
 );
 
-router.get("/admin/users",
+// 👨‍💼 ADMIN ユーザー管理ページ
+router.get(
+  "/admin/users",
   authMiddleware,
   authorize("ADMIN"),
   (req, res) => {
-    res.json({ message: "Admin page" });
+    res.json({ message: "管理者ページです。" });
   }
 );
 
-router.get("/customer",
+// 👤 CUSTOMER 専用ページ
+router.get(
+  "/customer",
   authMiddleware,
   authorize("CUSTOMER"),
   (req, res) => {
-    res.json({ message: "Welcome CUSTOMER" });
+    res.json({ message: "カスタマーページへようこそ。" });
   }
 );
-
-
 
 module.exports = router;

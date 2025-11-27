@@ -8,27 +8,27 @@ const authController = {
     // ------------------------
     signup: async (req, res) => {
         try {
-            const { full_name, email,phone , password, confirmPassword} = req.body;
+            const { full_name, email, phone, password, confirmPassword } = req.body;
 
             // Validate basic
             if (!full_name || !email || !password) {
-                return res.status(400).json({ error: "Missing required fields" });
+                return res.status(400).json({ error: "必要な項目が不足しています。" });
             }
 
             // Confirm password
             if (password !== confirmPassword) {
-                return res.status(400).json({ error: "Passwords do not match" });
+                return res.status(400).json({ error: "パスワードが一致しません。" });
             }
 
             // Phone (optional checks)
             if (phone && !/^[0-9+\- ]{7,15}$/.test(phone)) {
-                return res.status(400).json({ error: "Invalid phone format" });
+                return res.status(400).json({ error: "電話番号の形式が正しくありません。" });
             }
 
             // Check duplicate email
             const existingUser = await User.findOne({ where: { email } });
             if (existingUser) {
-                return res.status(400).json({ error: "Email already exists" });
+                return res.status(400).json({ error: "このメールアドレスは既に登録されています。" });
             }
 
             const password_hash = await bcrypt.hash(password, 10);
@@ -44,7 +44,7 @@ const authController = {
             });
 
             res.status(201).json({
-                message: "User registered successfully",
+                message: "ユーザー登録が完了しました。",
                 user: {
                     id: user.id,
                     full_name: user.full_name,
@@ -56,7 +56,7 @@ const authController = {
 
         } catch (err) {
             console.error(err);
-            res.status(500).json({ error: "Server error" });
+            res.status(500).json({ error: "サーバーエラーが発生しました。" });
         }
     },
 
@@ -68,10 +68,10 @@ const authController = {
             const { email, password } = req.body;
 
             const user = await User.findOne({ where: { email }, logging: false });
-            if (!user) return res.status(400).json({ error: "Invalid credentials" });
+            if (!user) return res.status(400).json({ error: "メールアドレスまたはパスワードが間違っています。" });
 
             const match = await bcrypt.compare(password, user.password_hash);
-            if (!match) return res.status(400).json({ error: "Invalid credentials" });
+            if (!match) return res.status(400).json({ error: "メールアドレスまたはパスワードが間違っています。" });
 
             // Create token
             const token = jwt.sign(
@@ -81,7 +81,7 @@ const authController = {
             );
 
             res.json({
-                message: "Login successful",
+                message: "ログインに成功しました。",
                 token,
                 user: {
                     id: user.id,
@@ -92,10 +92,9 @@ const authController = {
                 },
             });
 
-
         } catch (err) {
             console.error(err);
-            res.status(500).json({ error: "Server error" });
+            res.status(500).json({ error: "サーバーエラーが発生しました。" });
         }
     },
 
@@ -104,7 +103,7 @@ const authController = {
     // ------------------------
     logout: (req, res) => {
         return res.json({
-            message: "Logged out successfully (client must delete token)",
+            message: "ログアウトしました。（クライアント側でトークンを削除してください）",
         });
     },
 };
