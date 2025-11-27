@@ -25,12 +25,13 @@ app.get('/api/health', (req, res) => {
 
 // Routes
 const authRoutes = require("./routes/authRoute");
-app.use("/api/auth", authRoutes);
-
 const userRoutes = require('./routes/userRoutes');
+const ownerRoutes = require('./routes/ownerRoutes');
 const { testConnection } = require('./config/database');
+
+app.use("/api/auth", authRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/owner', ownerRouter);
+app.use('/api/owner', ownerRoutes);
 // Error handling middleware (đặt sau các route)
 app.use((err, req, res, next) => {
   console.error(err.stack);
