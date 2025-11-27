@@ -3,7 +3,6 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 
-
 // Load environment variables
 dotenv.config();
 
@@ -31,7 +30,7 @@ app.use("/api/auth", authRoutes);
 const userRoutes = require('./routes/userRoutes');
 const { testConnection } = require('./config/database');
 app.use('/api/users', userRoutes);
-
+app.use('/api/owner', ownerRouter);
 // Error handling middleware (đặt sau các route)
 app.use((err, req, res, next) => {
   console.error(err.stack);
