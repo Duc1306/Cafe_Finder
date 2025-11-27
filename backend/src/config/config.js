@@ -1,28 +1,26 @@
+// backend/src/config/config.js
 require("dotenv").config();
 
 module.exports = {
     development: {
-        username: process.env.DB_USER || "root",
-        password: process.env.DB_PASSWORD || "",
-        database: process.env.DB_NAME || "cafe_finder_db",
+        username: process.env.DB_USER || "postgres",
+        password: process.env.DB_PASSWORD || "your_password",
+        database: process.env.DB_NAME || "cafe_finder_dev",
         host: process.env.DB_HOST || "127.0.0.1",
-        dialect: "mysql",
-        logging: false,
+        dialect: "postgres",
     },
     test: {
-        username: process.env.DB_USER || "root",
-        password: process.env.DB_PASSWORD || "",
+        username: process.env.DB_USER || "postgres",
+        password: process.env.DB_PASSWORD || "your_password",
         database: process.env.DB_NAME_TEST || "cafe_finder_test",
         host: process.env.DB_HOST || "127.0.0.1",
-        dialect: "mysql",
-        logging: false,
+        dialect: "postgres",
     },
     production: {
-        username: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME_PROD,
-        host: process.env.DB_HOST,
-        dialect: "mysql",
-        logging: false,
+        username: process.env.DB_USER || "postgres",
+        password: process.env.DB_PASSWORD || "your_password",
+        database: process.env.DB_NAME_PROD || "cafe_finder_prod",
+        host: process.env.DB_HOST || "127.0.0.1",
+        dialect: "postgres",
     },
 };
