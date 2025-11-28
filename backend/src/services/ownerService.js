@@ -1,5 +1,6 @@
 const { sequelize } = require('../config/database');
-const { QueryTypes } = require('sequelize');
+const { Cafe, Review, Favorite, CafePhoto } = require('../models');
+const { Op } = require('sequelize');
 
 const ownerService = {
   /**
@@ -7,52 +8,60 @@ const ownerService = {
    */
   getDashboardStats: async (ownerId) => {
     // Count cafes
-    const [cafeResult] = await sequelize.query(
-      'SELECT COUNT(*) as count FROM "Cafes" WHERE owner_id = :ownerId',
-      { replacements: { ownerId }, type: QueryTypes.SELECT }
-    );
-    const cafes_count = Number(cafeResult.count || 0);
+    const cafes_count = await Cafe.count({
+      where: { owner_id: ownerId }
+    });
 
     // Count favorites
-    const [favResults] = await sequelize.query(
-      `SELECT COUNT(*) as fav_count 
-       FROM "Favorites" f 
-       INNER JOIN "Cafes" c ON c.id = f.cafe_id 
-       WHERE c.owner_id = :ownerId`,
-      { 
-        replacements: { ownerId },
-        type: QueryTypes.SELECT 
-      }
-    );
-    const favorites_count = Number(favResults?.fav_count || 0);
+    const favorites_count = await Favorite.count({
+      include: [{
+        model: Cafe,
+        as: 'cafe',
+        where: { owner_id: ownerId },
+        attributes: []
+      }]
+    });
 
     // Count reviews and avg rating
-    const [revResults] = await sequelize.query(
-      `SELECT COUNT(*) as rev_count, ROUND(AVG(r.rating)::numeric, 2) as avg_rating
-       FROM "Reviews" r 
-       INNER JOIN "Cafes" c ON c.id = r.cafe_id 
-       WHERE c.owner_id = :ownerId`,
-      { 
-        replacements: { ownerId },
-        type: QueryTypes.SELECT 
-      }
-    );
-    const reviews_count = Number(revResults?.rev_count || 0);
-    const avgRating = Number(revResults?.avg_rating || 0);
+    const reviewStats = await Review.findOne({
+      attributes: [
+        [sequelize.fn('COUNT', sequelize.col('Review.id')), 'rev_count'],
+        [
+          sequelize.fn(
+            'ROUND',
+            sequelize.fn(
+              'AVG',
+              sequelize.cast(sequelize.col('Review.rating'), 'numeric')
+            ),
+            2
+          ),
+          'avg_rating'
+        ]
+      ],
+      include: [{
+        model: Cafe,
+        as: 'cafe',
+        attributes: [],
+        where: { owner_id: ownerId }
+      }],
+      raw: true
+    });
+
+    const reviews_count = Number(reviewStats?.rev_count || 0);
+    const avgRating = Number(reviewStats?.avg_rating || 0);
 
     // Get recent reviews
-    const recentReviews = await sequelize.query(
-      `SELECT r.id, r.cafe_id, c.name as cafe_name, r.rating, r.comment, r.created_at
-       FROM "Reviews" r 
-       INNER JOIN "Cafes" c ON c.id = r.cafe_id 
-       WHERE c.owner_id = :ownerId
-       ORDER BY r.created_at DESC
-       LIMIT 5`,
-      { 
-        replacements: { ownerId },
-        type: QueryTypes.SELECT 
-      }
-    );
+    const recentReviews = await Review.findAll({
+      attributes: ['id', 'cafe_id', 'rating', 'comment', 'created_at'],
+      include: [{
+        model: Cafe,
+        as: 'cafe',
+        attributes: ['id', 'name'],
+        where: { owner_id: ownerId }
+      }],
+      order: [['created_at', 'DESC']],
+      limit: 5
+    });
 
     return {
       totals: {
@@ -75,60 +84,123 @@ const ownerService = {
     const actualLimit = Math.min(50, Math.max(1, Number(limit)));
     const offset = (actualPage - 1) * actualLimit;
 
-    let whereClause = 'c.owner_id = :ownerId';
-    const replacements = { ownerId, limit: actualLimit, offset };
+    const where = { owner_id: ownerId };
 
     if (keyword && keyword.trim()) {
-      whereClause += ` AND (c.name ILIKE :keyword OR c.address_line ILIKE :keyword OR c.city ILIKE :keyword)`;
-      replacements.keyword = `%${keyword.trim()}%`;
+      where[Op.or] = [
+        { name: { [Op.iLike]: `%${keyword.trim()}%` } },
+        { address_line: { [Op.iLike]: `%${keyword.trim()}%` } },
+        { city: { [Op.iLike]: `%${keyword.trim()}%` } }
+      ];
     }
+
     if (city && city.trim()) {
-      whereClause += ' AND c.city = :city';
-      replacements.city = city.trim();
+      where.city = city.trim();
     }
 
-    // Get cafes with counts
-    const cafes = await sequelize.query(
-      `SELECT 
-         c.id, c.name, c.address_line, c.city, c.status,
-         c.avg_price_min, c.avg_price_max, c.open_time, c.close_time,
-         COALESCE(COUNT(DISTINCT f.cafe_id), 0) AS favorites_count,
-         COALESCE(COUNT(DISTINCT r.id), 0) AS reviews_count,
-         COALESCE(ROUND(AVG(r.rating)::numeric, 2), 0) AS avg_rating,
-         cp.url AS cover_url
-       FROM "Cafes" c
-       LEFT JOIN "Favorites" f ON f.cafe_id = c.id
-       LEFT JOIN "Reviews" r ON r.cafe_id = c.id
-       LEFT JOIN "CafePhotos" cp ON cp.cafe_id = c.id AND cp.is_cover = true
-       WHERE ${whereClause}
-       GROUP BY c.id, cp.url
-       ORDER BY c.updated_at DESC
-       LIMIT :limit OFFSET :offset`,
-      { 
-        replacements,
-        type: QueryTypes.SELECT 
-      }
-    );
+    // Get count of total cafes
+    const totalCafes = await Cafe.count({ where });
 
-    // Get total count
-    const [countResult] = await sequelize.query(
-      `SELECT COUNT(*) as total FROM "Cafes" c WHERE ${whereClause}`,
-      { 
-        replacements: { ownerId, keyword: replacements.keyword, city: replacements.city },
-        type: QueryTypes.SELECT 
-      }
-    );
+    // Get paginated cafes
+    const cafes = await Cafe.findAll({
+      attributes: [
+        'id',
+        'name',
+        'address_line',
+        'city',
+        'status',
+        'avg_price_min',
+        'avg_price_max',
+        'open_time',
+        'close_time',
+        'updated_at'
+      ],
+      where,
+      order: [['updated_at', 'DESC']],
+      limit: actualLimit,
+      offset,
+      raw: true
+    });
+
+    // Get all cafe IDs for batch query
+    const cafeIds = cafes.map(c => c.id);
+
+    // Fetch all aggregates in separate batch queries using Sequelize
+    let aggregateMap = {};
+    if (cafeIds.length > 0) {
+      // favorites count per cafe
+      const favResults = await Favorite.findAll({
+        where: { cafe_id: cafeIds },
+        attributes: [
+          'cafe_id',
+          [sequelize.fn('COUNT', sequelize.col('user_id')), 'count']
+        ],
+        group: ['cafe_id'],
+        raw: true
+      });
+
+      // reviews count + avg rating per cafe
+      const revResults = await Review.findAll({
+        where: { cafe_id: cafeIds },
+        attributes: [
+          'cafe_id',
+          [sequelize.fn('COUNT', sequelize.col('id')), 'count'],
+          [sequelize.fn('ROUND', sequelize.fn('AVG', sequelize.cast(sequelize.col('rating'), 'numeric')), 2), 'avg_rating']
+        ],
+        group: ['cafe_id'],
+        raw: true
+      });
+
+      // cover photo per cafe (assuming at most one cover)
+      const photoResults = await CafePhoto.findAll({
+        where: { cafe_id: cafeIds, is_cover: true },
+        attributes: ['cafe_id', 'url'],
+        raw: true
+      });
+
+      // Build map for quick lookup
+      favResults.forEach(f => {
+        aggregateMap[f.cafe_id] = aggregateMap[f.cafe_id] || {};
+        aggregateMap[f.cafe_id].favorites_count = Number(f.count || 0);
+      });
+
+      revResults.forEach(r => {
+        aggregateMap[r.cafe_id] = aggregateMap[r.cafe_id] || {};
+        aggregateMap[r.cafe_id].reviews_count = Number(r.count || 0);
+        aggregateMap[r.cafe_id].avg_rating = Number(r.avg_rating || 0);
+      });
+
+      photoResults.forEach(p => {
+        aggregateMap[p.cafe_id] = aggregateMap[p.cafe_id] || {};
+        aggregateMap[p.cafe_id].cover_url = p.url;
+      });
+    }
+
+    // Combine results
+    const data = cafes.map(cafe => {
+      const agg = aggregateMap[cafe.id] || {};
+      return {
+        id: cafe.id,
+        name: cafe.name,
+        address_line: cafe.address_line,
+        city: cafe.city,
+        status: cafe.status,
+        avg_price_min: cafe.avg_price_min,
+        avg_price_max: cafe.avg_price_max,
+        open_time: cafe.open_time,
+        close_time: cafe.close_time,
+        favorites_count: Number(agg.favorites_count || 0),
+        reviews_count: Number(agg.reviews_count || 0),
+        avg_rating: Number(agg.avg_rating || 0),
+        cover_url: agg.cover_url || null
+      };
+    });
 
     return {
       page: actualPage,
       limit: actualLimit,
-      total: Number(countResult?.total || 0),
-      data: cafes.map(c => ({
-        ...c,
-        favorites_count: Number(c.favorites_count),
-        reviews_count: Number(c.reviews_count),
-        avg_rating: Number(c.avg_rating)
-      }))
+      total: totalCafes,
+      data
     };
   }
 };
