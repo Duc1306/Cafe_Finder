@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { FaStore, FaCheckCircle, FaStar, FaSearch, FaPlus, FaSignOutAlt } from 'react-icons/fa';
+import { toast, ToastContainer } from 'react-toastify';
 
 export default function OwnerDashboard() {
   const [cafes, setCafes] = useState([]);
@@ -12,7 +13,7 @@ export default function OwnerDashboard() {
     // Check if user is logged in and is OWNER
     const userRole = sessionStorage.getItem('userRole');
     if (!userRole || userRole !== 'OWNER') {
-      alert('オーナーとしてログインしてください');
+      toast.error('オーナーとしてログインしてください');
       window.location.href = '/signin';
       return;
     }
@@ -32,7 +33,7 @@ export default function OwnerDashboard() {
       setCafes(shopsRes.data.data);
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
-      alert(`データの取得に失敗しました: ${error.response?.data?.message || error.message}`);
+      toast.error(`データの取得に失敗しました: ${error.response?.data?.message || error.message}`);
     } finally {
       setLoading(false);
     }
@@ -177,13 +178,13 @@ export default function OwnerDashboard() {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-center gap-2">
-                          <button className="px-3 py-1 text-xs text-[#a8201a] hover:bg-[#fff7f5] rounded transition">
+                          <button className="px-3 py-1 text-xs text-white bg-[#8b1a1a] hover:bg-[#a8201a] rounded transition">
                             詳細
                           </button>
-                          <button className="px-3 py-1 text-xs text-blue-600 hover:bg-blue-50 rounded transition">
+                          <button className="px-3 py-1 text-xs text-white bg-blue-600 hover:bg-blue-700 rounded transition">
                             編集
                           </button>
-                          <button className="px-3 py-1 text-xs text-red-600 hover:bg-red-50 rounded transition">
+                          <button className="px-3 py-1 text-xs text-white bg-gray-500 hover:bg-gray-600 rounded transition">
                             削除
                           </button>
                         </div>
@@ -196,6 +197,18 @@ export default function OwnerDashboard() {
           </div>
         </div>
       </main>
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 }

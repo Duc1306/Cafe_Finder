@@ -1,5 +1,6 @@
 import { useState } from "react";
 import api from "../services/api";
+import { toast, ToastContainer } from 'react-toastify';
 
 export default function Register() {
   const [form, setForm] = useState({
@@ -31,7 +32,7 @@ export default function Register() {
       });
 
       if (res.status === 201) {
-        alert("登録成功！ログインページに移動します。");
+        toast.success("登録成功！ログインページに移動します。");
         setForm({
           full_name: "",
           email: "",
@@ -39,13 +40,15 @@ export default function Register() {
           password: "",
           confirmPassword: "",
         });
-        window.location.href = "/signin";
+        setTimeout(() => {
+          window.location.href = "/signin";
+        }, 2000);
       }
     } catch (error) {
       const msg =
         error?.response?.data?.message ||
         "登録に失敗しました。もう一度お試しください。";
-      alert(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -144,6 +147,18 @@ export default function Register() {
           </a>
         </p>
       </form>
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 }

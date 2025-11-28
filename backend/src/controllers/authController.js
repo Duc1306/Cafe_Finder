@@ -67,7 +67,7 @@ const authController = {
         try {
             const { email, password } = req.body;
 
-            const user = await User.findOne({ where: { email } });
+            const user = await User.findOne({ where: { email }, logging: false });
             if (!user) return res.status(400).json({ error: "Invalid credentials" });
 
             const match = await bcrypt.compare(password, user.password_hash);

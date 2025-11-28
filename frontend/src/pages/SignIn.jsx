@@ -1,5 +1,6 @@
 import { useState } from "react";
 import api from "../services/api";
+import { toast, ToastContainer } from 'react-toastify';
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
@@ -14,7 +15,7 @@ export default function SignIn() {
       const res = await api.post("/auth/signin", { email, password });
 
       if (res.status === 200) {
-        alert("ログイン成功！");
+        toast.success("ログイン成功！");
 
         const token = res.data.token;
         const role = res.data.user?.role;
@@ -23,16 +24,18 @@ export default function SignIn() {
         sessionStorage.setItem("userRole", role);
         localStorage.setItem("userRole", role);
 
-        switch (role) {
-          case "OWNER":
-            window.location.href = "/owner/dashboard";
-            break;
-          case "ADMIN":
-            window.location.href = "/admin/users";
-            break;
-          default:
-            window.location.href = "/customer";
-        }
+        setTimeout(() => {
+          switch (role) {
+            case "OWNER":
+              window.location.href = "/owner/dashboard";
+              break;
+            case "ADMIN":
+              window.location.href = "/admin/users";
+              break;
+            default:
+              window.location.href = "/customer";
+          }
+        }, 1500);
       }
 
       setPassword("");
@@ -41,7 +44,7 @@ export default function SignIn() {
         error?.response?.data?.message ||
         "ログインに失敗しました。メールアドレスとパスワードを確認してください。";
 
-      alert(msg);
+      toast.error(msg);
       setPassword("");
     } finally {
       setLoading(false);
@@ -118,6 +121,18 @@ export default function SignIn() {
           </div>
         </div>
       </form>
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 }
