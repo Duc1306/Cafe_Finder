@@ -1,6 +1,6 @@
 import { useState } from "react";
 import api from "../services/api";
-import { toast, ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from "react-toastify";
 
 export default function Register() {
   const [form, setForm] = useState({
@@ -12,6 +12,10 @@ export default function Register() {
   });
 
   const [loading, setLoading] = useState(false);
+
+  // 🔥 State điều khiển việc hiển thị mật khẩu
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -82,9 +86,7 @@ export default function Register() {
         />
 
         {/* Email */}
-        <label className="block text-sm text-gray-700 mb-1">
-          メールアドレス
-        </label>
+        <label className="block text-sm text-gray-700 mb-1">メールアドレス</label>
         <input
           name="email"
           type="email"
@@ -108,27 +110,41 @@ export default function Register() {
 
         {/* Password */}
         <label className="block text-sm text-gray-700 mb-1">パスワード</label>
-        <input
-          name="password"
-          type="password"
-          value={form.password}
-          onChange={handleChange}
-          className="w-full px-4 py-3 mb-4 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-300 focus:outline-none"
-          required
-        />
+        <div className="relative mb-4">
+          <input
+            name="password"
+            type={showPassword ? "text" : "password"}
+            value={form.password}
+            onChange={handleChange}
+            className="w-full px-4 py-3 pr-12 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-300 focus:outline-none"
+            required
+          />
+          <span
+            className="absolute right-4 top-3 cursor-pointer text-gray-500"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? "👁️" : "🙈"}
+          </span>
+        </div>
 
         {/* Confirm Password */}
-        <label className="block text-sm text-gray-700 mb-1">
-          パスワード確認
-        </label>
-        <input
-          name="confirmPassword"
-          type="password"
-          value={form.confirmPassword}
-          onChange={handleChange}
-          className="w-full px-4 py-3 mb-6 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-300 focus:outline-none"
-          required
-        />
+        <label className="block text-sm text-gray-700 mb-1">パスワード確認</label>
+        <div className="relative mb-6">
+          <input
+            name="confirmPassword"
+            type={showConfirm ? "text" : "password"}
+            value={form.confirmPassword}
+            onChange={handleChange}
+            className="w-full px-4 py-3 pr-12 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-300 focus:outline-none"
+            required
+          />
+          <span
+            className="absolute right-4 top-3 cursor-pointer text-gray-500"
+            onClick={() => setShowConfirm(!showConfirm)}
+          >
+            {showPassword ? "👁️" : "🙈"}
+          </span>
+        </div>
 
         {/* Button */}
         <button
@@ -147,18 +163,8 @@ export default function Register() {
           </a>
         </p>
       </form>
-      <ToastContainer
-        position="top-right"
-        autoClose={2000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
+
+      <ToastContainer position="top-right" autoClose={2000} />
     </div>
   );
 }
