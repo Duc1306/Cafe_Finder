@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import api from '../services/api';
+import api from '../../services/api';
 import { FaStore, FaCheckCircle, FaStar, FaSearch, FaPlus, FaSignOutAlt } from 'react-icons/fa';
 import { toast, ToastContainer } from 'react-toastify';
 
