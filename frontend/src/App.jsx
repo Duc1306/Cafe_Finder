@@ -1,6 +1,6 @@
 import Register from "./pages/Register";
 import SignIn from "./pages/SignIn";
-import OwnerDashboard from "./pages/OwnerDashboard";
+import OwnerDashboard from "./pages/owner/OwnerDashboard";
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 function App() {
