@@ -43,11 +43,9 @@ export default function SignIn() {
 
       setPassword("");
     } catch (error) {
-      const msg =
-        error?.response?.data?.message ||
-        "ログインに失敗しました。メールアドレスとパスワードを確認してください。";
+      const msg =error?.response?.data?.error ||error?.response?.data?.message ||"ログインに失敗しました。";
 
-      toast.error(msg);
+      toast.info(msg);
       setPassword("");
     } finally {
       setLoading(false);

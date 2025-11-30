@@ -9,11 +9,11 @@ export default function Register() {
     phone: "",
     password: "",
     confirmPassword: "",
+    role: "CUSTOMER", // 👈 Default value
   });
 
   const [loading, setLoading] = useState(false);
 
-  // 🔥 State điều khiển việc hiển thị mật khẩu
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -33,6 +33,7 @@ export default function Register() {
         phone: form.phone,
         password: form.password,
         confirmPassword: form.confirmPassword,
+        role: form.role, // 👈 Gửi role
       });
 
       if (res.status === 201) {
@@ -43,6 +44,7 @@ export default function Register() {
           phone: "",
           password: "",
           confirmPassword: "",
+          role: "",
         });
         setTimeout(() => {
           window.location.href = "/signin";
@@ -60,7 +62,7 @@ export default function Register() {
 
   return (
     <div className="min-h-screen bg-[#fff7f5] flex flex-col items-center justify-center px-4">
-      {/* Logo + Title giống hình mẫu */}
+      {/* Logo */}
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-2 mb-2">
           <span className="text-3xl">☕</span>
@@ -69,11 +71,22 @@ export default function Register() {
         <p className="text-gray-600 text-sm">新しいアカウントを作成</p>
       </div>
 
-      {/* Form Card */}
       <form
         onSubmit={handleRegister}
         className="w-full max-w-md bg-white shadow-md rounded-2xl p-10 border border-[#f3e0dc]"
       >
+        {/* Role Dropdown */}
+        <label className="block text-sm text-gray-700 mb-1">アカウント種類</label>
+        <select
+          name="role"
+          value={form.role}
+          onChange={handleChange}
+          className="w-full px-4 py-3 mb-4 rounded-lg border border-gray-300 bg-white focus:ring-2 focus:ring-red-300 focus:outline-none"
+        >
+          <option value="CUSTOMER">Customer（お客様）</option>
+          <option value="OWNER">Owner（店舗オーナー）</option>
+        </select>
+
         {/* Name */}
         <label className="block text-sm text-gray-700 mb-1">氏名</label>
         <input
@@ -123,7 +136,7 @@ export default function Register() {
             className="absolute right-4 top-3 cursor-pointer text-gray-500"
             onClick={() => setShowPassword(!showPassword)}
           >
-            {showPassword ? "👁️" : "🙈"}
+            {showPassword ? "🙈" : "👁️"}
           </span>
         </div>
 
@@ -142,11 +155,11 @@ export default function Register() {
             className="absolute right-4 top-3 cursor-pointer text-gray-500"
             onClick={() => setShowConfirm(!showConfirm)}
           >
-            {showPassword ? "👁️" : "🙈"}
+            {showConfirm ? "🙈" : "👁️"}
           </span>
         </div>
 
-        {/* Button */}
+        {/* Submit Button */}
         <button
           type="submit"
           disabled={loading}
@@ -155,7 +168,6 @@ export default function Register() {
           {loading ? "登録中..." : "登録"}
         </button>
 
-        {/* Link */}
         <p className="text-center text-sm text-gray-600 mt-8">
           すでにアカウントをお持ちの方は{" "}
           <a href="/signin" className="text-[#a8201a] hover:underline">
