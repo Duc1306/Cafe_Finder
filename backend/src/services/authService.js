@@ -4,10 +4,10 @@ const jwt = require("jsonwebtoken");
 
 const authService = {
   /**
-   * Register a new user (always CUSTOMER role)
+   * Register a new user (CUSTOMER or OWNER)
    */
   registerUser: async (userData) => {
-    const { full_name, email, phone, password, confirmPassword } = userData;
+    const { full_name, email, phone, password, confirmPassword, role } = userData;
 
     // Validate required fields
     if (!full_name || !email || !password) {
@@ -17,6 +17,12 @@ const authService = {
     // Validate password match
     if (password !== confirmPassword) {
       throw { status: 400, message: "パスワードが一致しません。" };
+    }
+
+    // Validate role
+    const allowedRoles = ["CUSTOMER", "OWNER"];
+    if (!allowedRoles.includes(role)) {
+      throw { status: 400, message: "無効なアカウント種類です。" };
     }
 
     // Validate phone format (optional)
@@ -33,14 +39,17 @@ const authService = {
     // Hash password
     const password_hash = await bcrypt.hash(password, 10);
 
-    // Create user with CUSTOMER role
+    // Status logic based on role
+    const status = role === "CUSTOMER" ? "ACTIVE" : "PENDING";
+
+    // Create user
     const user = await User.create({
       full_name,
       email,
       phone: phone || null,
       password_hash,
-      role: "CUSTOMER",
-      status: "ACTIVE",
+      role,
+      status,
     });
 
     return {
@@ -49,6 +58,7 @@ const authService = {
       email: user.email,
       phone: user.phone,
       role: user.role,
+      status: user.status,
     };
   },
 
@@ -70,6 +80,11 @@ const authService = {
       throw { status: 400, message: "メールアドレスまたはパスワードが間違っています。" };
     }
 
+    // Check if owner account is still pending
+    if (user.role === "OWNER" && user.status === "PENDING") {
+      throw { status: 403, message: "店舗オーナーのアカウントは現在審査中です。" };
+    }
+
     // Generate JWT token
     const token = jwt.sign(
       { id: user.id, role: user.role },
@@ -85,6 +100,7 @@ const authService = {
         email: user.email,
         phone: user.phone,
         role: user.role,
+        status: user.status,
       },
     };
   },

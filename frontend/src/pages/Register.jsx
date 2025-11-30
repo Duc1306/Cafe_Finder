@@ -1,8 +1,10 @@
 import { useState } from "react";
 import api from "../services/api";
 import { toast, ToastContainer } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export default function Register() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     full_name: "",
     email: "",
@@ -64,7 +66,7 @@ export default function Register() {
     <div className="min-h-screen bg-[#fff7f5] flex flex-col items-center justify-center px-4">
       {/* Logo */}
       <div className="text-center mb-8">
-        <div className="flex items-center justify-center gap-2 mb-2">
+        <div className="flex items-center justify-center gap-2 mb-2" onClick={() => navigate("/")}>
           <span className="text-3xl">☕</span>
           <span className="text-3xl font-bold text-[#8b1a1a]">Cafe Finder</span>
         </div>

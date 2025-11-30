@@ -1,8 +1,10 @@
 import { useState } from "react";
 import api from "../services/api";
 import { toast, ToastContainer } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export default function SignIn() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -56,7 +58,7 @@ export default function SignIn() {
     <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-[#fff7f5]">
       {/* Logo + Title */}
       <div className="mb-8 text-center">
-        <div className="flex items-center justify-center gap-2 mb-2">
+        <div className="flex items-center justify-center gap-2 mb-2" onClick={() => navigate("/")}>
           <span className="text-3xl">☕</span>
           <span className="text-3xl font-bold tracking-wide text-[#8b1a1a]">
             Cafe Finder
