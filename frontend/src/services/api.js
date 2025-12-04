@@ -14,7 +14,9 @@ const api = axios.create({
 // Request interceptor - Tự động thêm token vào header
 api.interceptors.request.use(
   (config) => {
-    const token = sessionStorage.getItem('authToken');
+    const token =
+      sessionStorage.getItem('authToken') ||
+      localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -34,6 +36,7 @@ api.interceptors.response.use(
       sessionStorage.removeItem('authToken');
       sessionStorage.removeItem('userRole');
       localStorage.removeItem('userRole');
+      localStorage.removeItem('token');
       window.location.href = '/signin';
     }
     return Promise.reject(error);

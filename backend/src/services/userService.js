@@ -1,4 +1,5 @@
-const { User } = require("../models");
+const { User, Favorite, Review, Cafe, CafePhoto } = require("../models");
+const { Op } = require('sequelize');
 
 const userService = {
   /**
@@ -93,6 +94,88 @@ const userService = {
 
     await user.destroy();
     return { message: "ユーザーを削除しました。" };
+  },
+
+  /**
+   * Get dashboard data for logged-in user
+   */
+  getDashboardData: async (userId) => {
+    // Số lượng quán yêu thích
+    const favoriteCount = await Favorite.count({ where: { user_id: userId } });
+
+    // Số lượng review
+    const reviewCount = await Review.count({ where: { user_id: userId } });
+
+    // Số quán đã từng review (visitedCount)
+    const visitedCount = await Review.count({
+      where: { user_id: userId },
+      distinct: true,
+      col: 'cafe_id'
+    });
+
+    // Hoạt động gần đây (review + favorite)
+    const recentReviews = await Review.findAll({
+      where: { user_id: userId },
+      order: [['created_at', 'DESC']],
+      limit: 5,
+      include: [{ model: Cafe, as: 'cafe', attributes: ['name'] }]
+    });
+
+    const recentFavorites = await Favorite.findAll({
+      where: { user_id: userId },
+      order: [['created_at', 'DESC']],
+      limit: 5,
+      include: [{ model: Cafe, as: 'cafe', attributes: ['name'] }]
+    });
+
+    const recentActivities = [
+      ...recentReviews.map(r => ({
+        type: 'REVIEW',
+        cafe: r.Cafe?.name,
+        rating: r.rating,
+        comment: r.comment,
+        created_at: r.created_at
+      })),
+      ...recentFavorites.map(f => ({
+        type: 'FAVORITE',
+        cafe: f.Cafe?.name,
+        created_at: f.created_at
+      }))
+    ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 5);
+
+    // Gợi ý quán (quán ACTIVE, chưa favorite)
+    const favoriteCafeIds = await Favorite.findAll({
+      where: { user_id: userId },
+      attributes: ['cafe_id']
+    }).then(list => list.map(f => f.cafe_id));
+
+    const recommendedCafes = await Cafe.findAll({
+      where: {
+        status: 'ACTIVE',
+        id: { [Op.notIn]: favoriteCafeIds }
+      },
+      limit: 3,
+      include: [{
+        model: CafePhoto,
+        as: 'photos',
+        where: { is_cover: true },
+        required: false,
+        attributes: ['url']
+      }]
+    });
+
+    return {
+      favoriteCount,
+      reviewCount,
+      visitedCount,
+      recentActivities,
+      recommendedCafes: recommendedCafes.map(cafe => ({
+        id: cafe.id,
+        name: cafe.name,
+        address: cafe.address_line,
+        coverPhoto: cafe.CafePhotos?.[0]?.url || null
+      }))
+    };
   }
 };
 
