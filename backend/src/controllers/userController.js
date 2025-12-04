@@ -80,4 +80,14 @@ const userController = {
   }
 };
 
+userController.getDashboard = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const data = await userService.getDashboardData(userId);
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'ユーザーダッシュボード取得エラー' });
+  }
+};
 module.exports = userController;

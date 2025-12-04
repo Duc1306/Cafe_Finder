@@ -38,7 +38,7 @@ export default function SignIn() {
               window.location.href = "/admin/users";
               break;
             default:
-              window.location.href = "/customer";
+              window.location.href = "/user/dashboard";
           }
         }, 1500);
       }

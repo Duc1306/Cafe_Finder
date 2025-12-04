@@ -1,23 +1,12 @@
-import Register from "./pages/Register";
-import SignIn from "./pages/SignIn";
-import HomePage from "./pages/HomePage";
-import OwnerDashboard from "./pages/owner/OwnerDashboard";
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter } from "react-router-dom";
+import AppRoutes from "./router";
 
 function App() {
   return (
-    <>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/signin" element={<SignIn />}/>
-          <Route path="/register" element={<Register />}/>
-          <Route path="/owner/dashboard" element={<OwnerDashboard />}/>
-        </Routes>
-      </BrowserRouter>
-
-    </>
-  )
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
