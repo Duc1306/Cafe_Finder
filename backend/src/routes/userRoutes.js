@@ -3,7 +3,11 @@ const express = require('express');
 const userController = require('../controllers/userController');
 const authMiddleware = require('../middlewares/authMiddleware');
 const router = express.Router();
+// Lấy profile của user đang đăng nhập
+router.get("/profile", authMiddleware, userController.getProfile);
 
+// Cập nhật profile
+router.put("/profile", authMiddleware, userController.updateProfile);
 
 router.get('/dashboard', authMiddleware, userController.getDashboard);
 // Define routes
@@ -12,6 +16,7 @@ router.get('/:id', userController.getUserById);
 router.post('/', userController.createUser);
 router.put('/:id', userController.updateUser);
 router.delete('/:id', userController.deleteUser);
+
 
 
 
