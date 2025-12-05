@@ -2,6 +2,7 @@ import { useState } from "react";
 import api from "../services/api";
 import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { Coffee } from 'lucide-react'
 
 export default function Register() {
   const navigate = useNavigate();
@@ -18,6 +19,8 @@ export default function Register() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [agreed, setAgreed] = useState(false);
+
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -28,7 +31,10 @@ export default function Register() {
 
     try {
       setLoading(true);
-
+      if (!agreed) {
+        toast.error("利用規約に同意してください。");
+        return;
+      }
       const res = await api.post("/auth/signup", {
         full_name: form.full_name,
         email: form.email,
@@ -67,7 +73,7 @@ export default function Register() {
       {/* Logo */}
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-2 mb-2" onClick={() => navigate("/")}>
-          <span className="text-3xl">☕</span>
+          <span className="text-3xl"><Coffee className="w-10 h-10 text-primary text-[#8b1a1a]" /></span>
           <span className="text-3xl font-bold text-[#8b1a1a]">Cafe Finder</span>
         </div>
         <p className="text-gray-600 text-sm">新しいアカウントを作成</p>
@@ -138,7 +144,7 @@ export default function Register() {
             className="absolute right-4 top-3 cursor-pointer text-gray-500"
             onClick={() => setShowPassword(!showPassword)}
           >
-            {showPassword ? "🙈" : "👁️"}
+            {showPassword ? "👁️" : "🙈"}
           </span>
         </div>
 
@@ -157,9 +163,31 @@ export default function Register() {
             className="absolute right-4 top-3 cursor-pointer text-gray-500"
             onClick={() => setShowConfirm(!showConfirm)}
           >
-            {showConfirm ? "🙈" : "👁️"}
+            {showConfirm ? "👁️" : "🙈"}
           </span>
         </div>
+
+        {/* Agree to Terms */}
+        <div className="flex items-start gap-2 mb-4">
+          <input
+            type="checkbox"
+            checked={agreed}
+            onChange={(e) => setAgreed(e.target.checked)}
+            className="mt-1 w-4 h-4"
+          />
+
+          <p className="text-sm text-gray-700">
+            私は{" "}
+            <span
+              onClick={() => navigate("/terms")}
+              className="text-[#a8201a] underline cursor-pointer"
+            >
+              利用規約
+            </span>{" "}
+            に同意します。
+          </p>
+        </div>
+
 
         {/* Submit Button */}
         <button

@@ -2,6 +2,7 @@ import { useState } from "react";
 import api from "../services/api";
 import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import {Coffee} from 'lucide-react'
 
 export default function SignIn() {
   const navigate = useNavigate();
@@ -59,7 +60,7 @@ export default function SignIn() {
       {/* Logo + Title */}
       <div className="mb-8 text-center">
         <div className="flex items-center justify-center gap-2 mb-2" onClick={() => navigate("/")}>
-          <span className="text-3xl">☕</span>
+          <span className="text-3xl"><Coffee className="w-10 h-10 text-primary text-[#8b1a1a]" /></span>
           <span className="text-3xl font-bold tracking-wide text-[#8b1a1a]">
             Cafe Finder
           </span>

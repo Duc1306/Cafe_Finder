@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { Coffee } from "lucide-react"
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
-            <span className="text-2xl">☕</span>
+            <span className="text-2xl"><Coffee className="w-10 h-10 text-primary text-[#8b1a1a]" /></span>
             <span className="text-2xl font-bold text-[#8b1a1a]">Cafe Finder</span>
           </div>
 
