@@ -15,6 +15,9 @@ module.exports = (sequelize, DataTypes) => {
         modelName: 'TermsOfUse',
         tableName: 'TermsOfUses',
         underscored: true,
+        timestamps: true,
+        createdAt: 'created_at',
+        updatedAt: 'updated_at'
     });
     return TermsOfUse;
 };
