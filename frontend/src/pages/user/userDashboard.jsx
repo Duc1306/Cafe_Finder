@@ -50,16 +50,6 @@ export default function UserDashboard() {
   return (
     <div className="bg-gray-50 min-h-screen px-8 py-4">
       {/* ヘッダー */}
-      <div className="flex items-center justify-between mb-8">
-        <div className="text-2xl font-bold">Cafe Finder</div>
-        <div>
-          <Input
-            prefix={<SearchOutlined />}
-            placeholder="カフェを検索..."
-            className="w-64"
-          />
-        </div>
-      </div>
 
       {loading ? (
         <div className="flex justify-center items-center h-96">
