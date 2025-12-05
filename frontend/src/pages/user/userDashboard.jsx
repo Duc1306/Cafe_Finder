@@ -3,11 +3,16 @@ import {
   HeartOutlined,
   CommentOutlined,
   EnvironmentOutlined,
+  SearchOutlined,
+  InfoCircleOutlined,
+  ArrowRightOutlined,
 } from "@ant-design/icons";
 import { useUserDashboard } from "../../contexts/UserDashboard/useUserDashboard.js";
+import { useNavigate } from "react-router-dom";
 
 export default function UserDashboard() {
   const { dashboard, loading } = useUserDashboard();
+  const navigate = useNavigate();
 
   const statsConfig = [
     {
@@ -44,13 +49,25 @@ export default function UserDashboard() {
 
   return (
     <div className="bg-gray-50 min-h-screen px-8 py-4">
+      {/* ヘッダー */}
+      <div className="flex items-center justify-between mb-8">
+        <div className="text-2xl font-bold">Cafe Finder</div>
+        <div>
+          <Input
+            prefix={<SearchOutlined />}
+            placeholder="カフェを検索..."
+            className="w-64"
+          />
+        </div>
+      </div>
+
       {loading ? (
         <div className="flex justify-center items-center h-96">
           <Spin size="large" />
         </div>
       ) : (
         <>
-          {/* Stats */}
+          {/* 統計カード */}
           <div className="flex gap-4 mb-6">
             {statsConfig.map((stat, idx) => (
               <Card
@@ -76,7 +93,7 @@ export default function UserDashboard() {
             ))}
           </div>
 
-          {/* Search Nearby */}
+          {/* カフェ検索 */}
           <div className="rounded-xl bg-gradient-to-r from-orange-100 to-gray-100 p-4 mb-8 flex items-center justify-between">
             <div>
               <div className="font-semibold text-gray-700">
@@ -86,12 +103,17 @@ export default function UserDashboard() {
                 現在地情報をもとに周辺カフェを検索
               </div>
             </div>
-            <Button type="primary" className="bg-red-700 border-none px-8">
+            <Button
+              type="primary"
+              className="bg-red-700 border-none px-8 flex items-center"
+              icon={<SearchOutlined />}
+              onClick={() => navigate("/search")}
+            >
               検索
             </Button>
           </div>
 
-          {/* Recommended Cafes */}
+          {/* おすすめカフェ */}
           <div className="mb-8">
             <div className="font-bold text-lg mb-4">おすすめカフェ</div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -124,16 +146,28 @@ export default function UserDashboard() {
                     <div className="flex items-center text-sm mb-2">
                       <span className="text-gray-500">{cafe.address}</span>
                     </div>
-                    <Button block className="mt-4">
-                      詳細へ
-                    </Button>
+                    <div className="flex gap-2 mt-4">
+                      <Button
+                        type="primary"
+                        icon={<InfoCircleOutlined />}
+                        onClick={() => navigate(`/cafe/${cafe.id}`)}
+                      >
+                        詳細へ
+                      </Button>
+                      <Button
+                        icon={<EnvironmentOutlined />}
+                        onClick={() => navigate(`/cafe/${cafe.id}/map`)}
+                      >
+                        地図
+                      </Button>
+                    </div>
                   </Card>
                 ))
               )}
             </div>
           </div>
 
-          {/* Recent Activities */}
+          {/* 最近の活動 */}
           <div>
             <div className="font-bold text-lg mb-4">最近の活動</div>
             <div className="flex flex-col gap-2">
@@ -156,6 +190,9 @@ export default function UserDashboard() {
                             {act.comment}
                           </span>
                         )}
+                        <span className="ml-4 text-xs text-gray-400">
+                          {act.date}
+                        </span>
                       </div>
                     </Card>
                   );
@@ -167,8 +204,18 @@ export default function UserDashboard() {
           {/* お知らせ */}
           <div className="mt-8">
             <div className="font-bold text-lg mb-4">お知らせ</div>
-            <div className="rounded-xl bg-red-50 border border-red-200 p-4 text-red-700 text-sm">
-              新しいカフェが追加されました。プロモーション更新、システムメンテナンスなど、最新の通知をここで確認できます。
+            <div className="rounded-xl bg-red-50 border border-red-200 p-4 text-red-700 text-sm flex items-center justify-between">
+              <span>
+                新しいカフェが追加されました。プロモーション更新、システムメンテナンスなど、最新の通知をここで確認できます。
+              </span>
+              <Button
+                type="link"
+                className="text-red-700"
+                icon={<ArrowRightOutlined />}
+                onClick={() => navigate("/notifications")}
+              >
+                もっと見る
+              </Button>
             </div>
           </div>
         </>
