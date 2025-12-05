@@ -36,7 +36,7 @@ export default function SignIn() {
               window.location.href = "/owner/dashboard";
               break;
             case "ADMIN":
-              window.location.href = "/admin/users";
+              window.location.href = "/admin/dashboard";
               break;
             default:
               window.location.href = "/user/dashboard";
