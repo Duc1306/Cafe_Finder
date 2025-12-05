@@ -175,93 +175,212 @@ module.exports = {
     ], {});
 
     // ==========================================================
-    // 4. CAFES
+    // 4. CAFES (Đầy đủ các trạng thái để test)
     // ==========================================================
   await queryInterface.bulkInsert('Cafes', [
-  { // Quán 1
+  // ========== ACTIVE Cafes ==========
+  { 
     owner_id: userMap['owner1@cafe.com'],
     name: 'The Coffee House - Signature',
-    description: 'Không gian sang trọng, view đẹp.',
+    description: 'Không gian sang trọng, view đẹp, phục vụ nhanh chóng.',
     address_line: '86 Nguyen Hue',
     district: 'Quan 1',
     city: 'Ho Chi Minh',
     latitude: 10.776, longitude: 106.700,
+    phone_contact: '0901234567',
+    website_url: 'https://thecoffeehouse.com',
     open_time: '07:00:00', close_time: '22:00:00',
     avg_price_min: 40000, avg_price_max: 80000,
     has_wifi: true, has_ac: true, is_quiet: true, has_parking: true,
+    allow_smoking: false, allow_pets: false,
+    amenities_text: 'WiFi miễn phí, điều hòa, bãi đỗ xe',
     status: 'ACTIVE',
     created_at: now, updated_at: now
   },
-  { // Quán 2
+  { 
     owner_id: userMap['owner1@cafe.com'],
-    name: 'Goc Da Lat',
-    description: 'Quán nhỏ chill chill phong cách Đà Lạt.',
-    address_line: 'Hẻm 123 Le Loi',
-    district: 'Quan 1',
-    city: 'Ho Chi Minh',
-    latitude: 10.770, longitude: 106.690,
-    open_time: '08:00:00', close_time: '21:00:00',
-    avg_price_min: 20000, avg_price_max: 50000,
-    has_wifi: true, allow_smoking: true, allow_pets: true,
-    status: 'PENDING',
-    created_at: now, updated_at: now
-  },
-  { // Quán 3
-    owner_id: userMap['owner2@cafe.com'],
-    name: 'Highlands Coffee - Landmark',
-    description: 'Nằm ngay dưới chân tòa nhà Landmark 81.',
+    name: 'Highlands Coffee - Landmark 81',
+    description: 'Nằm ngay dưới chân tòa nhà Landmark 81, view sông tuyệt đẹp.',
     address_line: '208 Nguyen Huu Canh',
     district: 'Binh Thanh',
     city: 'Ho Chi Minh',
     latitude: 10.790, longitude: 106.720,
+    phone_contact: '0902345678',
+    website_url: 'https://highlandscoffee.com',
     open_time: '07:00:00', close_time: '23:00:00',
     avg_price_min: 30000, avg_price_max: 70000,
-    has_wifi: true, has_ac: true, has_parking: true,
+    has_wifi: true, has_ac: true, has_parking: true, is_quiet: false,
+    allow_smoking: false, allow_pets: false,
+    amenities_text: 'WiFi tốc độ cao, máy lạnh, bãi đỗ xe rộng',
     status: 'ACTIVE',
     created_at: now, updated_at: now
   },
-
-  // ------------------ Quán mới thêm ------------------
-  { // Quán 4 - Hà Nội, để test filter theo city/district
+  { 
     owner_id: userMap['owner1@cafe.com'],
     name: 'Cong Caphe - Truc Bach',
-    description: 'Không gian vintage, view hồ Trúc Bạch.',
+    description: 'Không gian vintage, view hồ Trúc Bạch, phong cách cổ điển.',
     address_line: '5 Truc Bach',
     district: 'Ba Dinh',
     city: 'Ha Noi',
     latitude: 21.041, longitude: 105.842,
+    phone_contact: '0903456789',
     open_time: '07:00:00', close_time: '23:00:00',
     avg_price_min: 35000, avg_price_max: 65000,
-    has_wifi: true, has_ac: false, allow_smoking: true,
+    has_wifi: true, has_ac: false, allow_smoking: true, allow_pets: false,
+    amenities_text: 'WiFi, không gian vintage',
     status: 'ACTIVE',
     created_at: now, updated_at: now
   },
-  { // Quán 5 - Hà Nội, giá rẻ, yên tĩnh để test price + is_quiet
-    owner_id: userMap['owner1@cafe.com'],
+  { 
+    owner_id: userMap['owner2@cafe.com'],
     name: 'Hidden Gem Coffee',
-    description: 'Quán nhỏ trong ngõ, yên tĩnh, phù hợp làm việc.',
+    description: 'Quán nhỏ trong ngõ, yên tĩnh, phù hợp làm việc và học tập.',
     address_line: 'Ngo 12 Lang Ha',
     district: 'Dong Da',
     city: 'Ha Noi',
     latitude: 21.013, longitude: 105.816,
+    phone_contact: '0904567890',
     open_time: '08:00:00', close_time: '22:00:00',
     avg_price_min: 20000, avg_price_max: 40000,
-    has_wifi: true, has_ac: true, is_quiet: true,
+    has_wifi: true, has_ac: true, is_quiet: true, has_parking: false,
+    allow_smoking: false, allow_pets: true,
+    amenities_text: 'WiFi nhanh, yên tĩnh, cho phép thú cưng',
     status: 'ACTIVE',
     created_at: now, updated_at: now
   },
-  { // Quán 6 - Đà Nẵng, thành phố khác để test city filter
+  { 
     owner_id: userMap['owner2@cafe.com'],
-    name: 'Da Nang Breeze Coffee',
-    description: 'View biển, gió mát, phù hợp check-in.',
-    address_line: 'Vo Nguyen Giap',
-    district: 'Son Tra',
-    city: 'Da Nang',
-    latitude: 16.080, longitude: 108.247,
-    open_time: '06:30:00', close_time: '21:30:00',
-    avg_price_min: 30000, avg_price_max: 90000,
-    has_wifi: true, has_ac: true, has_parking: true, allow_pets: true,
+    name: 'Starbucks Coffee - Vincom',
+    description: 'Chuỗi cà phê nổi tiếng quốc tế, không gian hiện đại.',
+    address_line: '72 Le Thanh Ton, Vincom Center',
+    district: 'Quan 1',
+    city: 'Ho Chi Minh',
+    latitude: 10.782, longitude: 106.698,
+    phone_contact: '0905678901',
+    website_url: 'https://starbucks.vn',
+    open_time: '07:00:00', close_time: '22:30:00',
+    avg_price_min: 50000, avg_price_max: 150000,
+    has_wifi: true, has_ac: true, has_parking: true, is_quiet: false,
+    allow_smoking: false, allow_pets: false,
+    amenities_text: 'WiFi, điều hòa, bãi đỗ xe tại trung tâm',
     status: 'ACTIVE',
+    created_at: now, updated_at: now
+  },
+
+  // ========== PENDING Cafes (Chờ duyệt) ==========
+  { 
+    owner_id: userMap['owner1@cafe.com'],
+    name: 'Goc Da Lat Coffee',
+    description: 'Quán nhỏ chill chill phong cách Đà Lạt, đang chờ duyệt.',
+    address_line: 'Hem 123 Le Loi',
+    district: 'Quan 1',
+    city: 'Ho Chi Minh',
+    latitude: 10.770, longitude: 106.690,
+    phone_contact: '0906789012',
+    open_time: '08:00:00', close_time: '21:00:00',
+    avg_price_min: 20000, avg_price_max: 50000,
+    has_wifi: true, has_ac: false, allow_smoking: true, allow_pets: true,
+    amenities_text: 'WiFi, không gian mở',
+    status: 'PENDING',
+    created_at: now, updated_at: now
+  },
+  { 
+    owner_id: userMap['owner2@cafe.com'],
+    name: 'Urban Station Coffee & Workspace',
+    description: 'Quán cafe kết hợp coworking space, đang chờ phê duyệt.',
+    address_line: '234 Cach Mang Thang 8',
+    district: 'Quan 3',
+    city: 'Ho Chi Minh',
+    latitude: 10.786, longitude: 106.679,
+    phone_contact: '0907890123',
+    website_url: 'https://urbanstation.vn',
+    open_time: '07:30:00', close_time: '23:00:00',
+    avg_price_min: 30000, avg_price_max: 80000,
+    has_wifi: true, has_ac: true, is_quiet: true, has_parking: true,
+    allow_smoking: false, allow_pets: false,
+    amenities_text: 'WiFi tốc độ cao, phòng họp, bãi đỗ xe',
+    status: 'PENDING',
+    created_at: now, updated_at: now
+  },
+  { 
+    owner_id: userMap['owner1@cafe.com'],
+    name: 'Brew & Breakfast Cafe',
+    description: 'Quán cafe phục vụ bữa sáng, đang chờ xét duyệt.',
+    address_line: '45 Hai Ba Trung',
+    district: 'Hoan Kiem',
+    city: 'Ha Noi',
+    latitude: 21.023, longitude: 105.853,
+    phone_contact: '0908901234',
+    open_time: '06:30:00', close_time: '14:00:00',
+    avg_price_min: 25000, avg_price_max: 60000,
+    has_wifi: true, has_ac: true, has_parking: false,
+    allow_smoking: false, allow_pets: true,
+    amenities_text: 'WiFi, bữa sáng all day',
+    status: 'PENDING',
+    created_at: now, updated_at: now
+  },
+
+  // ========== REJECTED Cafes (Bị từ chối) ==========
+  { 
+    owner_id: userMap['owner2@cafe.com'],
+    name: 'Coffee Corner - Rejected',
+    description: '[REJECTED] Thiếu giấy phép kinh doanh hợp lệ.\n\nQuán cafe góc phố, không gian nhỏ gọn.',
+    address_line: '78 Tran Hung Dao',
+    district: 'Quan 5',
+    city: 'Ho Chi Minh',
+    latitude: 10.754, longitude: 106.675,
+    phone_contact: '0909012345',
+    open_time: '08:00:00', close_time: '20:00:00',
+    avg_price_min: 15000, avg_price_max: 35000,
+    has_wifi: false, has_ac: false, has_parking: false,
+    status: 'REJECTED',
+    created_at: now, updated_at: now
+  },
+  { 
+    owner_id: userMap['owner1@cafe.com'],
+    name: 'Night Owl Cafe',
+    description: '[REJECTED] Địa chỉ không phù hợp với quy hoạch khu vực.\n\nQuán cafe mở cửa đêm khuya.',
+    address_line: '156 Nguyen Trai',
+    district: 'Thanh Xuan',
+    city: 'Ha Noi',
+    latitude: 21.001, longitude: 105.807,
+    phone_contact: '0900123456',
+    open_time: '18:00:00', close_time: '02:00:00',
+    avg_price_min: 30000, avg_price_max: 70000,
+    has_wifi: true, has_ac: true, allow_smoking: true,
+    status: 'REJECTED',
+    created_at: now, updated_at: now
+  },
+
+  // ========== CLOSED Cafes (Đã đóng cửa) ==========
+  { 
+    owner_id: userMap['owner2@cafe.com'],
+    name: 'Old Town Coffee - Closed',
+    description: 'Quán cafe đã ngừng hoạt động do chuyển địa điểm.',
+    address_line: '89 Pham Ngu Lao',
+    district: 'Quan 1',
+    city: 'Ho Chi Minh',
+    latitude: 10.767, longitude: 106.693,
+    phone_contact: '0901234568',
+    open_time: '07:00:00', close_time: '22:00:00',
+    avg_price_min: 25000, avg_price_max: 55000,
+    has_wifi: true, has_ac: true,
+    status: 'CLOSED',
+    created_at: now, updated_at: now
+  },
+  { 
+    owner_id: userMap['owner1@cafe.com'],
+    name: 'Sunset Rooftop Cafe',
+    description: 'Quán cafe sân thượng tạm ngừng hoạt động để sửa chữa.',
+    address_line: '12 Ly Tu Trong',
+    district: 'Hoan Kiem',
+    city: 'Ha Noi',
+    latitude: 21.028, longitude: 105.851,
+    phone_contact: '0902345679',
+    open_time: '16:00:00', close_time: '23:00:00',
+    avg_price_min: 40000, avg_price_max: 90000,
+    has_wifi: true, has_ac: false, has_parking: false,
+    status: 'CLOSED',
     created_at: now, updated_at: now
   }
 ], {});
@@ -271,12 +390,115 @@ module.exports = {
     cafes[0].forEach(c => cafeMap[c.name] = c.id);
 
     // ==========================================================
-    // 5. CAFE PHOTOS
+    // 5. CAFE PHOTOS (Ảnh thật từ Unsplash)
     // ==========================================================
     await queryInterface.bulkInsert('CafePhotos', [
-      { cafe_id: cafeMap['The Coffee House - Signature'], url: 'https://placehold.co/600x400?text=Cafe+Interior', photo_type: 'INTERIOR', is_cover: true, created_at: now, updated_at: now },
-      { cafe_id: cafeMap['The Coffee House - Signature'], url: 'https://placehold.co/600x400?text=Menu+1', photo_type: 'MENU', is_cover: false, created_at: now, updated_at: now },
-      { cafe_id: cafeMap['Highlands Coffee - Landmark'], url: 'https://placehold.co/600x400?text=Highlands', photo_type: 'EXTERIOR', is_cover: true, created_at: now, updated_at: now }
+      // The Coffee House - Signature
+      { 
+        cafe_id: cafeMap['The Coffee House - Signature'], 
+        url: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800&q=80', 
+        photo_type: 'INTERIOR', 
+        is_cover: true, 
+        created_at: now, updated_at: now 
+      },
+      { 
+        cafe_id: cafeMap['The Coffee House - Signature'], 
+        url: 'https://images.unsplash.com/photo-1559925393-8be0ec4767c8?w=800&q=80', 
+        photo_type: 'EXTERIOR', 
+        is_cover: false, 
+        created_at: now, updated_at: now 
+      },
+      { 
+        cafe_id: cafeMap['The Coffee House - Signature'], 
+        url: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&q=80', 
+        photo_type: 'FOOD', 
+        is_cover: false, 
+        created_at: now, updated_at: now 
+      },
+
+      // Highlands Coffee - Landmark 81
+      { 
+        cafe_id: cafeMap['Highlands Coffee - Landmark 81'], 
+        url: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&q=80', 
+        photo_type: 'INTERIOR', 
+        is_cover: true, 
+        created_at: now, updated_at: now 
+      },
+      { 
+        cafe_id: cafeMap['Highlands Coffee - Landmark 81'], 
+        url: 'https://images.unsplash.com/photo-1521017432531-fbd92d768814?w=800&q=80', 
+        photo_type: 'EXTERIOR', 
+        is_cover: false, 
+        created_at: now, updated_at: now 
+      },
+
+      // Cong Caphe - Truc Bach
+      { 
+        cafe_id: cafeMap['Cong Caphe - Truc Bach'], 
+        url: 'https://images.unsplash.com/photo-1513407030348-c983a97b98d8?w=800&q=80', 
+        photo_type: 'INTERIOR', 
+        is_cover: true, 
+        created_at: now, updated_at: now 
+      },
+      { 
+        cafe_id: cafeMap['Cong Caphe - Truc Bach'], 
+        url: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&q=80', 
+        photo_type: 'FOOD', 
+        is_cover: false, 
+        created_at: now, updated_at: now 
+      },
+
+      // Hidden Gem Coffee
+      { 
+        cafe_id: cafeMap['Hidden Gem Coffee'], 
+        url: 'https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=800&q=80', 
+        photo_type: 'INTERIOR', 
+        is_cover: true, 
+        created_at: now, updated_at: now 
+      },
+
+      // Starbucks Coffee - Vincom
+      { 
+        cafe_id: cafeMap['Starbucks Coffee - Vincom'], 
+        url: 'https://images.unsplash.com/photo-1521017432531-fbd92d768814?w=800&q=80', 
+        photo_type: 'EXTERIOR', 
+        is_cover: true, 
+        created_at: now, updated_at: now 
+      },
+      { 
+        cafe_id: cafeMap['Starbucks Coffee - Vincom'], 
+        url: 'https://images.unsplash.com/photo-1511920170033-f8396924c348?w=800&q=80', 
+        photo_type: 'INTERIOR', 
+        is_cover: false, 
+        created_at: now, updated_at: now 
+      },
+
+      // Goc Da Lat Coffee (PENDING)
+      { 
+        cafe_id: cafeMap['Goc Da Lat Coffee'], 
+        url: 'https://images.unsplash.com/photo-1445116572660-236099ec97a0?w=800&q=80', 
+        photo_type: 'INTERIOR', 
+        is_cover: true, 
+        created_at: now, updated_at: now 
+      },
+
+      // Urban Station Coffee & Workspace (PENDING)
+      { 
+        cafe_id: cafeMap['Urban Station Coffee & Workspace'], 
+        url: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800&q=80', 
+        photo_type: 'INTERIOR', 
+        is_cover: true, 
+        created_at: now, updated_at: now 
+      },
+
+      // Brew & Breakfast Cafe (PENDING)
+      { 
+        cafe_id: cafeMap['Brew & Breakfast Cafe'], 
+        url: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80', 
+        photo_type: 'FOOD', 
+        is_cover: true, 
+        created_at: now, updated_at: now 
+      }
     ], {});
 
     // ==========================================================
@@ -293,6 +515,28 @@ module.exports = {
         end_date: '2025-12-31',
         is_active: true,
         created_at: now, updated_at: now
+      },
+      {
+        cafe_id: cafeMap['Highlands Coffee - Landmark 81'],
+        title: 'Buy 1 Get 1',
+        description: 'Mua 1 tặng 1 cho đồ uống size M.',
+        discount_type: 'PERCENT',
+        discount_value: 50,
+        start_date: '2024-12-01',
+        end_date: '2025-12-31',
+        is_active: true,
+        created_at: now, updated_at: now
+      },
+      {
+        cafe_id: cafeMap['Starbucks Coffee - Vincom'],
+        title: 'Happy Hour',
+        description: 'Giảm 30% từ 14h-16h hàng ngày.',
+        discount_type: 'PERCENT',
+        discount_value: 30,
+        start_date: '2024-01-01',
+        end_date: '2025-12-31',
+        is_active: true,
+        created_at: now, updated_at: now
       }
     ], {});
 
@@ -300,18 +544,62 @@ module.exports = {
     // 7. REVIEWS
     // ==========================================================
     await queryInterface.bulkInsert('Reviews', [
+      // Reviews for The Coffee House - Signature
       {
         user_id: userMap['user1@cafe.com'],
         cafe_id: cafeMap['The Coffee House - Signature'],
         rating: 5,
-        comment: 'Quán đẹp, nhân viên thân thiện.',
+        comment: 'Quán đẹp, nhân viên thân thiện. View tuyệt vời!',
         created_at: now, updated_at: now
       },
       {
         user_id: userMap['user2@cafe.com'],
         cafe_id: cafeMap['The Coffee House - Signature'],
         rating: 4,
-        comment: 'Giá hơi cao nhưng nước ngon.',
+        comment: 'Giá hơi cao nhưng nước ngon, không gian sang trọng.',
+        created_at: now, updated_at: now
+      },
+      
+      // Reviews for Highlands Coffee - Landmark 81
+      {
+        user_id: userMap['user1@cafe.com'],
+        cafe_id: cafeMap['Highlands Coffee - Landmark 81'],
+        rating: 5,
+        comment: 'View sông rất đẹp, phù hợp làm việc và hẹn hò.',
+        created_at: now, updated_at: now
+      },
+      {
+        user_id: userMap['user2@cafe.com'],
+        cafe_id: cafeMap['Highlands Coffee - Landmark 81'],
+        rating: 4,
+        comment: 'Đông khách vào cuối tuần nhưng dịch vụ tốt.',
+        created_at: now, updated_at: now
+      },
+
+      // Reviews for Cong Caphe - Truc Bach
+      {
+        user_id: userMap['user1@cafe.com'],
+        cafe_id: cafeMap['Cong Caphe - Truc Bach'],
+        rating: 5,
+        comment: 'Phong cách vintage độc đáo, cà phê ngon.',
+        created_at: now, updated_at: now
+      },
+
+      // Reviews for Hidden Gem Coffee
+      {
+        user_id: userMap['user2@cafe.com'],
+        cafe_id: cafeMap['Hidden Gem Coffee'],
+        rating: 5,
+        comment: 'Quán yên tĩnh, wifi nhanh, rất thích hợp học bài.',
+        created_at: now, updated_at: now
+      },
+
+      // Reviews for Starbucks Coffee - Vincom
+      {
+        user_id: userMap['user1@cafe.com'],
+        cafe_id: cafeMap['Starbucks Coffee - Vincom'],
+        rating: 4,
+        comment: 'Chất lượng ổn định như mọi chi nhánh Starbucks.',
         created_at: now, updated_at: now
       }
     ], {});
@@ -321,7 +609,10 @@ module.exports = {
     // ==========================================================
     await queryInterface.bulkInsert('Favorites', [
       { user_id: userMap['user1@cafe.com'], cafe_id: cafeMap['The Coffee House - Signature'], created_at: now },
-      { user_id: userMap['user1@cafe.com'], cafe_id: cafeMap['Highlands Coffee - Landmark'], created_at: now }
+      { user_id: userMap['user1@cafe.com'], cafe_id: cafeMap['Highlands Coffee - Landmark 81'], created_at: now },
+      { user_id: userMap['user1@cafe.com'], cafe_id: cafeMap['Cong Caphe - Truc Bach'], created_at: now },
+      { user_id: userMap['user2@cafe.com'], cafe_id: cafeMap['Hidden Gem Coffee'], created_at: now },
+      { user_id: userMap['user2@cafe.com'], cafe_id: cafeMap['Starbucks Coffee - Vincom'], created_at: now }
     ], {});
 
     // ==========================================================
@@ -331,8 +622,29 @@ module.exports = {
       {
         type: 'NEW_CAFE',
         title: 'Có quán mới chờ duyệt',
-        content: 'Chủ quán B vừa đăng ký quán Goc Da Lat.',
+        content: 'Chủ quán vừa đăng ký quán Goc Da Lat Coffee.',
         is_read: false,
+        created_at: now
+      },
+      {
+        type: 'NEW_CAFE',
+        title: 'Có quán mới chờ duyệt',
+        content: 'Chủ quán vừa đăng ký quán Urban Station Coffee & Workspace.',
+        is_read: false,
+        created_at: now
+      },
+      {
+        type: 'SYSTEM',
+        title: 'Thông báo hệ thống',
+        content: 'The Coffee House - Signature vừa nhận được đánh giá 5 sao.',
+        is_read: true,
+        created_at: now
+      },
+      {
+        type: 'NEW_USER',
+        title: 'Người dùng mới',
+        content: 'Có 2 người dùng mới đăng ký tài khoản hôm nay.',
+        is_read: true,
         created_at: now
       }
     ], {});

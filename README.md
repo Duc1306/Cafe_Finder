@@ -49,6 +49,9 @@ npx sequelize-cli db:create
 npx sequelize-cli db:migrate
 npx sequelize-cli db:seed:all
 
+# Reset database và chạy lại seeder
+npx sequelize-cli db:seed:undo:all
+npx sequelize-cli db:seed --seed 20251126063141-demo-data.js
 # Chạy development server
 npm run dev
 ```
