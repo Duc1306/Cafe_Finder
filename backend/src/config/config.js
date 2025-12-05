@@ -8,6 +8,7 @@ module.exports = {
         database: process.env.DB_NAME || "cafe_finder_dev",
         host: process.env.DB_HOST || "127.0.0.1",
         dialect: "postgres",
+        logging: false,          
     },
     test: {
         username: process.env.DB_USER || "postgres",
@@ -15,6 +16,7 @@ module.exports = {
         database: process.env.DB_NAME_TEST || "cafe_finder_test",
         host: process.env.DB_HOST || "127.0.0.1",
         dialect: "postgres",
+        logging: false,          
     },
     production: {
         username: process.env.DB_USER || "postgres",
@@ -22,5 +24,6 @@ module.exports = {
         database: process.env.DB_NAME_PROD || "cafe_finder_prod",
         host: process.env.DB_HOST || "127.0.0.1",
         dialect: "postgres",
+        logging: false,          
     },
 };
