@@ -104,50 +104,94 @@ module.exports = {
     // ==========================================================
     // 4. CAFES
     // ==========================================================
-    await queryInterface.bulkInsert('Cafes', [
-      { // Quán 1
-        owner_id: userMap['owner1@cafe.com'],
-        name: 'The Coffee House - Signature',
-        description: 'Không gian sang trọng, view đẹp.',
-        address_line: '86 Nguyen Hue',
-        district: 'Quan 1',
-        city: 'Ho Chi Minh',
-        latitude: 10.776, longitude: 106.700,
-        open_time: '07:00:00', close_time: '22:00:00',
-        avg_price_min: 40000, avg_price_max: 80000,
-        has_wifi: true, has_ac: true, is_quiet: true, has_parking: true,
-        status: 'ACTIVE',
-        created_at: now, updated_at: now
-      },
-      { // Quán 2
-        owner_id: userMap['owner1@cafe.com'],
-        name: 'Goc Da Lat',
-        description: 'Quán nhỏ chill chill phong cách Đà Lạt.',
-        address_line: 'Hẻm 123 Le Loi',
-        district: 'Quan 1',
-        city: 'Ho Chi Minh',
-        latitude: 10.770, longitude: 106.690,
-        open_time: '08:00:00', close_time: '21:00:00',
-        avg_price_min: 20000, avg_price_max: 50000,
-        has_wifi: true, allow_smoking: true, allow_pets: true,
-        status: 'PENDING',
-        created_at: now, updated_at: now
-      },
-      { // Quán 3
-        owner_id: userMap['owner2@cafe.com'],
-        name: 'Highlands Coffee - Landmark',
-        description: 'Nằm ngay dưới chân tòa nhà Landmark 81.',
-        address_line: '208 Nguyen Huu Canh',
-        district: 'Binh Thanh',
-        city: 'Ho Chi Minh',
-        latitude: 10.790, longitude: 106.720,
-        open_time: '07:00:00', close_time: '23:00:00',
-        avg_price_min: 30000, avg_price_max: 70000,
-        has_wifi: true, has_ac: true, has_parking: true,
-        status: 'ACTIVE',
-        created_at: now, updated_at: now
-      }
-    ], {});
+  await queryInterface.bulkInsert('Cafes', [
+  { // Quán 1
+    owner_id: userMap['owner1@cafe.com'],
+    name: 'The Coffee House - Signature',
+    description: 'Không gian sang trọng, view đẹp.',
+    address_line: '86 Nguyen Hue',
+    district: 'Quan 1',
+    city: 'Ho Chi Minh',
+    latitude: 10.776, longitude: 106.700,
+    open_time: '07:00:00', close_time: '22:00:00',
+    avg_price_min: 40000, avg_price_max: 80000,
+    has_wifi: true, has_ac: true, is_quiet: true, has_parking: true,
+    status: 'ACTIVE',
+    created_at: now, updated_at: now
+  },
+  { // Quán 2
+    owner_id: userMap['owner1@cafe.com'],
+    name: 'Goc Da Lat',
+    description: 'Quán nhỏ chill chill phong cách Đà Lạt.',
+    address_line: 'Hẻm 123 Le Loi',
+    district: 'Quan 1',
+    city: 'Ho Chi Minh',
+    latitude: 10.770, longitude: 106.690,
+    open_time: '08:00:00', close_time: '21:00:00',
+    avg_price_min: 20000, avg_price_max: 50000,
+    has_wifi: true, allow_smoking: true, allow_pets: true,
+    status: 'PENDING',
+    created_at: now, updated_at: now
+  },
+  { // Quán 3
+    owner_id: userMap['owner2@cafe.com'],
+    name: 'Highlands Coffee - Landmark',
+    description: 'Nằm ngay dưới chân tòa nhà Landmark 81.',
+    address_line: '208 Nguyen Huu Canh',
+    district: 'Binh Thanh',
+    city: 'Ho Chi Minh',
+    latitude: 10.790, longitude: 106.720,
+    open_time: '07:00:00', close_time: '23:00:00',
+    avg_price_min: 30000, avg_price_max: 70000,
+    has_wifi: true, has_ac: true, has_parking: true,
+    status: 'ACTIVE',
+    created_at: now, updated_at: now
+  },
+
+  // ------------------ Quán mới thêm ------------------
+  { // Quán 4 - Hà Nội, để test filter theo city/district
+    owner_id: userMap['owner1@cafe.com'],
+    name: 'Cong Caphe - Truc Bach',
+    description: 'Không gian vintage, view hồ Trúc Bạch.',
+    address_line: '5 Truc Bach',
+    district: 'Ba Dinh',
+    city: 'Ha Noi',
+    latitude: 21.041, longitude: 105.842,
+    open_time: '07:00:00', close_time: '23:00:00',
+    avg_price_min: 35000, avg_price_max: 65000,
+    has_wifi: true, has_ac: false, allow_smoking: true,
+    status: 'ACTIVE',
+    created_at: now, updated_at: now
+  },
+  { // Quán 5 - Hà Nội, giá rẻ, yên tĩnh để test price + is_quiet
+    owner_id: userMap['owner1@cafe.com'],
+    name: 'Hidden Gem Coffee',
+    description: 'Quán nhỏ trong ngõ, yên tĩnh, phù hợp làm việc.',
+    address_line: 'Ngo 12 Lang Ha',
+    district: 'Dong Da',
+    city: 'Ha Noi',
+    latitude: 21.013, longitude: 105.816,
+    open_time: '08:00:00', close_time: '22:00:00',
+    avg_price_min: 20000, avg_price_max: 40000,
+    has_wifi: true, has_ac: true, is_quiet: true,
+    status: 'ACTIVE',
+    created_at: now, updated_at: now
+  },
+  { // Quán 6 - Đà Nẵng, thành phố khác để test city filter
+    owner_id: userMap['owner2@cafe.com'],
+    name: 'Da Nang Breeze Coffee',
+    description: 'View biển, gió mát, phù hợp check-in.',
+    address_line: 'Vo Nguyen Giap',
+    district: 'Son Tra',
+    city: 'Da Nang',
+    latitude: 16.080, longitude: 108.247,
+    open_time: '06:30:00', close_time: '21:30:00',
+    avg_price_min: 30000, avg_price_max: 90000,
+    has_wifi: true, has_ac: true, has_parking: true, allow_pets: true,
+    status: 'ACTIVE',
+    created_at: now, updated_at: now
+  }
+], {});
 
     const cafes = await queryInterface.sequelize.query(`SELECT id, name FROM "Cafes";`);
     const cafeMap = {};
