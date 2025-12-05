@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
-import { getUserProfile, updateUserProfile } from "../../services/userDashboardService";
+import {
+  getUserProfile,
+  updateUserProfile,
+} from "../../services/userDashboardService";
 import { Input, Button, message, Spin, Avatar } from "antd";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeftOutlined, UploadOutlined } from "@ant-design/icons";
-
+import { uploadUserAvatar } from "../../services/userDashboardService";
 export default function UserProfile() {
   const [profile, setProfile] = useState(null);
   const [fullName, setFullName] = useState("");
@@ -40,16 +43,18 @@ export default function UserProfile() {
   };
 
   //  upload avatar (preview)
-  const handleAvatarChange = (e) => {
+  const handleAvatarChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
       setUploading(true);
-      const reader = new FileReader();
-      reader.onload = () => {
-        setAvatarUrl(reader.result);
-        setUploading(false);
-      };
-      reader.readAsDataURL(file);
+      try {
+        const url = await uploadUserAvatar(file);
+        setAvatarUrl(url);
+        message.success("アバターをアップロードしました。");
+      } catch {
+        message.error("アバターのアップロードに失敗しました。");
+      }
+      setUploading(false);
     }
   };
 

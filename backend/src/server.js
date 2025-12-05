@@ -38,6 +38,10 @@ app.use('/api/owner', ownerRoutes);
 app.use('/api/admin/cafes', adminCafeRoutes);
 app.use('/api/terms', termsRoutes);
 app.use('/api/admin/terms', termsRoutes);
+
+
+app.use("/uploads", express.static("uploads"));
+
 // Error handling middleware (đặt sau các route)
 app.use((err, req, res, next) => {
   console.error(err.stack);
