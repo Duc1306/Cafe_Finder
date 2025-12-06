@@ -5,11 +5,11 @@ import { Coffee } from "lucide-react";
 
 const menu = [
   { icon: <FaThLarge />, label: "ダッシュボード", href: "/user/dashboard" },
-  { icon: <FaSearch />, label: "カフェ検索", href: "/search" },
-  { icon: <FaHeart />, label: "お気に入り", href: "/favorites" },
-  { icon: <FaCommentDots />, label: "レビュー", href: "/reviews" },
+  { icon: <FaSearch />, label: "カフェ検索", href: "/user/cafes/search" },
+  { icon: <FaHeart />, label: "お気に入り", href: "/user/favorites" },
+  { icon: <FaCommentDots />, label: "レビュー", href: "/user/review" },
   { icon: <FaTags />, label: "プロモーション", href: "/promotions" },
-  { icon: <FaUser />, label: "プロフィール", href: "user/profile" },
+  { icon: <FaUser />, label: "プロフィール", href: "/user/profile" },
 ];
 
 export default function Sidebar() {
@@ -21,7 +21,7 @@ export default function Sidebar() {
     sessionStorage.removeItem("authToken");
     sessionStorage.removeItem("userRole");
     localStorage.removeItem("userRole");
-    
+
     navigate("/signin");
   };
 
@@ -41,11 +41,10 @@ export default function Sidebar() {
                 <li key={idx}>
                   <Link
                     to={item.href}
-                    className={`flex items-center px-6 py-3 transition ${
-                      isActive
+                    className={`flex items-center px-6 py-3 transition ${isActive
                         ? "bg-gray-100 text-black font-semibold"
                         : "text-gray-700 hover:bg-gray-100 hover:text-black"
-                    }`}
+                      }`}
                   >
                     <span className="text-lg mr-3">{item.icon}</span>
                     <span className="text-base">{item.label}</span>
