@@ -10,15 +10,15 @@ const router = express.Router();
 
 // ==================== CAFE ROUTES (Public) ====================
 // GET /api/user/cafes - Lấy danh sách quán cafe (tìm kiếm, lọc, phân trang)
-router.get('/cafes', userCafeController.getCafeList);
+router.get('/', userCafeController.getCafeList);
 
 // GET /api/user/cafes/:id - Lấy chi tiết quán cafe
-router.get('/cafes/:id', userCafeController.getCafeDetail);
+router.get('/:id', userCafeController.getCafeDetail);
 
 // GET /api/user/cafes/:id/reviews - Lấy danh sách reviews
-router.get('/cafes/:id/reviews', userCafeController.getCafeReviews);
+router.get('/:id/reviews', userCafeController.getCafeReviews);
 
 // POST /api/user/cafes/:id/reviews - Đăng review mới (yêu cầu đăng nhập)
-router.post('/cafes/:id/reviews', authMiddleware, userCafeController.createReview);
+router.post('/:id/reviews', authMiddleware, userCafeController.createReview);
 
 module.exports = router;
