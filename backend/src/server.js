@@ -31,11 +31,13 @@ const adminCafeRoutes = require('./routes/adminCafeRoutes');
 
 const termsRoutes = require('./routes/termsRoutes');
 const userCafeRoutes = require('./routes/userCafeRoutes');
+const favoriteRoutes = require('./routes/favoriteRoutes');
 const { testConnection } = require('./config/database');
 
 app.use("/api/auth", authRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/user', userCafeRoutes);
+app.use('/api/user/cafes', userCafeRoutes);
+app.use('/api/user/favorites', favoriteRoutes);
 app.use('/api/admin/cafes', adminCafeRoutes);
 app.use('/api/terms', termsRoutes);
 app.use('/api/admin/terms', termsRoutes);

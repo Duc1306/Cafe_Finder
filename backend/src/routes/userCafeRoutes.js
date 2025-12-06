@@ -21,14 +21,4 @@ router.get('/cafes/:id/reviews', userCafeController.getCafeReviews);
 // POST /api/user/cafes/:id/reviews - Đăng review mới (yêu cầu đăng nhập)
 router.post('/cafes/:id/reviews', authMiddleware, userCafeController.createReview);
 
-// ==================== FAVORITES ROUTES (Protected) ====================
-// GET /api/user/favorites - Lấy danh sách quán yêu thích
-router.get('/favorites', authMiddleware, userCafeController.getUserFavorites);
-
-// POST /api/user/favorites - Thêm quán vào yêu thích
-router.post('/favorites', authMiddleware, userCafeController.addFavorite);
-
-// DELETE /api/user/favorites/:cafeId - Xóa quán khỏi yêu thích
-router.delete('/favorites/:cafeId', authMiddleware, userCafeController.removeFavorite);
-
 module.exports = router;
