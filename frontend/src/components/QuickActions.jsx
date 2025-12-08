@@ -10,29 +10,8 @@ export default function QuickActions() {
             title: 'カフェを探す',
             description: 'お気に入りのカフェを見つけよう',
             icon: <SearchOutlined className="text-3xl text-red-600" />,
-            path: '/user/cafes/search',
+            path: '/search',
             color: 'from-red-50 to-red-100',
-        },
-        {
-            title: 'お気に入り',
-            description: '保存したカフェを見る',
-            icon: <HeartOutlined className="text-3xl text-red-600" />,
-            path: '/user/favorites',
-            color: 'from-red-50 to-red-100',
-        },
-        {
-            title: '近くのカフェ',
-            description: '現在地から探す',
-            icon: <CompassOutlined className="text-3xl text-green-600" />,
-            path: '/user/nearby',
-            color: 'from-green-50 to-green-100',
-        },
-        {
-            title: 'レビュー',
-            description: 'あなたのレビューを見る',
-            icon: <StarOutlined className="text-3xl text-yellow-600" />,
-            path: '/user/review',
-            color: 'from-yellow-50 to-yellow-100',
         },
     ];
 

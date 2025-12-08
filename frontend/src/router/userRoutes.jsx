@@ -11,8 +11,8 @@ export function UserRoutes() {
     <Route element={<UserLayout />}>
       <Route path="/user/dashboard" element={<UserDashboardPage />} />
       <Route path="/user/profile" element={<UserProfile />} />
-      <Route path="/user/cafes/search" element={<CafeSearch />} />
-      <Route path="/user/cafes/:id" element={<CafeDetail />} />
+      <Route path="/search" element={<CafeSearch />} />
+      <Route path="/cafes/:id" element={<CafeDetail />} />
     </Route>
   );
 }
