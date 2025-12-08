@@ -5,7 +5,7 @@ import { Coffee } from "lucide-react";
 
 const menu = [
   { icon: <FaThLarge />, label: "ダッシュボード", href: "/user/dashboard" },
-  { icon: <FaSearch />, label: "カフェ検索", href: "/user/cafes/search" },
+  { icon: <FaSearch />, label: "カフェ検索", href: "/search" },
   { icon: <FaHeart />, label: "お気に入り", href: "/favorites" },
   { icon: <FaCommentDots />, label: "レビュー", href: "/reviews" },
   { icon: <FaTags />, label: "プロモーション", href: "/promotions" },
@@ -42,8 +42,8 @@ export default function Sidebar() {
                   <Link
                     to={item.href}
                     className={`flex items-center px-6 py-3 transition ${isActive
-                        ? "bg-gray-100 text-black font-semibold"
-                        : "text-gray-700 hover:bg-gray-100 hover:text-black"
+                      ? "bg-gray-100 text-black font-semibold"
+                      : "text-gray-700 hover:bg-gray-100 hover:text-black"
                       }`}
                   >
                     <span className="text-lg mr-3">{item.icon}</span>

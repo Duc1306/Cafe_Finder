@@ -12,7 +12,7 @@ export default function CafeCard({ cafe, showFavoriteButton = false, onRemoveFav
                     src={cafe.coverUrl || '/placeholder-cafe.jpg'}
                     alt={cafe.name}
                     className="w-full h-48 object-cover cursor-pointer"
-                    onClick={() => navigate(`/user/cafes/${cafe.id}`)}
+                    onClick={() => navigate(`/cafes/${cafe.id}`)}
                 />
                 {showFavoriteButton && onRemoveFavorite && (
                     <button
@@ -28,7 +28,7 @@ export default function CafeCard({ cafe, showFavoriteButton = false, onRemoveFav
             <div className="p-4">
                 <h3
                     className="text-lg font-bold text-gray-900 mb-2 cursor-pointer hover:text-blue-600"
-                    onClick={() => navigate(`/user/cafes/${cafe.id}`)}
+                    onClick={() => navigate(`/cafes/${cafe.id}`)}
                 >
                     {cafe.name}
                 </h3>
@@ -67,7 +67,7 @@ export default function CafeCard({ cafe, showFavoriteButton = false, onRemoveFav
 
                 {/* View Details Button */}
                 <button
-                    onClick={() => navigate(`/user/cafes/${cafe.id}`)}
+                    onClick={() => navigate(`/cafes/${cafe.id}`)}
                     className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
                 >
                     詳細を見る

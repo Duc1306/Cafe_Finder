@@ -290,7 +290,7 @@ export default function CafeSearchPage() {
                         {cafes.map((cafe) => (
                             <div
                                 key={cafe.id}
-                                onClick={() => navigate(`/user/cafes/${cafe.id}`)}
+                                onClick={() => navigate(`/cafes/${cafe.id}`)}
                                 className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition cursor-pointer flex"
                             >
                                 <img
