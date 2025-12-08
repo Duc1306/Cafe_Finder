@@ -46,16 +46,8 @@ export default function CafeDetail() {
     };
 
     const handleToggleFavorite = async () => {
-        try {
-            if (cafe.isFavorite) {
-                await removeFavorite(id);
-            } else {
-                await addFavorite(id);
-            }
-            loadCafeData();
-        } catch (err) {
-            toast.info('お気に入り操作に失敗しました: ' + err.message);
-        }
+        // Favorite functionality disabled
+        return;
     };
 
     const handleOpenReviewModal = () => {
