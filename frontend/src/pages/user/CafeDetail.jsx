@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { getCafeDetail, getCafeReviews, addFavorite, removeFavorite } from '../../services/cafeService';
+import { getCafeDetail, getCafeReviews, addFavorite, removeFavorite, postReview } from '../../services/cafeService';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Star, MapPin, Clock, Heart, Phone, Wifi, Wind, Volume2, Car, Dog, Cigarette } from 'lucide-react';
+import { toast, ToastContainer } from 'react-toastify';
 
 export default function CafeDetail() {
     const { id } = useParams();
@@ -10,6 +11,9 @@ export default function CafeDetail() {
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [showReviewModal, setShowReviewModal] = useState(false);
+    const [reviewForm, setReviewForm] = useState({ rating: 5, comment: '' });
+    const [submittingReview, setSubmittingReview] = useState(false);
 
     useEffect(() => {
         loadCafeData();
@@ -50,7 +54,39 @@ export default function CafeDetail() {
             }
             loadCafeData();
         } catch (err) {
-            alert('お気に入り操作に失敗しました: ' + err.message);
+            toast.info('お気に入り操作に失敗しました: ' + err.message);
+        }
+    };
+
+    const handleOpenReviewModal = () => {
+        setShowReviewModal(true);
+        setReviewForm({ rating: 5, comment: '' });
+    };
+
+    const handleCloseReviewModal = () => {
+        setShowReviewModal(false);
+        setReviewForm({ rating: 5, comment: '' });
+    };
+
+    const handleSubmitReview = async () => {
+        if (!reviewForm.comment.trim()) {
+            toast.info('コメントを入力してください');
+            return;
+        }
+
+        setSubmittingReview(true);
+        try {
+            await postReview(id, {
+                rating: reviewForm.rating,
+                comment: reviewForm.comment.trim()
+            });
+            toast.success('レビューを投稿しました！');
+            handleCloseReviewModal();
+            loadCafeData(); // Reload to show new review
+        } catch (err) {
+            toast.info('レビューの投稿に失敗しました: ' + err.message);
+        } finally {
+            setSubmittingReview(false);
         }
     };
 
@@ -245,7 +281,10 @@ export default function CafeDetail() {
 
                         {/* Action Buttons */}
                         <div className="bg-white rounded-lg shadow-md p-6 space-y-3">
-                            <button className="w-full px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium">
+                            <button
+                                onClick={handleOpenReviewModal}
+                                className="w-full px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium"
+                            >
                                 レビューを書く
                             </button>
                             <button className="w-full px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium">
@@ -255,6 +294,79 @@ export default function CafeDetail() {
                     </div>
                 </div>
             </div>
+
+            {/* Review Modal */}
+            {showReviewModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-lg shadow-xl max-w-lg w-full mx-4">
+                        <div className="p-6">
+                            <h3 className="text-xl font-bold text-gray-900 mb-4">
+                                レビューを書く
+                            </h3>
+
+                            {/* Rating */}
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    評価
+                                </label>
+                                <div className="flex gap-2">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <button
+                                            key={star}
+                                            type="button"
+                                            onClick={() => setReviewForm({ ...reviewForm, rating: star })}
+                                            className="focus:outline-none"
+                                        >
+                                            <Star
+                                                className={`w-8 h-8 ${star <= reviewForm.rating
+                                                    ? 'fill-yellow-400 text-yellow-400'
+                                                    : 'text-gray-300'
+                                                    }`}
+                                            />
+                                        </button>
+                                    ))}
+                                    <span className="ml-2 text-lg font-medium">{reviewForm.rating}.0</span>
+                                </div>
+                            </div>
+
+                            {/* Comment */}
+                            <div className="mb-6">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    コメント
+                                </label>
+                                <textarea
+                                    value={reviewForm.comment}
+                                    onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })}
+                                    placeholder="このカフェについての感想を書いてください..."
+                                    rows={4}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
+                                />
+                            </div>
+
+                            {/* Buttons */}
+                            <div className="flex justify-end gap-3">
+                                <button
+                                    onClick={handleCloseReviewModal}
+                                    disabled={submittingReview}
+                                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium disabled:opacity-50"
+                                >
+                                    キャンセル
+                                </button>
+                                <button
+                                    onClick={handleSubmitReview}
+                                    disabled={submittingReview}
+                                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium disabled:opacity-50"
+                                >
+                                    {submittingReview ? '投稿中...' : '投稿する'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Toast Notifications */}
+            <ToastContainer position="top-right" autoClose={2000} />
         </div>
     );
 }

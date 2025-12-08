@@ -10,6 +10,8 @@ export default function FavoritesPage() {
     const [error, setError] = useState(null);
     const [pagination, setPagination] = useState({ page: 1, limit: 12, total: 0 });
     const [searchKeyword, setSearchKeyword] = useState('');
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [cafeToRemove, setCafeToRemove] = useState(null);
 
     useEffect(() => {
         loadFavorites();
@@ -29,16 +31,26 @@ export default function FavoritesPage() {
         }
     };
 
-    const handleRemoveFavorite = async (cafeId) => {
-        if (!confirm('お気に入りから削除しますか？')) return;
+    const handleRemoveFavorite = (cafeId) => {
+        setCafeToRemove(cafeId);
+        setShowConfirmModal(true);
+    };
 
+    const confirmRemoveFavorite = async () => {
         try {
-            await removeFavorite(cafeId);
+            await removeFavorite(cafeToRemove);
+            setShowConfirmModal(false);
+            setCafeToRemove(null);
             // Reload favorites
             loadFavorites();
         } catch (err) {
             alert('削除に失敗しました: ' + err.message);
         }
+    };
+
+    const cancelRemoveFavorite = () => {
+        setShowConfirmModal(false);
+        setCafeToRemove(null);
     };
 
     const filteredFavorites = favorites.filter(cafe =>
@@ -207,6 +219,31 @@ export default function FavoritesPage() {
                     </>
                 )}
             </div>
+
+            {/* Confirmation Modal */}
+            {showConfirmModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                            お気に入りから削除しますか？
+                        </h3>
+                        <div className="flex justify-end gap-3">
+                            <button
+                                onClick={cancelRemoveFavorite}
+                                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={confirmRemoveFavorite}
+                                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium"
+                            >
+                                OK
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
