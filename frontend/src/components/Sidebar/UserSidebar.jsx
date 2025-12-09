@@ -1,6 +1,7 @@
 import { FaThLarge, FaSearch, FaHeart, FaCommentDots, FaTags, FaUser } from "react-icons/fa";
 import { FiLogOut } from "react-icons/fi";
 import { useLocation, Link, useNavigate } from "react-router-dom";
+import {Coffee} from 'lucide-react'
 
 const menu = [
   { icon: <FaThLarge />, label: "ダッシュボード", href: "/user/dashboard" },
@@ -28,7 +29,7 @@ export default function Sidebar() {
     <aside className="w-64 bg-white h-screen shadow flex flex-col justify-between">
       <div>
         <div className="flex items-center px-6 py-4 border-b">
-          <span className="text-2xl mr-2">☕</span>
+          <span className="text-2xl mr-2"><Coffee className="w-10 h-10 text-primary text-[#8b1a1a]" /></span>
           <span className="font-bold text-lg">Cafe Finder</span>
           <button className="ml-auto text-xl text-gray-400 hover:text-gray-600">&times;</button>
         </div>
