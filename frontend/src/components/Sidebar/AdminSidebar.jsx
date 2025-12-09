@@ -1,27 +1,25 @@
-import { FaThLarge, FaSearch, FaHeart, FaCommentDots, FaTags, FaUser } from "react-icons/fa";
+import { AppstoreOutlined, UserOutlined, ShopOutlined, FileTextOutlined, LogoutOutlined } from "@ant-design/icons";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Coffee } from "lucide-react";
 import { FiLogOut } from "react-icons/fi";
-import { useLocation, Link, useNavigate } from "react-router-dom";
-import {Coffee} from 'lucide-react'
 
 const menu = [
-  { icon: <FaThLarge />, label: "ダッシュボード", href: "/user/dashboard" },
-  { icon: <FaSearch />, label: "カフェ検索", href: "/search" },
-  { icon: <FaHeart />, label: "お気に入り", href: "/favorites" },
-  { icon: <FaCommentDots />, label: "レビュー", href: "/reviews" },
-  { icon: <FaTags />, label: "プロモーション", href: "/promotions" },
-  { icon: <FaUser />, label: "プロフィール", href: "user/profile" },
+  { icon: <AppstoreOutlined />, label: "ダッシュボード", href: "/admin/dashboard" },
+  { icon: <UserOutlined />, label: "顧客管理", href: "/admin/customers" },
+  { icon: <UserOutlined />, label: "店舗オーナー管理", href: "/admin/owners" },
+  { icon: <ShopOutlined />, label: "カフェ管理", href: "/admin/cafes" },
+  { icon: <FileTextOutlined />, label: "利用規約", href: "/admin/terms" },
 ];
 
-export default function Sidebar() {
-  const location = useLocation();
+export function AdminSidebar() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
     sessionStorage.removeItem("authToken");
     sessionStorage.removeItem("userRole");
+    localStorage.removeItem("token");
     localStorage.removeItem("userRole");
-    
     navigate("/signin");
   };
 
@@ -29,9 +27,11 @@ export default function Sidebar() {
     <aside className="w-64 bg-white h-screen shadow flex flex-col justify-between">
       <div>
         <div className="flex items-center px-6 py-4 border-b">
-          <span className="text-2xl mr-2"><Coffee className="w-10 h-10 text-primary text-[#8b1a1a]" /></span>
-          <span className="font-bold text-lg">Cafe Finder</span>
-          <button className="ml-auto text-xl text-gray-400 hover:text-gray-600">&times;</button>
+          <Coffee className="w-8 h-8 mr-3 text-[#8b1a1a]" />
+          <div className="flex flex-col">
+            <span className="text-xs text-gray-500">コーヒー検索</span>
+            <span className="text-sm font-semibold">システム</span>
+          </div>
         </div>
         <nav className="mt-4">
           <ul>
@@ -43,12 +43,12 @@ export default function Sidebar() {
                     to={item.href}
                     className={`flex items-center px-6 py-3 transition ${
                       isActive
-                        ? "bg-gray-100 text-black font-semibold"
-                        : "text-gray-700 hover:bg-gray-100 hover:text-black"
+                        ? "bg-gray-900 text-white font-medium"
+                        : "text-gray-700 hover:bg-gray-100"
                     }`}
                   >
-                    <span className="text-lg mr-3">{item.icon}</span>
-                    <span className="text-base">{item.label}</span>
+                    <span className="text-base mr-4">{item.icon}</span>
+                    <span className="text-sm">{item.label}</span>
                   </Link>
                 </li>
               );

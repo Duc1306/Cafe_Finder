@@ -100,83 +100,108 @@ const userService = {
    * Get dashboard data for logged-in user
    */
   getDashboardData: async (userId) => {
-    // Số lượng quán yêu thích
-    const favoriteCount = await Favorite.count({ where: { user_id: userId } });
+  // 1. Số lượng quán yêu thích
+  const favoriteCount = await Favorite.count({
+    where: { user_id: userId }
+  });
 
-    // Số lượng review
-    const reviewCount = await Review.count({ where: { user_id: userId } });
+  // 2. Số lượng review
+  const reviewCount = await Review.count({
+    where: { user_id: userId }
+  });
 
-    // Số quán đã từng review (visitedCount)
-    const visitedCount = await Review.count({
-      where: { user_id: userId },
-      distinct: true,
-      col: 'cafe_id'
-    });
+  // 3. Số quán đã từng review
+  const visitedCount = await Review.count({
+    where: { user_id: userId },
+    distinct: true,
+    col: 'cafe_id'
+  });
 
-    // Hoạt động gần đây (review + favorite)
-    const recentReviews = await Review.findAll({
-      where: { user_id: userId },
-      order: [['created_at', 'DESC']],
-      limit: 5,
-      include: [{ model: Cafe, as: 'cafe', attributes: ['name'] }]
-    });
+  // 4. Hoạt động gần đây
+  const recentReviews = await Review.findAll({
+    where: { user_id: userId },
+    order: [['created_at', 'DESC']],
+    limit: 5,
+    include: [
+      {
+        model: Cafe,
+        as: 'cafe',
+        attributes: ['name']
+      }
+    ]
+  });
 
-    const recentFavorites = await Favorite.findAll({
-      where: { user_id: userId },
-      order: [['created_at', 'DESC']],
-      limit: 5,
-      include: [{ model: Cafe, as: 'cafe', attributes: ['name'] }]
-    });
+  const recentFavorites = await Favorite.findAll({
+    where: { user_id: userId },
+    order: [['created_at', 'DESC']],
+    limit: 5,
+    include: [
+      {
+        model: Cafe,
+        as: 'cafe',
+        attributes: ['name']
+      }
+    ]
+  });
 
-    const recentActivities = [
-      ...recentReviews.map(r => ({
-        type: 'REVIEW',
-        cafe: r.Cafe?.name,
-        rating: r.rating,
-        comment: r.comment,
-        created_at: r.created_at
-      })),
-      ...recentFavorites.map(f => ({
-        type: 'FAVORITE',
-        cafe: f.Cafe?.name,
-        created_at: f.created_at
-      }))
-    ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 5);
+  const recentActivities = [
+    ...recentReviews.map(r => ({
+      type: 'REVIEW',
+      cafe: r.cafe?.name,
+      rating: r.rating,
+      comment: r.comment,
+      created_at: r.created_at
+    })),
+    ...recentFavorites.map(f => ({
+      type: 'FAVORITE',
+      cafe: f.cafe?.name,
+      created_at: f.created_at
+    }))
+  ]
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    .slice(0, 5);
 
-    // Gợi ý quán (quán ACTIVE, chưa favorite)
-    const favoriteCafeIds = await Favorite.findAll({
-      where: { user_id: userId },
-      attributes: ['cafe_id']
-    }).then(list => list.map(f => f.cafe_id));
+  // 5. Lấy danh sách cafe đã favorite
+  const favoriteCafeIds = await Favorite.findAll({
+    where: { user_id: userId },
+    attributes: ['cafe_id']
+  }).then(list => list.map(f => f.cafe_id));
 
-    const recommendedCafes = await Cafe.findAll({
-      where: {
-        status: 'ACTIVE',
-        id: { [Op.notIn]: favoriteCafeIds }
-      },
-      limit: 3,
-      include: [{
+  // 6. Gợi ý quán + lấy ảnh cover
+  const recommendedCafes = await Cafe.findAll({
+    where: {
+      status: 'ACTIVE',
+      id: { [Op.notIn]: favoriteCafeIds }
+    },
+    limit: 3,
+    include: [
+      {
         model: CafePhoto,
-        as: 'photos',
+        as: 'photos',              // PHẢI TRÙNG alias trong association
         where: { is_cover: true },
         required: false,
         attributes: ['url']
-      }]
-    });
+      }
+    ]
+  });
 
-    return {
-      favoriteCount,
-      reviewCount,
-      visitedCount,
-      recentActivities,
-      recommendedCafes: recommendedCafes.map(cafe => ({
-        id: cafe.id,
-        name: cafe.name,
-        address: cafe.address_line,
-        coverPhoto: cafe.CafePhotos?.[0]?.url || null
-      }))
-    };
-  }
+  // 7. Map output đúng ảnh
+  const mappedRecommended = recommendedCafes.map(cafe => ({
+    id: cafe.id,
+    name: cafe.name,
+    address: cafe.address_line,
+    coverPhoto: cafe.photos?.[0]?.url || null   // ✅ SỬA CHỖ NÀY
+  }));
+
+  return {
+    favoriteCount,
+    reviewCount,
+    visitedCount,
+    recentActivities,
+    recommendedCafes: mappedRecommended
+  };
+}
+
 };
 
 module.exports = userService;
