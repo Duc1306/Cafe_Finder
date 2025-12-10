@@ -447,6 +447,113 @@ const ownerService = {
       is_active: promo.is_active,
       views: Math.floor(Math.random() * 2000) + 500 // Mock data
     }));
+  },
+
+  /**
+   * Update existing cafe
+   */
+  updateCafe: async (ownerId, cafeId, cafeData, newPhotoFiles = [], photosToDelete = []) => {
+    const transaction = await sequelize.transaction();
+    
+    try {
+      // Verify ownership
+      const cafe = await Cafe.findOne({
+        where: { 
+          id: cafeId,
+          owner_id: ownerId 
+        }
+      });
+
+      if (!cafe) {
+        throw new Error('Cafe not found or unauthorized');
+      }
+
+      // Update cafe information
+      await cafe.update({
+        name: cafeData.name,
+        address_line: cafeData.address_line,
+        district: cafeData.district || null,
+        city: cafeData.city,
+        description: cafeData.description,
+        phone_contact: cafeData.phone_contact || null,
+        website_url: cafeData.website_url || null,
+        open_time: cafeData.opening_time,
+        close_time: cafeData.closing_time,
+        avg_price_min: cafeData.avg_price_min ? parseInt(cafeData.avg_price_min) : null,
+        avg_price_max: cafeData.avg_price_max ? parseInt(cafeData.avg_price_max) : null,
+        has_wifi: cafeData.has_wifi === 'true' || cafeData.has_wifi === true,
+        has_ac: cafeData.has_ac === 'true' || cafeData.has_ac === true,
+        has_parking: cafeData.has_parking === 'true' || cafeData.has_parking === true,
+        is_quiet: cafeData.is_quiet === 'true' || cafeData.is_quiet === true,
+        allow_smoking: cafeData.allow_smoking === 'true' || cafeData.allow_smoking === true,
+        allow_pets: cafeData.allow_pets === 'true' || cafeData.allow_pets === true,
+        has_outlet: cafeData.has_outlet === 'true' || cafeData.has_outlet === true
+      }, { transaction });
+
+      // Delete photos if requested
+      if (photosToDelete && photosToDelete.length > 0) {
+        const fs = require('fs');
+        const path = require('path');
+
+        // Get photos from database
+        const photosToRemove = await CafePhoto.findAll({
+          where: {
+            id: photosToDelete,
+            cafe_id: cafeId
+          }
+        });
+
+        // Delete files from filesystem
+        for (const photo of photosToRemove) {
+          const filePath = path.join(__dirname, '../../', photo.url);
+          if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+          }
+        }
+
+        // Delete from database
+        await CafePhoto.destroy({
+          where: {
+            id: photosToDelete,
+            cafe_id: cafeId
+          },
+          transaction
+        });
+      }
+
+      // Add new photos
+      if (newPhotoFiles && newPhotoFiles.length > 0) {
+        // Check if there are existing photos
+        const remainingPhotosCount = await CafePhoto.count({
+          where: { cafe_id: cafeId }
+        });
+
+        const photoRecords = newPhotoFiles.map((file, index) => ({
+          cafe_id: cafeId,
+          url: `/uploads/cafes/${file.filename}`,
+          photo_type: 'INTERIOR',
+          is_cover: remainingPhotosCount === 0 && index === 0 // Set first new photo as cover if no photos remain
+        }));
+
+        await CafePhoto.bulkCreate(photoRecords, { transaction });
+      }
+
+      await transaction.commit();
+
+      // Return updated cafe with photos
+      const updatedCafe = await Cafe.findByPk(cafeId, {
+        include: [{
+          model: CafePhoto,
+          as: 'photos',
+          attributes: ['id', 'url', 'photo_type', 'is_cover']
+        }]
+      });
+
+      return updatedCafe;
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
   }
 };
 
