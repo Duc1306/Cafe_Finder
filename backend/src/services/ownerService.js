@@ -202,6 +202,67 @@ const ownerService = {
       total: totalCafes,
       data
     };
+  },
+
+  /**
+   * Create new cafe
+   */
+  createCafe: async (ownerId, cafeData, photoFiles = []) => {
+    const transaction = await sequelize.transaction();
+    
+    try {
+      // Tạo cafe mới
+      const newCafe = await Cafe.create({
+        owner_id: ownerId,
+        name: cafeData.name,
+        address_line: cafeData.address_line,
+        district: cafeData.district || null,
+        city: cafeData.city,
+        description: cafeData.description,
+        phone_contact: cafeData.phone_contact || null,
+        website_url: cafeData.website_url || null,
+        open_time: cafeData.opening_time,
+        close_time: cafeData.closing_time,
+        avg_price_min: cafeData.avg_price_min ? parseInt(cafeData.avg_price_min) : null,
+        avg_price_max: cafeData.avg_price_max ? parseInt(cafeData.avg_price_max) : null,
+        has_wifi: cafeData.has_wifi === 'true' || cafeData.has_wifi === true,
+        has_ac: cafeData.has_ac === 'true' || cafeData.has_ac === true,
+        has_parking: cafeData.has_parking === 'true' || cafeData.has_parking === true,
+        is_quiet: cafeData.is_quiet === 'true' || cafeData.is_quiet === true,
+        allow_smoking: cafeData.allow_smoking === 'true' || cafeData.allow_smoking === true,
+        allow_pets: cafeData.allow_pets === 'true' || cafeData.allow_pets === true,
+        has_outlet: cafeData.has_outlet === 'true' || cafeData.has_outlet === true,
+        status: 'PENDING' // Mặc định chờ duyệt
+      }, { transaction });
+
+      // Nếu có ảnh, lưu vào CafePhotos
+      if (photoFiles && photoFiles.length > 0) {
+        const photoRecords = photoFiles.map((file, index) => ({
+          cafe_id: newCafe.id,
+          url: `/uploads/cafes/${file.filename}`,
+          photo_type: 'INTERIOR', // Mặc định
+          is_cover: index === 0 // Ảnh đầu tiên là cover
+        }));
+
+        await CafePhoto.bulkCreate(photoRecords, { transaction });
+      }
+
+      await transaction.commit();
+
+      // Lấy lại cafe với photos
+      const cafe = await Cafe.findByPk(newCafe.id, {
+        include: [{
+          model: CafePhoto,
+          as: 'photos',
+          attributes: ['id', 'url', 'photo_type', 'is_cover']
+        }]
+      });
+
+      return cafe;
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
   }
 };
 

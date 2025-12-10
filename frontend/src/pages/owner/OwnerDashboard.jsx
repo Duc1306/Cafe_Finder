@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { FaStore, FaCheckCircle, FaStar, FaSearch, FaPlus, FaSignOutAlt } from 'react-icons/fa';
 import { toast, ToastContainer } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 export default function OwnerDashboard() {
   const [cafes, setCafes] = useState([]);
   const [stats, setStats] = useState({ cafes: 0, favorites: 0, reviews: 0, avgRating: 0 });
   const [searchKeyword, setSearchKeyword] = useState('');
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Check if user is logged in and is OWNER
@@ -133,7 +135,10 @@ export default function OwnerDashboard() {
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d0574b]"
               />
             </div>
-            <button className="ml-4 px-4 py-2 bg-[#a8201a] hover:bg-[#901a15] text-white rounded-lg text-sm font-medium transition shadow-sm flex items-center gap-2">
+            <button 
+              onClick={() => navigate('/owner/create-cafe')}
+              className="ml-4 px-4 py-2 bg-[#a8201a] hover:bg-[#901a15] text-white rounded-lg text-sm font-medium transition shadow-sm flex items-center gap-2"
+            >
               <FaPlus />
               <span>新規カフェ作成</span>
             </button>

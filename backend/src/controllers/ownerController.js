@@ -107,8 +107,48 @@ const ownerController = {
       });
 
     } catch (e) { next(e); }
-  }
+  },
 
+  /**
+   * ============================================
+   * POST /api/owner/shops/create
+   * ============================================
+   */
+  createCafe: async (req, res, next) => {
+    try {
+      const ownerId = req.user.id;
+      const cafeData = req.body;
+      const photoFiles = req.files || [];
+
+      // Validate required fields
+      if (!cafeData.name || !cafeData.address_line || !cafeData.city || !cafeData.description) {
+        return res.status(400).json({
+          success: false,
+          message: '必須項目を入力してください'
+        });
+      }
+
+      if (!cafeData.opening_time || !cafeData.closing_time) {
+        return res.status(400).json({
+          success: false,
+          message: '営業時間を入力してください'
+        });
+      }
+
+      // Call service to create cafe
+      const newCafe = await ownerService.createCafe(ownerId, cafeData, photoFiles);
+
+      res.status(201).json({
+        success: true,
+        message: 'カフェを作成しました',
+        data: newCafe
+      });
+
+    } catch (error) {
+      console.error('Create cafe error:', error);
+      next(error);
+    }
+  }
 };
 
 module.exports = ownerController;
