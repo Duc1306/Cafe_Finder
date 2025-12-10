@@ -148,6 +148,123 @@ const ownerController = {
       console.error('Create cafe error:', error);
       next(error);
     }
+  },
+
+  /**
+   * ============================================
+   * GET /api/owner/shops/:id
+   * Get detailed cafe information
+   * ============================================
+   */
+  getCafeDetail: async (req, res, next) => {
+    try {
+      const ownerId = req.user.id;
+      const cafeId = req.params.id;
+
+      const cafe = await ownerService.getCafeDetail(ownerId, cafeId);
+
+      res.json({
+        success: true,
+        data: cafe
+      });
+
+    } catch (error) {
+      if (error.message === 'Cafe not found or unauthorized') {
+        return res.status(404).json({
+          success: false,
+          message: 'カフェが見つからないか、アクセス権限がありません'
+        });
+      }
+      next(error);
+    }
+  },
+
+  /**
+   * ============================================
+   * GET /api/owner/shops/:id/stats
+   * Get cafe statistics
+   * ============================================
+   */
+  getCafeStats: async (req, res, next) => {
+    try {
+      const ownerId = req.user.id;
+      const cafeId = req.params.id;
+
+      const stats = await ownerService.getCafeStats(ownerId, cafeId);
+
+      res.json({
+        success: true,
+        data: stats
+      });
+
+    } catch (error) {
+      if (error.message === 'Cafe not found or unauthorized') {
+        return res.status(404).json({
+          success: false,
+          message: 'カフェが見つかりません'
+        });
+      }
+      next(error);
+    }
+  },
+
+  /**
+   * ============================================
+   * GET /api/owner/shops/:id/reviews
+   * Get recent reviews for cafe
+   * ============================================
+   */
+  getCafeReviews: async (req, res, next) => {
+    try {
+      const ownerId = req.user.id;
+      const cafeId = req.params.id;
+      const limit = req.query.limit || 5;
+
+      const reviews = await ownerService.getCafeReviews(ownerId, cafeId, limit);
+
+      res.json({
+        success: true,
+        data: reviews
+      });
+
+    } catch (error) {
+      if (error.message === 'Cafe not found or unauthorized') {
+        return res.status(404).json({
+          success: false,
+          message: 'カフェが見つかりません'
+        });
+      }
+      next(error);
+    }
+  },
+
+  /**
+   * ============================================
+   * GET /api/owner/shops/:id/promotions
+   * Get promotions for cafe
+   * ============================================
+   */
+  getCafePromotions: async (req, res, next) => {
+    try {
+      const ownerId = req.user.id;
+      const cafeId = req.params.id;
+
+      const promotions = await ownerService.getCafePromotions(ownerId, cafeId);
+
+      res.json({
+        success: true,
+        data: promotions
+      });
+
+    } catch (error) {
+      if (error.message === 'Cafe not found or unauthorized') {
+        return res.status(404).json({
+          success: false,
+          message: 'カフェが見つかりません'
+        });
+      }
+      next(error);
+    }
   }
 };
 

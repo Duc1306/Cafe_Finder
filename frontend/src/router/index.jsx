@@ -4,6 +4,7 @@ import Register from "../pages/Register";
 import SignIn from "../pages/SignIn";
 import OwnerDashboard from "../pages/owner/OwnerDashboard";
 import CreateCafe from "../pages/owner/CreateCafe";
+import CafeDetail from "../pages/Owner/CafeDetail";
 import { UserRoutes } from "./userRoutes";
 import { AdminRoutes } from "./adminRoutes";
 
@@ -16,6 +17,7 @@ export default function AppRoutes() {
       <Route path="/register" element={<Register />} />
       <Route path="/owner/dashboard" element={<OwnerDashboard />} />
       <Route path="/owner/create-cafe" element={<CreateCafe />} />
+      <Route path="/owner/cafe/:id" element={<CafeDetail />} /> 
       
       {UserRoutes()}
       {AdminRoutes()}

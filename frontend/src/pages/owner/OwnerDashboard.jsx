@@ -183,7 +183,10 @@ export default function OwnerDashboard() {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-center gap-2">
-                          <button className="px-3 py-1 text-xs text-white bg-[#8b1a1a] hover:bg-[#a8201a] rounded transition">
+                          <button 
+                            onClick={() => navigate(`/owner/cafe/${cafe.id}`)}
+                            className="px-3 py-1 text-xs text-white bg-[#8b1a1a] hover:bg-[#a8201a] rounded transition"
+                          >
                             詳細
                           </button>
                           <button className="px-3 py-1 text-xs text-white bg-blue-600 hover:bg-blue-700 rounded transition">
