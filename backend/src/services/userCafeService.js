@@ -78,14 +78,14 @@ const userCafeService = {
       ];
     }
 
-    // City
+    // City - fuzzy search with ILIKE
     if (city && city.trim()) {
-      whereCafe.city = city.trim();
+      whereCafe.city = { [Op.iLike]: `%${city.trim()}%` };
     }
 
-    // District
+    // District - fuzzy search with ILIKE
     if (district && district.trim()) {
-      whereCafe.district = district.trim();
+      whereCafe.district = { [Op.iLike]: `%${district.trim()}%` };
     }
 
     // Price range

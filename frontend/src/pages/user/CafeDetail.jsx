@@ -35,6 +35,13 @@ export default function CafeDetail() {
             const cafe = cafeData.data || cafeData;
             const reviews = reviewsData.data || reviewsData.reviews || [];
 
+            // Extract coverUrl from photos array
+            if (cafe.photos && cafe.photos.length > 0) {
+                // Find cover photo or use first photo
+                const coverPhoto = cafe.photos.find(p => p.is_cover || p.isCover) || cafe.photos[0];
+                cafe.coverUrl = coverPhoto.url;
+            }
+
             setCafe(cafe);
             setReviews(reviews);
         } catch (err) {
@@ -46,8 +53,20 @@ export default function CafeDetail() {
     };
 
     const handleToggleFavorite = async () => {
-        // Favorite functionality disabled
-        return;
+        try {
+            if (cafe.isFavorite) {
+                await removeFavorite(id);
+                toast.success('お気に入りから削除しました');
+                setCafe({ ...cafe, isFavorite: false, favoritesCount: cafe.favoritesCount - 1 });
+            } else {
+                await addFavorite(id);
+                toast.success('お気に入りに追加しました');
+                setCafe({ ...cafe, isFavorite: true, favoritesCount: cafe.favoritesCount + 1 });
+            }
+        } catch (err) {
+            console.error('Toggle favorite error:', err);
+            toast.error('お気に入りの更新に失敗しました: ' + err.message);
+        }
     };
 
     const handleOpenReviewModal = () => {
