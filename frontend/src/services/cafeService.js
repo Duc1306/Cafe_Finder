@@ -67,7 +67,7 @@ export const getFavorites = async (page = 1, limit = 10) => {
 
     try {
         const response = await fetch(
-            `${API_BASE_URL}/user/favorites?page=${page}&limit=${limit}`,
+            `${API_BASE_URL}/favorites?page=${page}&limit=${limit}`,
             {
                 headers: authHeaders(),
             }
@@ -86,7 +86,7 @@ export const getFavorites = async (page = 1, limit = 10) => {
 };
 
 export const addFavorite = async (cafeId) => {
-    const response = await fetch(`${API_BASE_URL}/user/favorites`, {
+    const response = await fetch(`${API_BASE_URL}/favorites`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -99,7 +99,7 @@ export const addFavorite = async (cafeId) => {
 };
 
 export const removeFavorite = async (cafeId) => {
-    const response = await fetch(`${API_BASE_URL}/user/favorites/${cafeId}`, {
+    const response = await fetch(`${API_BASE_URL}/favorites/${cafeId}`, {
         method: 'DELETE',
         headers: authHeaders(),
     });
