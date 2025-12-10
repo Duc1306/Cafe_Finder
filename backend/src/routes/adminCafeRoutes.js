@@ -4,9 +4,12 @@ const adminCafeController = require('../controllers/adminCafeController');
 const authMiddleware = require('../middlewares/authMiddleware');
 const { authorize } = require('../middlewares/authMiddleware');
 
+
+
 // Tất cả các route này yêu cầu xác thực Admin
 router.use(authMiddleware);
 router.use(authorize('ADMIN'));
+
 
 /**
  * GET /api/admin/cafes

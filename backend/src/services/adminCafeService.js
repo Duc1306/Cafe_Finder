@@ -1,6 +1,7 @@
 const { Cafe, User, OwnerProfile, CafePhoto, Review } = require('../models');
 const { Op } = require('sequelize');
 
+
 /**
  * Lấy danh sách tất cả quán
  * @param {Object} filters - { page, limit, keyword, city, status }
@@ -151,18 +152,18 @@ const getRequestDetail = async (cafeId) => {
           as: 'owner',
           attributes: ['id', 'full_name', 'email', 'phone', 'avatar_url'],
           include: [
+            {
+              model: OwnerProfile,
+              as: 'ownerProfile'
+            }
+          ]
+        },
         {
-          model: OwnerProfile,
-          as: 'ownerProfile'
+          model: CafePhoto,
+          as: 'photos'
         }
       ]
-    },
-    {
-      model: CafePhoto,
-      as: 'photos'
-    }
-  ]
-});    if (!cafe) {
+    }); if (!cafe) {
       throw new Error('Request not found or already processed');
     }
 

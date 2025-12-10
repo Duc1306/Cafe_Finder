@@ -85,6 +85,11 @@ const authService = {
       throw { status: 403, message: "店舗オーナーのアカウントは現在審査中です。" };
     }
 
+    //Check if account is still locked
+    if(user.status === 'LOCKED'){
+      throw {status: 403, message: "店舗オーナーのアカウントは使用禁止です。"}
+    }
+
     // Generate JWT token
     const token = jwt.sign(
       { id: user.id, role: user.role },

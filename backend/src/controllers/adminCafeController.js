@@ -91,7 +91,7 @@ const getRequestDetail = async (req, res) => {
     });
   } catch (error) {
     console.error('Controller Error:', error);
-    
+
     if (error.message.includes('not found')) {
       return res.status(404).json({
         success: false,
@@ -130,7 +130,7 @@ const approveRequest = async (req, res) => {
     });
   } catch (error) {
     console.error('Controller Error:', error);
-    
+
     if (error.message.includes('not found')) {
       return res.status(404).json({
         success: false,
@@ -177,7 +177,7 @@ const rejectRequest = async (req, res) => {
     });
   } catch (error) {
     console.error('Controller Error:', error);
-    
+
     if (error.message.includes('not found')) {
       return res.status(404).json({
         success: false,
@@ -215,7 +215,7 @@ const getCafeDetail = async (req, res) => {
     });
   } catch (error) {
     console.error('Controller Error:', error);
-    
+
     if (error.message.includes('not found')) {
       return res.status(404).json({
         success: false,
@@ -262,7 +262,7 @@ const updateCafe = async (req, res) => {
     });
   } catch (error) {
     console.error('Controller Error:', error);
-    
+
     if (error.message.includes('not found')) {
       return res.status(404).json({
         success: false,
@@ -300,7 +300,7 @@ const deleteCafe = async (req, res) => {
     });
   } catch (error) {
     console.error('Controller Error:', error);
-    
+
     if (error.message.includes('not found')) {
       return res.status(404).json({
         success: false,

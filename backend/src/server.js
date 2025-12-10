@@ -27,18 +27,25 @@ app.get('/api/health', (req, res) => {
 const authRoutes = require("./routes/authRoute");
 const userRoutes = require('./routes/userRoutes');
 const ownerRoutes = require('./routes/ownerRoutes');
+const adminUserRoutes = require('./routes/adminUserRoutes');
 const adminCafeRoutes = require('./routes/adminCafeRoutes');
+const adminStatsRoutes = require("./routes/adminStatsRoutes");
+
+
+
 
 const termsRoutes = require('./routes/termsRoutes');
 const { testConnection } = require('./config/database');
 
+
+app.use('/api/terms', termsRoutes);
 app.use("/api/auth", authRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/owner', ownerRoutes); 
+app.use('/api/owner', ownerRoutes);
+app.use("/api/admin/stats", adminStatsRoutes);
+app.use("/api/admin/users", adminUserRoutes); 
 app.use('/api/admin/cafes', adminCafeRoutes);
-app.use('/api/terms', termsRoutes);
 app.use('/api/admin/terms', termsRoutes);
-
 
 app.use("/uploads", express.static("uploads"));
 
