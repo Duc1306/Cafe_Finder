@@ -132,7 +132,7 @@ export default function Register() {
           onChange={handleChange}
           className="w-full px-4 py-3 mb-4 rounded-lg border border-gray-300 bg-white focus:ring-2 focus:ring-red-300 focus:outline-none"
         >
-          <option value="CUSTOMER">お客様）</option>
+          <option value="CUSTOMER">お客様</option>
           <option value="OWNER">店舗オーナー</option>
         </select>
 
