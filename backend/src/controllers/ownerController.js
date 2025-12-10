@@ -265,6 +265,71 @@ const ownerController = {
       }
       next(error);
     }
+  },
+
+  /**
+   * ============================================
+   * PUT /api/owner/shops/:id
+   * Update existing cafe
+   * ============================================
+   */
+  updateCafe: async (req, res, next) => {
+    try {
+      const ownerId = req.user.id;
+      const cafeId = req.params.id;
+      const cafeData = req.body;
+      const newPhotoFiles = req.files || [];
+      
+      // Parse photosToDelete from JSON string
+      let photosToDelete = [];
+      if (cafeData.photos_to_delete) {
+        try {
+          photosToDelete = JSON.parse(cafeData.photos_to_delete);
+        } catch (e) {
+          console.error('Failed to parse photos_to_delete:', e);
+        }
+      }
+
+      // Validate required fields
+      if (!cafeData.name || !cafeData.address_line || !cafeData.city || !cafeData.description) {
+        return res.status(400).json({
+          success: false,
+          message: '必須項目を入力してください'
+        });
+      }
+
+      if (!cafeData.opening_time || !cafeData.closing_time) {
+        return res.status(400).json({
+          success: false,
+          message: '営業時間を入力してください'
+        });
+      }
+
+      // Call service to update cafe
+      const updatedCafe = await ownerService.updateCafe(
+        ownerId, 
+        cafeId, 
+        cafeData, 
+        newPhotoFiles, 
+        photosToDelete
+      );
+
+      res.json({
+        success: true,
+        message: 'カフェを更新しました',
+        data: updatedCafe
+      });
+
+    } catch (error) {
+      if (error.message === 'Cafe not found or unauthorized') {
+        return res.status(404).json({
+          success: false,
+          message: 'カフェが見つからないか、アクセス権限がありません'
+        });
+      }
+      console.error('Update cafe error:', error);
+      next(error);
+    }
   }
 };
 

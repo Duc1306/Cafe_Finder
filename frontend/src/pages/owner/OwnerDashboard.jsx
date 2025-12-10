@@ -189,7 +189,10 @@ export default function OwnerDashboard() {
                           >
                             詳細
                           </button>
-                          <button className="px-3 py-1 text-xs text-white bg-blue-600 hover:bg-blue-700 rounded transition">
+                          <button 
+                            onClick={() => navigate(`/owner/edit-cafe/${cafe.id}`)}
+                            className="px-3 py-1 text-xs text-white bg-blue-600 hover:bg-blue-700 rounded transition"
+                          >
                             編集
                           </button>
                           <button className="px-3 py-1 text-xs text-white bg-gray-500 hover:bg-gray-600 rounded transition">

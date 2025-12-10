@@ -47,4 +47,12 @@ router.get('/shops/:id/reviews', authMiddleware, ownerController.getCafeReviews)
  */
 router.get('/shops/:id/promotions', authMiddleware, ownerController.getCafePromotions);
 
+/**
+ * PUT /api/owner/shops/:id
+ * Update existing cafe
+ * Protected route - requires authentication
+ * Upload multiple photos (max 10 files)
+ */
+router.put('/shops/:id', authMiddleware, upload.array('photos', 10), ownerController.updateCafe);
+
 module.exports = router;
