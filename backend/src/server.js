@@ -32,8 +32,6 @@ const adminCafeRoutes = require('./routes/adminCafeRoutes');
 const adminStatsRoutes = require("./routes/adminStatsRoutes");
 
 
-
-
 const termsRoutes = require('./routes/termsRoutes');
 const userCafeRoutes = require('./routes/userCafeRoutes');
 const favoriteRoutes = require('./routes/favoriteRoutes');

@@ -9,7 +9,7 @@ const menu = [
   { icon: <FaHeart />, label: "お気に入り", href: "/favorites" },
   { icon: <FaCommentDots />, label: "レビュー", href: "/reviews" },
   { icon: <FaTags />, label: "プロモーション", href: "/promotions" },
-  { icon: <FaUser />, label: "プロフィール", href: "/profile" },
+  { icon: <FaUser />, label: "プロフィール", href: "/user/profile" },
 ];
 
 export default function Sidebar() {
