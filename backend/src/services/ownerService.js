@@ -176,6 +176,9 @@ const ownerService = {
       });
     }
 
+    // Base URL for images
+    const baseURL = process.env.BACKEND_URL || 'http://localhost:5000';
+
     // Combine results
     const data = cafes.map(cafe => {
       const agg = aggregateMap[cafe.id] || {};
@@ -192,7 +195,7 @@ const ownerService = {
         favorites_count: Number(agg.favorites_count || 0),
         reviews_count: Number(agg.reviews_count || 0),
         avg_rating: Number(agg.avg_rating || 0),
-        cover_url: agg.cover_url || null
+        cover_url: agg.cover_url ? `${baseURL}${agg.cover_url}` : null // ADD baseURL
       };
     });
 
@@ -202,6 +205,355 @@ const ownerService = {
       total: totalCafes,
       data
     };
+  },
+
+  /**
+   * Create new cafe
+   */
+  createCafe: async (ownerId, cafeData, photoFiles = []) => {
+    const transaction = await sequelize.transaction();
+    
+    try {
+      // Tạo cafe mới
+      const newCafe = await Cafe.create({
+        owner_id: ownerId,
+        name: cafeData.name,
+        address_line: cafeData.address_line,
+        district: cafeData.district || null,
+        city: cafeData.city,
+        description: cafeData.description,
+        phone_contact: cafeData.phone_contact || null,
+        website_url: cafeData.website_url || null,
+        open_time: cafeData.opening_time,
+        close_time: cafeData.closing_time,
+        avg_price_min: cafeData.avg_price_min ? parseInt(cafeData.avg_price_min) : null,
+        avg_price_max: cafeData.avg_price_max ? parseInt(cafeData.avg_price_max) : null,
+        has_wifi: cafeData.has_wifi === 'true' || cafeData.has_wifi === true,
+        has_ac: cafeData.has_ac === 'true' || cafeData.has_ac === true,
+        has_parking: cafeData.has_parking === 'true' || cafeData.has_parking === true,
+        is_quiet: cafeData.is_quiet === 'true' || cafeData.is_quiet === true,
+        allow_smoking: cafeData.allow_smoking === 'true' || cafeData.allow_smoking === true,
+        allow_pets: cafeData.allow_pets === 'true' || cafeData.allow_pets === true,
+        has_outlet: cafeData.has_outlet === 'true' || cafeData.has_outlet === true,
+        status: 'PENDING' // Mặc định chờ duyệt
+      }, { transaction });
+
+      // Nếu có ảnh, lưu vào CafePhotos
+      if (photoFiles && photoFiles.length > 0) {
+        const photoRecords = photoFiles.map((file, index) => ({
+          cafe_id: newCafe.id,
+          url: `/uploads/cafes/${file.filename}`, // Path bắt đầu với /
+          photo_type: 'INTERIOR',
+          is_cover: index === 0
+        }));
+
+        await CafePhoto.bulkCreate(photoRecords, { transaction });
+      }
+
+      await transaction.commit();
+
+      // Lấy lại cafe với photos
+      const cafe = await Cafe.findByPk(newCafe.id, {
+        include: [{
+          model: CafePhoto,
+          as: 'photos',
+          attributes: ['id', 'url', 'photo_type', 'is_cover']
+        }]
+      });
+
+      return cafe;
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
+  },
+
+  /**
+   * Get detailed cafe information for owner
+   */
+  getCafeDetail: async (ownerId, cafeId) => {
+    // Kiểm tra cafe có tồn tại và thuộc owner không
+    const cafe = await Cafe.findOne({
+      where: { 
+        id: cafeId,
+        owner_id: ownerId 
+      },
+      include: [
+        {
+          model: CafePhoto,
+          as: 'photos',
+          attributes: ['id', 'url', 'photo_type', 'is_cover']
+        }
+      ]
+    });
+
+    if (!cafe) {
+      throw new Error('Cafe not found or unauthorized');
+    }
+
+    // Convert to plain object
+    const cafeData = cafe.toJSON();
+    
+    // Base URL for images
+    const baseURL = process.env.BACKEND_URL || 'http://localhost:5000';
+    
+    // Add full URL to photos
+    if (cafeData.photos && cafeData.photos.length > 0) {
+      cafeData.photos = cafeData.photos.map(photo => ({
+        ...photo,
+        url: `${baseURL}${photo.url}`
+      }));
+      
+      // Find cover photo
+      const coverPhoto = cafeData.photos.find(p => p.is_cover);
+      cafeData.cover_url = coverPhoto ? coverPhoto.url : null;
+    } else {
+      cafeData.cover_url = null;
+    }
+
+    return cafeData;
+  },
+
+  /**
+   * Get cafe statistics (favorites, reviews, rating distribution)
+   */
+  getCafeStats: async (ownerId, cafeId) => {
+    // Verify ownership
+    const cafe = await Cafe.findOne({
+      where: { id: cafeId, owner_id: ownerId },
+      attributes: ['id']
+    });
+
+    if (!cafe) {
+      throw new Error('Cafe not found or unauthorized');
+    }
+
+    // Count favorites
+    const favoritesCount = await Favorite.count({
+      where: { cafe_id: cafeId }
+    });
+
+    // Count reviews
+    const reviewsCount = await Review.count({
+      where: { cafe_id: cafeId }
+    });
+
+    // Get rating distribution
+    const ratingDistribution = await Review.findAll({
+      where: { cafe_id: cafeId },
+      attributes: [
+        'rating',
+        [sequelize.fn('COUNT', sequelize.col('id')), 'count']
+      ],
+      group: ['rating'],
+      order: [['rating', 'DESC']],
+      raw: true
+    });
+
+    // Format rating distribution for chart
+    const formattedDistribution = [5, 4, 3, 2, 1].map(star => {
+      const found = ratingDistribution.find(r => r.rating === star);
+      const count = found ? Number(found.count) : 0;
+      const percentage = reviewsCount > 0 ? Math.round((count / reviewsCount) * 100) : 0;
+      return {
+        name: `${star}★`,
+        value: count,
+        percentage
+      };
+    });
+
+    return {
+      favorites: favoritesCount,
+      reviews: reviewsCount,
+      ratingDistribution: formattedDistribution
+    };
+  },
+
+  /**
+   * Get recent reviews for a cafe
+   */
+  getCafeReviews: async (ownerId, cafeId, limit = 5) => {
+    // Verify ownership
+    const cafe = await Cafe.findOne({
+      where: { id: cafeId, owner_id: ownerId },
+      attributes: ['id']
+    });
+
+    if (!cafe) {
+      throw new Error('Cafe not found or unauthorized');
+    }
+
+    const { User } = require('../models');
+    const baseURL = process.env.BACKEND_URL || 'http://localhost:5000';
+
+    const reviews = await Review.findAll({
+      where: { cafe_id: cafeId },
+      attributes: ['id', 'rating', 'comment', 'created_at'],
+      include: [
+        {
+          model: User,
+          as: 'author',
+          attributes: ['id', 'full_name', 'avatar_url']
+        }
+      ],
+      order: [['created_at', 'DESC']],
+      limit: Number(limit)
+    });
+
+    // Format response
+    return reviews.map(review => ({
+      id: review.id,
+      user_name: review.author?.full_name || '匿名',
+      user_avatar: review.author?.avatar_url ? `${baseURL}${review.author.avatar_url}` : null,
+      rating: review.rating,
+      comment: review.comment,
+      created_at: review.created_at
+    }));
+  },
+
+  /**
+   * Get promotions for a cafe
+   */
+  getCafePromotions: async (ownerId, cafeId) => {
+    // Verify ownership
+    const cafe = await Cafe.findOne({
+      where: { id: cafeId, owner_id: ownerId },
+      attributes: ['id']
+    });
+
+    if (!cafe) {
+      throw new Error('Cafe not found or unauthorized');
+    }
+
+    const { Promotion } = require('../models');
+
+    const promotions = await Promotion.findAll({
+      where: { cafe_id: cafeId },
+      order: [
+        ['is_active', 'DESC'],
+        ['start_date', 'DESC']
+      ]
+    });
+
+    // Add mock views count (cần thêm table tracking sau)
+    return promotions.map(promo => ({
+      id: promo.id,
+      title: promo.title,
+      description: promo.description,
+      discount_type: promo.discount_type,
+      discount_value: Number(promo.discount_value),
+      start_date: promo.start_date,
+      end_date: promo.end_date,
+      is_active: promo.is_active,
+      views: Math.floor(Math.random() * 2000) + 500 // Mock data
+    }));
+  },
+
+  /**
+   * Update existing cafe
+   */
+  updateCafe: async (ownerId, cafeId, cafeData, newPhotoFiles = [], photosToDelete = []) => {
+    const transaction = await sequelize.transaction();
+    
+    try {
+      // Verify ownership
+      const cafe = await Cafe.findOne({
+        where: { 
+          id: cafeId,
+          owner_id: ownerId 
+        }
+      });
+
+      if (!cafe) {
+        throw new Error('Cafe not found or unauthorized');
+      }
+
+      // Update cafe information
+      await cafe.update({
+        name: cafeData.name,
+        address_line: cafeData.address_line,
+        district: cafeData.district || null,
+        city: cafeData.city,
+        description: cafeData.description,
+        phone_contact: cafeData.phone_contact || null,
+        website_url: cafeData.website_url || null,
+        open_time: cafeData.opening_time,
+        close_time: cafeData.closing_time,
+        avg_price_min: cafeData.avg_price_min ? parseInt(cafeData.avg_price_min) : null,
+        avg_price_max: cafeData.avg_price_max ? parseInt(cafeData.avg_price_max) : null,
+        has_wifi: cafeData.has_wifi === 'true' || cafeData.has_wifi === true,
+        has_ac: cafeData.has_ac === 'true' || cafeData.has_ac === true,
+        has_parking: cafeData.has_parking === 'true' || cafeData.has_parking === true,
+        is_quiet: cafeData.is_quiet === 'true' || cafeData.is_quiet === true,
+        allow_smoking: cafeData.allow_smoking === 'true' || cafeData.allow_smoking === true,
+        allow_pets: cafeData.allow_pets === 'true' || cafeData.allow_pets === true,
+        has_outlet: cafeData.has_outlet === 'true' || cafeData.has_outlet === true
+      }, { transaction });
+
+      // Delete photos if requested
+      if (photosToDelete && photosToDelete.length > 0) {
+        const fs = require('fs');
+        const path = require('path');
+
+        // Get photos from database
+        const photosToRemove = await CafePhoto.findAll({
+          where: {
+            id: photosToDelete,
+            cafe_id: cafeId
+          }
+        });
+
+        // Delete files from filesystem
+        for (const photo of photosToRemove) {
+          const filePath = path.join(__dirname, '../../', photo.url);
+          if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+          }
+        }
+
+        // Delete from database
+        await CafePhoto.destroy({
+          where: {
+            id: photosToDelete,
+            cafe_id: cafeId
+          },
+          transaction
+        });
+      }
+
+      // Add new photos
+      if (newPhotoFiles && newPhotoFiles.length > 0) {
+        // Check if there are existing photos
+        const remainingPhotosCount = await CafePhoto.count({
+          where: { cafe_id: cafeId }
+        });
+
+        const photoRecords = newPhotoFiles.map((file, index) => ({
+          cafe_id: cafeId,
+          url: `/uploads/cafes/${file.filename}`,
+          photo_type: 'INTERIOR',
+          is_cover: remainingPhotosCount === 0 && index === 0 // Set first new photo as cover if no photos remain
+        }));
+
+        await CafePhoto.bulkCreate(photoRecords, { transaction });
+      }
+
+      await transaction.commit();
+
+      // Return updated cafe with photos
+      const updatedCafe = await Cafe.findByPk(cafeId, {
+        include: [{
+          model: CafePhoto,
+          as: 'photos',
+          attributes: ['id', 'url', 'photo_type', 'is_cover']
+        }]
+      });
+
+      return updatedCafe;
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
   }
 };
 

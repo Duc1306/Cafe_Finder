@@ -107,8 +107,230 @@ const ownerController = {
       });
 
     } catch (e) { next(e); }
-  }
+  },
 
+  /**
+   * ============================================
+   * POST /api/owner/shops/create
+   * ============================================
+   */
+  createCafe: async (req, res, next) => {
+    try {
+      const ownerId = req.user.id;
+      const cafeData = req.body;
+      const photoFiles = req.files || [];
+
+      // Validate required fields
+      if (!cafeData.name || !cafeData.address_line || !cafeData.city || !cafeData.description) {
+        return res.status(400).json({
+          success: false,
+          message: '必須項目を入力してください'
+        });
+      }
+
+      if (!cafeData.opening_time || !cafeData.closing_time) {
+        return res.status(400).json({
+          success: false,
+          message: '営業時間を入力してください'
+        });
+      }
+
+      // Call service to create cafe
+      const newCafe = await ownerService.createCafe(ownerId, cafeData, photoFiles);
+
+      res.status(201).json({
+        success: true,
+        message: 'カフェを作成しました',
+        data: newCafe
+      });
+
+    } catch (error) {
+      console.error('Create cafe error:', error);
+      next(error);
+    }
+  },
+
+  /**
+   * ============================================
+   * GET /api/owner/shops/:id
+   * Get detailed cafe information
+   * ============================================
+   */
+  getCafeDetail: async (req, res, next) => {
+    try {
+      const ownerId = req.user.id;
+      const cafeId = req.params.id;
+
+      const cafe = await ownerService.getCafeDetail(ownerId, cafeId);
+
+      res.json({
+        success: true,
+        data: cafe
+      });
+
+    } catch (error) {
+      if (error.message === 'Cafe not found or unauthorized') {
+        return res.status(404).json({
+          success: false,
+          message: 'カフェが見つからないか、アクセス権限がありません'
+        });
+      }
+      next(error);
+    }
+  },
+
+  /**
+   * ============================================
+   * GET /api/owner/shops/:id/stats
+   * Get cafe statistics
+   * ============================================
+   */
+  getCafeStats: async (req, res, next) => {
+    try {
+      const ownerId = req.user.id;
+      const cafeId = req.params.id;
+
+      const stats = await ownerService.getCafeStats(ownerId, cafeId);
+
+      res.json({
+        success: true,
+        data: stats
+      });
+
+    } catch (error) {
+      if (error.message === 'Cafe not found or unauthorized') {
+        return res.status(404).json({
+          success: false,
+          message: 'カフェが見つかりません'
+        });
+      }
+      next(error);
+    }
+  },
+
+  /**
+   * ============================================
+   * GET /api/owner/shops/:id/reviews
+   * Get recent reviews for cafe
+   * ============================================
+   */
+  getCafeReviews: async (req, res, next) => {
+    try {
+      const ownerId = req.user.id;
+      const cafeId = req.params.id;
+      const limit = req.query.limit || 5;
+
+      const reviews = await ownerService.getCafeReviews(ownerId, cafeId, limit);
+
+      res.json({
+        success: true,
+        data: reviews
+      });
+
+    } catch (error) {
+      if (error.message === 'Cafe not found or unauthorized') {
+        return res.status(404).json({
+          success: false,
+          message: 'カフェが見つかりません'
+        });
+      }
+      next(error);
+    }
+  },
+
+  /**
+   * ============================================
+   * GET /api/owner/shops/:id/promotions
+   * Get promotions for cafe
+   * ============================================
+   */
+  getCafePromotions: async (req, res, next) => {
+    try {
+      const ownerId = req.user.id;
+      const cafeId = req.params.id;
+
+      const promotions = await ownerService.getCafePromotions(ownerId, cafeId);
+
+      res.json({
+        success: true,
+        data: promotions
+      });
+
+    } catch (error) {
+      if (error.message === 'Cafe not found or unauthorized') {
+        return res.status(404).json({
+          success: false,
+          message: 'カフェが見つかりません'
+        });
+      }
+      next(error);
+    }
+  },
+
+  /**
+   * ============================================
+   * PUT /api/owner/shops/:id
+   * Update existing cafe
+   * ============================================
+   */
+  updateCafe: async (req, res, next) => {
+    try {
+      const ownerId = req.user.id;
+      const cafeId = req.params.id;
+      const cafeData = req.body;
+      const newPhotoFiles = req.files || [];
+      
+      // Parse photosToDelete from JSON string
+      let photosToDelete = [];
+      if (cafeData.photos_to_delete) {
+        try {
+          photosToDelete = JSON.parse(cafeData.photos_to_delete);
+        } catch (e) {
+          console.error('Failed to parse photos_to_delete:', e);
+        }
+      }
+
+      // Validate required fields
+      if (!cafeData.name || !cafeData.address_line || !cafeData.city || !cafeData.description) {
+        return res.status(400).json({
+          success: false,
+          message: '必須項目を入力してください'
+        });
+      }
+
+      if (!cafeData.opening_time || !cafeData.closing_time) {
+        return res.status(400).json({
+          success: false,
+          message: '営業時間を入力してください'
+        });
+      }
+
+      // Call service to update cafe
+      const updatedCafe = await ownerService.updateCafe(
+        ownerId, 
+        cafeId, 
+        cafeData, 
+        newPhotoFiles, 
+        photosToDelete
+      );
+
+      res.json({
+        success: true,
+        message: 'カフェを更新しました',
+        data: updatedCafe
+      });
+
+    } catch (error) {
+      if (error.message === 'Cafe not found or unauthorized') {
+        return res.status(404).json({
+          success: false,
+          message: 'カフェが見つからないか、アクセス権限がありません'
+        });
+      }
+      console.error('Update cafe error:', error);
+      next(error);
+    }
+  }
 };
 
 module.exports = ownerController;
