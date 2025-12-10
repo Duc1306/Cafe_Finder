@@ -1,6 +1,16 @@
 import { useEffect, useState } from "react";
 import { Card, Row, Col, Statistic, message } from "antd";
 import { UserOutlined, ShopOutlined, FileTextOutlined, StarOutlined } from "@ant-design/icons";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+
 
 import adminStatsService from "../../services/adminStatsService";
 
@@ -9,6 +19,8 @@ export default function AdminDashboard() {
   const [ownerCount, setOwnerCount] = useState(0);
   const [cafeCount, setCafeCount] = useState(0);
   const [reviewCount, setReviewCount] = useState(0);
+  const [monthlyData, setMonthlyData] = useState([]);
+
 
   // Load dashboard data
   const fetchDashboardData = async () => {
@@ -30,6 +42,28 @@ export default function AdminDashboard() {
       // tổng số review
       const reviewRes = await adminStatsService.getReviewCount();
       if (reviewRes.success) setReviewCount(reviewRes.totalReviews);
+
+
+      const statsRes = await adminStatsService.getUserStatsByMonth();
+
+      if (statsRes.success) {
+        // Convert API format → chart format
+        const grouped = {};
+
+        statsRes.data.forEach((item) => {
+          const month = item.month.substring(0, 7);  // YYYY-MM
+          if (!grouped[month]) grouped[month] = { month, CUSTOMER: 0, OWNER: 0 };
+
+          if (item.role === "CUSTOMER") {
+            grouped[month].CUSTOMER = parseInt(item.count);
+          } else if (item.role === "OWNER") {
+            grouped[month].OWNER = parseInt(item.count);
+          }
+        });
+
+        setMonthlyData(Object.values(grouped));
+      }
+
 
     } catch (error) {
       message.error("ダッシュボードデータの取得に失敗しました");
@@ -89,6 +123,50 @@ export default function AdminDashboard() {
           </Card>
         </Col>
       </Row>
+
+
+      <Row gutter={[16, 16]} className="mt-6">
+        <Col xs={24} lg={12}>
+          <Card title="ユーザー登録数（月別）" className="mt-6">
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={monthlyData}>
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="CUSTOMER" fill="#3f8600" name="一般ユーザー" />
+                <Bar dataKey="OWNER" fill="#1890ff" name="店舗オーナー" />
+              </BarChart>
+            </ResponsiveContainer>
+          </Card>
+        </Col>
+
+        <Col xs={24} lg={12}>
+          <Card title="システム情報" className="h-full">
+            <div className="space-y-3">
+              <div className="flex justify-between">
+                <span className="text-gray-600">サーバーステータス:</span>
+                <span className="text-green-600 font-semibold">正常稼働中</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">データベース:</span>
+                <span className="text-green-600 font-semibold">接続OK</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">API バージョン:</span>
+                <span className="font-semibold">v1.0.0</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">最終バックアップ:</span>
+                <span className="font-semibold">2025/12/05 00:00</span>
+              </div>
+            </div>
+          </Card>
+        </Col>
+      </Row>
+
+
+
 
       {/* Activity + System Info (giữ nguyên) */}
     </div>

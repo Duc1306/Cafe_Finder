@@ -26,6 +26,19 @@ const adminStatsController = {
       return res.status(500).json({ success: false, message: "Server error" });
     }
   },
+  getUserStatsByMonth: async (req, res) => {
+    try {
+      const stats = await adminStatsService.getUserStatsByMonth();
+
+      return res.status(200).json({
+        success: true,
+        data: stats
+      });
+    } catch (error) {
+      console.error("Stats error:", error);
+      return res.status(500).json({ success: false, message: "Server error" });
+    }
+  }
 };
 
 module.exports = adminStatsController;

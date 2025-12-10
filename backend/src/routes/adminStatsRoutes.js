@@ -12,6 +12,7 @@ router.use(authorize("ADMIN"));
 
 // 📌 GET /api/admin/stats/cafes/count
 router.get("/cafes/count", adminStatsController.getCafeCount);
-router.get("/reviews/count", adminStatsController.getReviewCount); 
+router.get("/reviews/count", adminStatsController.getReviewCount);
+router.get("/users/monthly", adminStatsController.getUserStatsByMonth); 
 
 module.exports = router;

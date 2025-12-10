@@ -14,6 +14,11 @@ const adminStatsService = {
     const res = await api.get("/admin/stats/reviews/count");
     return res.data;
   },
+  getUserStatsByMonth: async () => {
+    const res = await api.get("/admin/stats/users/monthly");
+    return res.data;
+  },
+
 };
 
 export default adminStatsService;
