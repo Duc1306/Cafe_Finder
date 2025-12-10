@@ -9,13 +9,19 @@ module.exports = (sequelize, DataTypes) => {
     }
     Favorite.init({
         user_id: DataTypes.BIGINT,
-        cafe_id: DataTypes.BIGINT
+        cafe_id: DataTypes.BIGINT,
+        created_at: {
+            type: DataTypes.DATE,
+            defaultValue: DataTypes.NOW
+        }
     }, {
         sequelize,
         modelName: 'Favorite',
         tableName: 'Favorites',
         underscored: true,
-        timestamps: false
+        timestamps: true,
+        createdAt: 'created_at',
+        updatedAt: false
     });
     return Favorite;
 };

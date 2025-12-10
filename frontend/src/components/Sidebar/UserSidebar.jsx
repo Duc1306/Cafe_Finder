@@ -9,7 +9,7 @@ const menu = [
   { icon: <FaHeart />, label: "お気に入り", href: "/favorites" },
   { icon: <FaCommentDots />, label: "レビュー", href: "/reviews" },
   { icon: <FaTags />, label: "プロモーション", href: "/promotions" },
-  { icon: <FaUser />, label: "プロフィール", href: "user/profile" },
+  { icon: <FaUser />, label: "プロフィール", href: "/profile" },
 ];
 
 export default function Sidebar() {
@@ -21,7 +21,7 @@ export default function Sidebar() {
     sessionStorage.removeItem("authToken");
     sessionStorage.removeItem("userRole");
     localStorage.removeItem("userRole");
-    
+
     navigate("/signin");
   };
 
@@ -41,11 +41,10 @@ export default function Sidebar() {
                 <li key={idx}>
                   <Link
                     to={item.href}
-                    className={`flex items-center px-6 py-3 transition ${
-                      isActive
-                        ? "bg-gray-100 text-black font-semibold"
-                        : "text-gray-700 hover:bg-gray-100 hover:text-black"
-                    }`}
+                    className={`flex items-center px-6 py-3 transition ${isActive
+                      ? "bg-gray-100 text-black font-semibold"
+                      : "text-gray-700 hover:bg-gray-100 hover:text-black"
+                      }`}
                   >
                     <span className="text-lg mr-3">{item.icon}</span>
                     <span className="text-base">{item.label}</span>

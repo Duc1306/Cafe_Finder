@@ -140,13 +140,13 @@ export default function UserDashboard() {
                       <Button
                         type="primary"
                         icon={<InfoCircleOutlined />}
-                        onClick={() => navigate(`/cafe/${cafe.id}`)}
+                        onClick={() => navigate(`/cafes/${cafe.id}`)}
                       >
                         詳細へ
                       </Button>
                       <Button
                         icon={<EnvironmentOutlined />}
-                        onClick={() => navigate(`/cafe/${cafe.id}/map`)}
+                        onClick={() => navigate(`/cafes/${cafe.id}/map`)}
                       >
                         地図
                       </Button>
