@@ -176,6 +176,9 @@ const ownerService = {
       });
     }
 
+    // Base URL for images
+    const baseURL = process.env.BACKEND_URL || 'http://localhost:5000';
+
     // Combine results
     const data = cafes.map(cafe => {
       const agg = aggregateMap[cafe.id] || {};
@@ -192,7 +195,7 @@ const ownerService = {
         favorites_count: Number(agg.favorites_count || 0),
         reviews_count: Number(agg.reviews_count || 0),
         avg_rating: Number(agg.avg_rating || 0),
-        cover_url: agg.cover_url || null
+        cover_url: agg.cover_url ? `${baseURL}${agg.cover_url}` : null // ADD baseURL
       };
     });
 
@@ -239,9 +242,9 @@ const ownerService = {
       if (photoFiles && photoFiles.length > 0) {
         const photoRecords = photoFiles.map((file, index) => ({
           cafe_id: newCafe.id,
-          url: `/uploads/cafes/${file.filename}`,
-          photo_type: 'INTERIOR', // Mặc định
-          is_cover: index === 0 // Ảnh đầu tiên là cover
+          url: `/uploads/cafes/${file.filename}`, // Path bắt đầu với /
+          photo_type: 'INTERIOR',
+          is_cover: index === 0
         }));
 
         await CafePhoto.bulkCreate(photoRecords, { transaction });
@@ -263,6 +266,187 @@ const ownerService = {
       await transaction.rollback();
       throw error;
     }
+  },
+
+  /**
+   * Get detailed cafe information for owner
+   */
+  getCafeDetail: async (ownerId, cafeId) => {
+    // Kiểm tra cafe có tồn tại và thuộc owner không
+    const cafe = await Cafe.findOne({
+      where: { 
+        id: cafeId,
+        owner_id: ownerId 
+      },
+      include: [
+        {
+          model: CafePhoto,
+          as: 'photos',
+          attributes: ['id', 'url', 'photo_type', 'is_cover']
+        }
+      ]
+    });
+
+    if (!cafe) {
+      throw new Error('Cafe not found or unauthorized');
+    }
+
+    // Convert to plain object
+    const cafeData = cafe.toJSON();
+    
+    // Base URL for images
+    const baseURL = process.env.BACKEND_URL || 'http://localhost:5000';
+    
+    // Add full URL to photos
+    if (cafeData.photos && cafeData.photos.length > 0) {
+      cafeData.photos = cafeData.photos.map(photo => ({
+        ...photo,
+        url: `${baseURL}${photo.url}`
+      }));
+      
+      // Find cover photo
+      const coverPhoto = cafeData.photos.find(p => p.is_cover);
+      cafeData.cover_url = coverPhoto ? coverPhoto.url : null;
+    } else {
+      cafeData.cover_url = null;
+    }
+
+    return cafeData;
+  },
+
+  /**
+   * Get cafe statistics (favorites, reviews, rating distribution)
+   */
+  getCafeStats: async (ownerId, cafeId) => {
+    // Verify ownership
+    const cafe = await Cafe.findOne({
+      where: { id: cafeId, owner_id: ownerId },
+      attributes: ['id']
+    });
+
+    if (!cafe) {
+      throw new Error('Cafe not found or unauthorized');
+    }
+
+    // Count favorites
+    const favoritesCount = await Favorite.count({
+      where: { cafe_id: cafeId }
+    });
+
+    // Count reviews
+    const reviewsCount = await Review.count({
+      where: { cafe_id: cafeId }
+    });
+
+    // Get rating distribution
+    const ratingDistribution = await Review.findAll({
+      where: { cafe_id: cafeId },
+      attributes: [
+        'rating',
+        [sequelize.fn('COUNT', sequelize.col('id')), 'count']
+      ],
+      group: ['rating'],
+      order: [['rating', 'DESC']],
+      raw: true
+    });
+
+    // Format rating distribution for chart
+    const formattedDistribution = [5, 4, 3, 2, 1].map(star => {
+      const found = ratingDistribution.find(r => r.rating === star);
+      const count = found ? Number(found.count) : 0;
+      const percentage = reviewsCount > 0 ? Math.round((count / reviewsCount) * 100) : 0;
+      return {
+        name: `${star}★`,
+        value: count,
+        percentage
+      };
+    });
+
+    return {
+      favorites: favoritesCount,
+      reviews: reviewsCount,
+      ratingDistribution: formattedDistribution
+    };
+  },
+
+  /**
+   * Get recent reviews for a cafe
+   */
+  getCafeReviews: async (ownerId, cafeId, limit = 5) => {
+    // Verify ownership
+    const cafe = await Cafe.findOne({
+      where: { id: cafeId, owner_id: ownerId },
+      attributes: ['id']
+    });
+
+    if (!cafe) {
+      throw new Error('Cafe not found or unauthorized');
+    }
+
+    const { User } = require('../models');
+    const baseURL = process.env.BACKEND_URL || 'http://localhost:5000';
+
+    const reviews = await Review.findAll({
+      where: { cafe_id: cafeId },
+      attributes: ['id', 'rating', 'comment', 'created_at'],
+      include: [
+        {
+          model: User,
+          as: 'author',
+          attributes: ['id', 'full_name', 'avatar_url']
+        }
+      ],
+      order: [['created_at', 'DESC']],
+      limit: Number(limit)
+    });
+
+    // Format response
+    return reviews.map(review => ({
+      id: review.id,
+      user_name: review.author?.full_name || '匿名',
+      user_avatar: review.author?.avatar_url ? `${baseURL}${review.author.avatar_url}` : null,
+      rating: review.rating,
+      comment: review.comment,
+      created_at: review.created_at
+    }));
+  },
+
+  /**
+   * Get promotions for a cafe
+   */
+  getCafePromotions: async (ownerId, cafeId) => {
+    // Verify ownership
+    const cafe = await Cafe.findOne({
+      where: { id: cafeId, owner_id: ownerId },
+      attributes: ['id']
+    });
+
+    if (!cafe) {
+      throw new Error('Cafe not found or unauthorized');
+    }
+
+    const { Promotion } = require('../models');
+
+    const promotions = await Promotion.findAll({
+      where: { cafe_id: cafeId },
+      order: [
+        ['is_active', 'DESC'],
+        ['start_date', 'DESC']
+      ]
+    });
+
+    // Add mock views count (cần thêm table tracking sau)
+    return promotions.map(promo => ({
+      id: promo.id,
+      title: promo.title,
+      description: promo.description,
+      discount_type: promo.discount_type,
+      discount_value: Number(promo.discount_value),
+      start_date: promo.start_date,
+      end_date: promo.end_date,
+      is_active: promo.is_active,
+      views: Math.floor(Math.random() * 2000) + 500 // Mock data
+    }));
   }
 };
 

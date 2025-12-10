@@ -23,4 +23,28 @@ router.get('/shops', authMiddleware, ownerController.getShops);
  */
 router.post('/shops/create', authMiddleware, upload.array('photos', 10), ownerController.createCafe);
 
+/**
+ * GET /api/owner/shops/:id
+ * Get detailed cafe information
+ */
+router.get('/shops/:id', authMiddleware, ownerController.getCafeDetail);
+
+/**
+ * GET /api/owner/shops/:id/stats
+ * Get cafe statistics (favorites, reviews, charts data)
+ */
+router.get('/shops/:id/stats', authMiddleware, ownerController.getCafeStats);
+
+/**
+ * GET /api/owner/shops/:id/reviews
+ * Get recent reviews for cafe
+ */
+router.get('/shops/:id/reviews', authMiddleware, ownerController.getCafeReviews);
+
+/**
+ * GET /api/owner/shops/:id/promotions
+ * Get promotions list for cafe
+ */
+router.get('/shops/:id/promotions', authMiddleware, ownerController.getCafePromotions);
+
 module.exports = router;
