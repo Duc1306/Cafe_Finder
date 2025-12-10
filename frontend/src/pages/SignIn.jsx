@@ -2,7 +2,7 @@ import { useState } from "react";
 import api from "../services/api";
 import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import {Coffee} from 'lucide-react'
+import { Coffee } from 'lucide-react'
 
 export default function SignIn() {
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ export default function SignIn() {
 
       setPassword("");
     } catch (error) {
-      const msg =error?.response?.data?.error ||error?.response?.data?.message ||"ログインに失敗しました。";
+      const msg = error?.response?.data?.error || error?.response?.data?.message || "ログインに失敗しました。";
 
       toast.info(msg);
       setPassword("");
