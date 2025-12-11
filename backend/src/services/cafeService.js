@@ -398,170 +398,6 @@ const cafeService = {
     };
   },
 
-  // ====================== USER FAVORITES ======================
-  /**
-   * GET /favorites
-   * Danh sách quán user đã "Yêu thích"
-   */
-  getUserFavorites: async ({ userId, page = 1, limit = 10 }) => {
-    const actualPage = Math.max(1, Number(page) || 1);
-    const actualLimit = Math.min(50, Math.max(1, Number(limit) || 10));
-    const offset = (actualPage - 1) * actualLimit;
-
-    // 1. Đếm tổng
-    const { count: total } = await Favorite.findAndCountAll({
-      where: { user_id: userId },
-      include: [
-        {
-          model: Cafe,
-          required: true,
-          where: { status: 'ACTIVE' },
-        },
-      ],
-    });
-
-    if (total === 0) {
-      return {
-        page: actualPage,
-        limit: actualLimit,
-        total: 0,
-        data: [],
-      };
-    }
-
-    // 2. Lấy page favorites + cafe
-    const favs = await Favorite.findAll({
-      where: { user_id: userId },
-      include: [
-        {
-          model: Cafe,
-          required: true,
-          where: { status: 'ACTIVE' },
-          attributes: [
-            'id',
-            'name',
-            'address_line',
-            'district',
-            'city',
-            'avg_price_min',
-            'avg_price_max',
-            'open_time',
-            'close_time',
-          ],
-        },
-      ],
-      order: [['created_at', 'DESC']],
-      limit: actualLimit,
-      offset,
-    });
-
-    const cafeIds = favs.map((f) => f.cafe_id);
-    if (cafeIds.length === 0) {
-      return {
-        page: actualPage,
-        limit: actualLimit,
-        total,
-        data: [],
-      };
-    }
-
-    // 3. Stats rating
-    const ratingRows = await Review.findAll({
-      where: {
-        cafe_id: {
-          [Op.in]: cafeIds,
-        },
-      },
-      attributes: [
-        'cafe_id',
-        [fn('COUNT', col('id')), 'reviewsCount'],
-        [fn('COALESCE', fn('AVG', col('rating')), 0), 'rating'],
-      ],
-      group: ['cafe_id'],
-    });
-
-    const ratingMap = {};
-    ratingRows.forEach((row) => {
-      const plain = row.get({ plain: true });
-      ratingMap[plain.cafe_id] = {
-        reviewsCount: Number(plain.reviewsCount || 0),
-        rating: Number(plain.rating || 0),
-      };
-    });
-
-    // 4. Stats favorites count
-    const favRows = await Favorite.findAll({
-      where: {
-        cafe_id: {
-          [Op.in]: cafeIds,
-        },
-      },
-      attributes: [
-        'cafe_id',
-        [fn('COUNT', fn('DISTINCT', col('user_id'))), 'favoritesCount'],
-      ],
-      group: ['cafe_id'],
-    });
-
-    const favCountMap = {};
-    favRows.forEach((row) => {
-      const plain = row.get({ plain: true });
-      favCountMap[plain.cafe_id] = {
-        favoritesCount: Number(plain.favoritesCount || 0),
-      };
-    });
-
-    // 5. Cover photo
-    const coverRows = await CafePhoto.findAll({
-      where: {
-        cafe_id: {
-          [Op.in]: cafeIds,
-        },
-        is_cover: true,
-      },
-      attributes: ['cafe_id', 'url'],
-    });
-
-    const coverMap = {};
-    coverRows.forEach((row) => {
-      const plain = row.get({ plain: true });
-      coverMap[plain.cafe_id] = { url: plain.url };
-    });
-
-    // 6. Build data
-    const data = favs.map((fav) => {
-      const f = fav.get({ plain: true });
-      const c = f.Cafe;
-
-      const id = c.id;
-      const rating = ratingMap[id]?.rating || 0;
-      const favoritesCount = favCountMap[id]?.favoritesCount || 0;
-      const coverUrl = coverMap[id]?.url || null;
-
-      return {
-        id,
-        name: c.name,
-        addressLine: c.address_line,
-        district: c.district,
-        city: c.city,
-        avgPriceMin: c.avg_price_min,
-        avgPriceMax: c.avg_price_max,
-        rating,
-        favoritesCount,
-        coverUrl,
-        openTime: c.open_time,
-        closeTime: c.close_time,
-        favoritedAt: f.created_at,
-      };
-    });
-
-    return {
-      page: actualPage,
-      limit: actualLimit,
-      total,
-      data,
-    };
-  },
 
   // ====================== REVIEWS ======================
   /**
@@ -607,62 +443,24 @@ const cafeService = {
     };
   },
 
-  // ====================== FAVORITES ======================
   /**
-   * Thêm yêu thích: POST /favorites
+   * Lấy danh sách các Quận/Huyện có quán đang hoạt động
+   * Dùng để đổ dữ liệu vào Dropdown Filter
    */
-  addFavorite: async ({ cafeId, userId }) => {
-    const cafe = await Cafe.findOne({
-      where: { id: cafeId, status: 'ACTIVE' },
+  getActiveAreas: async () => {
+    // Select DISTINCT district from Cafes where status = 'ACTIVE'
+    const areas = await Cafe.findAll({
+      attributes: [
+        [sequelize.fn('DISTINCT', sequelize.col('district')), 'district']
+      ],
+      where: { status: 'ACTIVE' },
+      order: [['district', 'ASC']],
+      raw: true
     });
 
-    if (!cafe) {
-      return { notFound: true };
-    }
-
-    await Favorite.findOrCreate({
-      where: {
-        cafe_id: cafeId,
-        user_id: userId,
-      },
-      defaults: {
-        cafe_id: cafeId,
-        user_id: userId,
-      },
-    });
-
-    const favoritesCount = await Favorite.count({
-      where: { cafe_id: cafeId },
-    });
-
-    return {
-      cafeId,
-      favoritesCount,
-      isFavorite: true,
-    };
-  },
-
-  /**
-   * Xoá yêu thích: DELETE /favorites/:cafeId
-   */
-  removeFavorite: async ({ cafeId, userId }) => {
-    await Favorite.destroy({
-      where: {
-        cafe_id: cafeId,
-        user_id: userId,
-      },
-    });
-
-    const favoritesCount = await Favorite.count({
-      where: { cafe_id: cafeId },
-    });
-
-    return {
-      cafeId,
-      favoritesCount,
-      isFavorite: false,
-    };
-  },
+    // Trả về mảng string: ['Minato', 'Shibuya', 'Shinjuku', ...]
+    return areas.map(a => a.district).filter(Boolean); // filter(Boolean) để loại bỏ null/empty
+  }
 };
 
 module.exports = cafeService;

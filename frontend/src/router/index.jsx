@@ -18,9 +18,10 @@ export default function AppRoutes() {
       <Route path="/register" element={<Register />} />
       <Route path="/owner/dashboard" element={<OwnerDashboard />} />
       <Route path="/owner/create-cafe" element={<CreateCafe />} />
-      <Route path="/owner/cafe/:id" element={<CafeDetail />} /> 
+      <Route path="/owner/cafe/:id" element={<CafeDetail />} />
       <Route path="/owner/edit-cafe/:id" element={<EditCafe />} />
-      
+
+
       {UserRoutes()}
       {AdminRoutes()}
     </Routes>

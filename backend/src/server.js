@@ -35,6 +35,7 @@ const adminStatsRoutes = require("./routes/adminStatsRoutes");
 const termsRoutes = require('./routes/termsRoutes');
 const userCafeRoutes = require('./routes/userCafeRoutes');
 const favoriteRoutes = require('./routes/favoriteRoutes');
+const nearbyRoutes = require('./routes/nearbyRoutes');
 const { testConnection } = require('./config/database');
 
 
@@ -42,10 +43,11 @@ app.use('/api/terms', termsRoutes);
 app.use("/api/auth", authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/user/cafes', userCafeRoutes);
-app.use('/api/favorites', favoriteRoutes);
+app.use('/api/nearby', nearbyRoutes);
+app.use('/api/user/favorites', favoriteRoutes);
 app.use('/api/owner', ownerRoutes);
 app.use("/api/admin/stats", adminStatsRoutes);
-app.use("/api/admin/users", adminUserRoutes);  
+app.use("/api/admin/users", adminUserRoutes);
 app.use('/api/admin/cafes', adminCafeRoutes);
 app.use('/api/admin/terms', termsRoutes);
 
