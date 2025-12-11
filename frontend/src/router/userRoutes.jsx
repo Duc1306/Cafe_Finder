@@ -4,6 +4,9 @@ import UserDashboardPage from "../pages/user/userDashboard";
 import UserProfile from "../pages/user/userProfile";
 import CafeSearch from "../pages/user/CafeSearch";
 import CafeDetail from "../pages/user/CafeDetail";
+import NearbyPage from "../pages/user/nearbyPage";
+import FavoritesPage from "../pages/user/FavoritesPage";
+
 
 
 export function UserRoutes() {
@@ -13,6 +16,8 @@ export function UserRoutes() {
       <Route path="/user/profile" element={<UserProfile />} />
       <Route path="/search" element={<CafeSearch />} />
       <Route path="/cafes/:id" element={<CafeDetail />} />
+      <Route path="/nearby" element={<NearbyPage />} />
+      <Route path="/favorites" element={<FavoritesPage />} />
     </Route>
   );
 }

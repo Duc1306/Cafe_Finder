@@ -3,6 +3,7 @@
  * Handles cafe-related requests for customer users
  */
 const userCafeService = require('../services/userCafeService');
+const cafeService = require('../services/cafeService');
 
 // Error messages
 const ERROR_MESSAGES = {
@@ -123,6 +124,18 @@ const userCafeController = {
 
         res.status(result.isUpdated ? 200 : 201).json(result);
     }),
+
+
+    // GET /api/user/cafes/areas
+    getAreas: async (req, res) => {
+        try {
+            const areas = await cafeService.getActiveAreas();
+            res.json({ success: true, data: areas });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: "Lỗi lấy danh sách khu vực" });
+        }
+    }
 };
 
 module.exports = userCafeController;

@@ -97,7 +97,7 @@ export default function UserDashboard() {
               type="primary"
               className="bg-red-700 border-none px-8 flex items-center"
               icon={<SearchOutlined />}
-              onClick={() => navigate("/search")}
+              onClick={() => navigate("/nearby")}
             >
               検索
             </Button>
@@ -108,7 +108,7 @@ export default function UserDashboard() {
             <div className="font-bold text-lg mb-4">おすすめカフェ</div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {dashboard?.recommendedCafes?.length === 0 ||
-              !dashboard?.recommendedCafes ? (
+                !dashboard?.recommendedCafes ? (
                 <div className="col-span-3 text-gray-400">
                   おすすめカフェがありません。
                 </div>
@@ -162,7 +162,7 @@ export default function UserDashboard() {
             <div className="font-bold text-lg mb-4">最近の活動</div>
             <div className="flex flex-col gap-2">
               {!dashboard?.recentActivities ||
-              dashboard.recentActivities.length === 0 ? (
+                dashboard.recentActivities.length === 0 ? (
                 <div className="text-gray-400">最近の活動はありません。</div>
               ) : (
                 dashboard.recentActivities.map((act, idx) => {

@@ -12,6 +12,8 @@ const router = express.Router();
 // GET /api/user/cafes - Lấy danh sách quán cafe (tìm kiếm, lọc, phân trang)
 router.get('/', userCafeController.getCafeList);
 
+router.get('/areas', userCafeController.getAreas);
+
 // GET /api/user/cafes/:id - Lấy chi tiết quán cafe
 router.get('/:id', userCafeController.getCafeDetail);
 

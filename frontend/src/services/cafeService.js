@@ -4,6 +4,7 @@
  */
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+import api from './api';
 
 const getAuthToken = () => sessionStorage.getItem('authToken') || localStorage.getItem('token');
 
@@ -57,6 +58,17 @@ export const postReview = async (cafeId, reviewData) => {
     return response.json();
 };
 
+
+export const getAreas = async () => {
+    try {
+        // Gọi API Backend: GET /api/user/cafes/areas
+        const response = await api.get('/user/cafes/areas');
+        return response.data; // { success: true, data: ['Shibuya', 'Minato'...] }
+    } catch (error) {
+        console.error("Error fetching areas:", error);
+        return { success: false, data: [] }; // Trả về mảng rỗng để không crash UI
+    }
+};
 // ==================== FAVORITES APIs ====================
 
 export const getFavorites = async (page = 1, limit = 10) => {

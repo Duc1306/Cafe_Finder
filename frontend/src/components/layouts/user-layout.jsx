@@ -15,11 +15,7 @@ export function UserLayout({ children }) {
         <header className="bg-card border-b border-border px-6 py-4">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold text-foreground">Cafe Finder</h1>
-            <input
-              type="text"
-              placeholder="カフェを検索..."
-              className="px-4 py-2 rounded-lg bg-background border border-border text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-            />
+
           </div>
         </header>
 
