@@ -45,6 +45,12 @@ const userCafeService = {
       priceMax,
       rating,
       openNow,
+      hasWifi,
+      hasAc,
+      isQuiet,
+      hasParking,
+      allowPets,
+      allowSmoking,
     } = filters;
 
     const actualPage = Math.max(1, Number(page) || 1);
@@ -88,12 +94,38 @@ const userCafeService = {
       whereCafe.district = { [Op.iLike]: `%${district.trim()}%` };
     }
 
-    // Price range
+    // Amenities filters
+    if (hasWifi === true || hasWifi === 'true') {
+      whereCafe.has_wifi = true;
+    }
+    if (hasAc === true || hasAc === 'true') {
+      whereCafe.has_ac = true;
+    }
+    if (isQuiet === true || isQuiet === 'true') {
+      whereCafe.is_quiet = true;
+    }
+    if (hasParking === true || hasParking === 'true') {
+      whereCafe.has_parking = true;
+    }
+    if (allowPets === true || allowPets === 'true') {
+      whereCafe.allow_pets = true;
+    }
+    if (allowSmoking === true || allowSmoking === 'true') {
+      whereCafe.allow_smoking = true;
+    }
+
+    // Price range - Lọc cafe có khoảng giá overlap với khoảng user chọn
+    // Ví dụ: User chọn 20k-50k
+    // - Cafe 10k-40k: OK (có món 20k-40k trong range)
+    // - Cafe 30k-60k: OK (có món 30k-50k trong range)
+    // - Cafe 60k-100k: Loại (không có món nào trong range)
     const andConds = [];
     if (priceMinNum != null && !Number.isNaN(priceMinNum)) {
+      // Giá MAX của cafe phải >= giá min user nhập (cafe có món >= priceMin)
       andConds.push({ avg_price_max: { [Op.gte]: priceMinNum } });
     }
     if (priceMaxNum != null && !Number.isNaN(priceMaxNum)) {
+      // Giá MIN của cafe phải <= giá max user nhập (cafe có món <= priceMax)
       andConds.push({ avg_price_min: { [Op.lte]: priceMaxNum } });
     }
 
