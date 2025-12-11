@@ -19,11 +19,11 @@ export default function CafeSearchPage() {
         priceMax: '',
         rating: '',
         openNow: false,
-        hasWifi: undefined,
-        hasAc: undefined,
-        isQuiet: undefined,
-        hasParking: undefined,
-        allowPets: undefined,
+        hasWifi: false,
+        hasAc: false,
+        isQuiet: false,
+        hasParking: false,
+        allowPets: false,
     });
 
     const [showFilters, setShowFilters] = useState(false);
@@ -193,8 +193,8 @@ export default function CafeSearchPage() {
                                 <input
                                     type="checkbox"
                                     id="hasWifi"
-                                    checked={filters.hasWifi === true}
-                                    onChange={(e) => handleFilterChange('hasWifi', e.target.checked ? true : undefined)}
+                                    checked={filters.hasWifi}
+                                    onChange={(e) => handleFilterChange('hasWifi', e.target.checked)}
                                     className="w-4 h-4 text-red-600 rounded focus:ring-red-500"
                                 />
                                 <label htmlFor="hasWifi" className="ml-2 text-sm text-gray-700">
@@ -206,8 +206,8 @@ export default function CafeSearchPage() {
                                 <input
                                     type="checkbox"
                                     id="hasAc"
-                                    checked={filters.hasAc === true}
-                                    onChange={(e) => handleFilterChange('hasAc', e.target.checked ? true : undefined)}
+                                    checked={filters.hasAc}
+                                    onChange={(e) => handleFilterChange('hasAc', e.target.checked)}
                                     className="w-4 h-4 text-red-600 rounded focus:ring-red-500"
                                 />
                                 <label htmlFor="hasAc" className="ml-2 text-sm text-gray-700">
@@ -219,8 +219,8 @@ export default function CafeSearchPage() {
                                 <input
                                     type="checkbox"
                                     id="isQuiet"
-                                    checked={filters.isQuiet === true}
-                                    onChange={(e) => handleFilterChange('isQuiet', e.target.checked ? true : undefined)}
+                                    checked={filters.isQuiet}
+                                    onChange={(e) => handleFilterChange('isQuiet', e.target.checked)}
                                     className="w-4 h-4 text-red-600 rounded focus:ring-red-500"
                                 />
                                 <label htmlFor="isQuiet" className="ml-2 text-sm text-gray-700">
@@ -232,8 +232,8 @@ export default function CafeSearchPage() {
                                 <input
                                     type="checkbox"
                                     id="hasParking"
-                                    checked={filters.hasParking === true}
-                                    onChange={(e) => handleFilterChange('hasParking', e.target.checked ? true : undefined)}
+                                    checked={filters.hasParking}
+                                    onChange={(e) => handleFilterChange('hasParking', e.target.checked)}
                                     className="w-4 h-4 text-red-600 rounded focus:ring-red-500"
                                 />
                                 <label htmlFor="hasParking" className="ml-2 text-sm text-gray-700">
@@ -245,8 +245,8 @@ export default function CafeSearchPage() {
                                 <input
                                     type="checkbox"
                                     id="allowPets"
-                                    checked={filters.allowPets === true}
-                                    onChange={(e) => handleFilterChange('allowPets', e.target.checked ? true : undefined)}
+                                    checked={filters.allowPets}
+                                    onChange={(e) => handleFilterChange('allowPets', e.target.checked)}
                                     className="w-4 h-4 text-red-600 rounded focus:ring-red-500"
                                 />
                                 <label htmlFor="allowPets" className="ml-2 text-sm text-gray-700">

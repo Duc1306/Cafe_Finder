@@ -3,15 +3,7 @@
  * API calls for cafe search, details, reviews, and favorites
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 import api from './api';
-
-const getAuthToken = () => sessionStorage.getItem('authToken') || localStorage.getItem('token');
-
-const authHeaders = () => {
-    const token = getAuthToken();
-    return token ? { 'Authorization': `Bearer ${token}` } : {};
-};
 
 // ==================== CAFE APIs ====================
 
@@ -24,73 +16,41 @@ export const searchCafes = async (params = {}) => {
         }
     });
 
-    const response = await fetch(`${API_BASE_URL}/user/cafes?${queryParams}`);
-    if (!response.ok) throw new Error('Failed to fetch cafes');
-    return response.json();
+    const response = await api.get(`/user/cafes?${queryParams}`);
+    return response.data;
 };
 
 export const getCafeDetail = async (cafeId) => {
-    const response = await fetch(`${API_BASE_URL}/user/cafes/${cafeId}`, {
-        headers: authHeaders(),
-    });
-    if (!response.ok) throw new Error('Failed to fetch cafe details');
-    return response.json();
+    const response = await api.get(`/user/cafes/${cafeId}`);
+    return response.data;
 };
 
 export const getCafeReviews = async (cafeId, page = 1, limit = 10) => {
-    const response = await fetch(
-        `${API_BASE_URL}/user/cafes/${cafeId}/reviews?page=${page}&limit=${limit}`
-    );
-    if (!response.ok) throw new Error('Failed to fetch reviews');
-    return response.json();
+    const response = await api.get(`/user/cafes/${cafeId}/reviews?page=${page}&limit=${limit}`);
+    return response.data;
 };
 
 export const postReview = async (cafeId, reviewData) => {
-    const response = await fetch(`${API_BASE_URL}/user/cafes/${cafeId}/reviews`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            ...authHeaders(),
-        },
-        body: JSON.stringify(reviewData),
-    });
-    if (!response.ok) throw new Error('Failed to post review');
-    return response.json();
+    const response = await api.post(`/user/cafes/${cafeId}/reviews`, reviewData);
+    return response.data;
 };
-
 
 export const getAreas = async () => {
     try {
-        // Gọi API Backend: GET /api/user/cafes/areas
         const response = await api.get('/user/cafes/areas');
-        return response.data; // { success: true, data: ['Shibuya', 'Minato'...] }
+        return response.data;
     } catch (error) {
         console.error("Error fetching areas:", error);
-        return { success: false, data: [] }; // Trả về mảng rỗng để không crash UI
+        return { success: false, data: [] };
     }
 };
+
 // ==================== FAVORITES APIs ====================
 
 export const getFavorites = async (page = 1, limit = 10) => {
-    const token = getAuthToken();
-    if (!token) {
-        throw new Error('認証が必要です。ログインしてください。');
-    }
-
     try {
-        const response = await fetch(
-            `${API_BASE_URL}/favorites?page=${page}&limit=${limit}`,
-            {
-                headers: authHeaders(),
-            }
-        );
-
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.error || `Failed to fetch favorites (${response.status})`);
-        }
-
-        return response.json();
+        const response = await api.get(`/user/favorites?page=${page}&limit=${limit}`);
+        return response.data;
     } catch (error) {
         console.error('getFavorites error:', error);
         throw error;
@@ -98,23 +58,11 @@ export const getFavorites = async (page = 1, limit = 10) => {
 };
 
 export const addFavorite = async (cafeId) => {
-    const response = await fetch(`${API_BASE_URL}/favorites`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            ...authHeaders(),
-        },
-        body: JSON.stringify({ cafeId }),
-    });
-    if (!response.ok) throw new Error('Failed to add favorite');
-    return response.json();
+    const response = await api.post('/user/favorites/toggle', { cafeId });
+    return response.data;
 };
 
 export const removeFavorite = async (cafeId) => {
-    const response = await fetch(`${API_BASE_URL}/favorites/${cafeId}`, {
-        method: 'DELETE',
-        headers: authHeaders(),
-    });
-    if (!response.ok) throw new Error('Failed to remove favorite');
-    return response.json();
+    const response = await api.post('/user/favorites/toggle', { cafeId });
+    return response.data;
 };

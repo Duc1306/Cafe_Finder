@@ -1,0 +1,60 @@
+[33m0d2486c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeatures/cafedetails[m[33m, [m[1;31morigin/features/cafedetails[m[33m)[m HEAD@{0}: commit: fix
+[33m38e9d65[m HEAD@{1}: commit: replace fetch with axios and connect addFavorite button in detail screen
+[33ma251e55[m[33m ([m[1;31morigin/features/favorite-module[m[33m, [m[1;32mfeatures/favorite-module[m[33m)[m HEAD@{2}: checkout: moving from features/favorite-module to features/cafedetails
+[33ma251e55[m[33m ([m[1;31morigin/features/favorite-module[m[33m, [m[1;32mfeatures/favorite-module[m[33m)[m HEAD@{3}: commit: revert last commit
+[33mb23069e[m HEAD@{4}: checkout: moving from main to features/favorite-module
+[33m16d38af[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m HEAD@{5}: reset: moving to HEAD
+[33m16d38af[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m HEAD@{6}: checkout: moving from features/favorite-module to main
+[33mb23069e[m HEAD@{7}: commit: replace fetch with axios and connect addFavorite button in detail screen
+[33m307ebeb[m HEAD@{8}: checkout: moving from main to features/favorite-module
+[33m16d38af[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m HEAD@{9}: pull: Fast-forward
+[33m03fd262[m[33m ([m[1;31morigin/feature/admin-dashboard[m[33m)[m HEAD@{10}: pull: Fast-forward
+[33m1a30468[m HEAD@{11}: pull: Fast-forward
+[33m2f04887[m HEAD@{12}: checkout: moving from feature/cafe-list to main
+[33m1c362d0[m[33m ([m[1;31morigin/feature/cafe-list[m[33m, [m[1;32mfeature/cafe-list[m[33m)[m HEAD@{13}: commit: fix ảnh,+favourite, +fuzzy search
+[33ma5e5542[m HEAD@{14}: commit: sua route
+[33m52076ef[m HEAD@{15}: commit: fix route
+[33m09984e5[m HEAD@{16}: commit: sửa
+[33mb64798b[m HEAD@{17}: commit: sửa
+[33m6188ed0[m HEAD@{18}: commit: +form review, thong báo bằng toast,
+[33m8955502[m HEAD@{19}: checkout: moving from main to feature/cafe-list
+[33m2f04887[m HEAD@{20}: checkout: moving from feature/cafe-list to main
+[33m8955502[m HEAD@{21}: commit: +screen review,+favourite, +search
+[33m76877dc[m HEAD@{22}: commit: +screen review,+favourite, +search
+[33m87f85fe[m HEAD@{23}: reset: moving to HEAD
+[33m87f85fe[m HEAD@{24}: commit: +favourite, +review, +rate
+[33m2f04887[m HEAD@{25}: reset: moving to origin/main
+[33ma4e8081[m HEAD@{26}: checkout: moving from main to feature/cafe-list
+[33m2f04887[m HEAD@{27}: checkout: moving from feature/cafe-list to main
+[33ma4e8081[m HEAD@{28}: reset: moving to HEAD
+[33ma4e8081[m HEAD@{29}: checkout: moving from main to feature/cafe-list
+[33m2f04887[m HEAD@{30}: reset: moving to HEAD
+[33m2f04887[m HEAD@{31}: checkout: moving from feature/cafe-list to main
+[33ma4e8081[m HEAD@{32}: commit: fix+refactor
+[33mb3cb1b2[m HEAD@{33}: checkout: moving from main to feature/cafe-list
+[33m2f04887[m HEAD@{34}: reset: moving to HEAD
+[33m2f04887[m HEAD@{35}: pull: Fast-forward
+[33m8d0b9e4[m HEAD@{36}: checkout: moving from feature/cafe-list to main
+[33mb3cb1b2[m HEAD@{37}: commit: thêm favourites và filter
+[33mf389e9e[m HEAD@{38}: commit: remove submodule
+[33mc27ce6f[m HEAD@{39}: commit: refactor
+[33m2aebf69[m HEAD@{40}: checkout: moving from main to feature/cafe-list
+[33m8d0b9e4[m HEAD@{41}: pull: Fast-forward
+[33m5acf3c6[m HEAD@{42}: merge feature/cafe-list: Merge made by the 'ort' strategy.
+[33mdeb22fe[m HEAD@{43}: pull origin main: Fast-forward
+[33m2d67843[m HEAD@{44}: checkout: moving from feature/cafe-list to main
+[33m2aebf69[m HEAD@{45}: commit: add cf
+[33m2d67843[m HEAD@{46}: checkout: moving from main to feature/cafe-list
+[33m2d67843[m HEAD@{47}: pull: Fast-forward
+[33m3222fc5[m HEAD@{48}: commit: fix
+[33m902cf7d[m HEAD@{49}: pull: Fast-forward
+[33mf8696df[m HEAD@{50}: reset: moving to HEAD
+[33mf8696df[m HEAD@{51}: pull: Fast-forward
+[33mb1a5430[m HEAD@{52}: pull: Fast-forward
+[33m131a7db[m HEAD@{53}: checkout: moving from feature/be/owner-dashboard-shops-api to main
+[33madc932b[m[33m ([m[1;31morigin/feature/be/owner-dashboard-shops-api[m[33m, [m[1;32mfeature/be/owner-dashboard-shops-api[m[33m)[m HEAD@{54}: pull: Fast-forward
+[33mc896b9f[m HEAD@{55}: commit: feat(be): api dashboard shop owner
+[33m131a7db[m HEAD@{56}: checkout: moving from main to feature/be/owner-dashboard-shops-api
+[33m131a7db[m HEAD@{57}: pull: Fast-forward
+[33m49fffd9[m HEAD@{58}: reset: moving to HEAD
+[33m49fffd9[m HEAD@{59}: clone: from https://github.com/Duc1306/Cafe_Finder.git
