@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { FaSignOutAlt, FaUpload, FaTimes } from 'react-icons/fa';
 import { toast, ToastContainer } from 'react-toastify';
+import { Coffee } from 'lucide-react';
 
 export default function CreateCafe() {
   const navigate = useNavigate();
@@ -172,7 +173,7 @@ export default function CreateCafe() {
       <header className="bg-white shadow-sm border-b border-[#f3e0dc]">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-2xl">☕</span>
+            <span className="text-2xl"><Coffee className='w-10 h-10 text-primary text-[#8b1a1a]'/></span>
             <span className="text-2xl font-bold text-[#8b1a1a]">Cafe Finder</span>
           </div>
           <button 

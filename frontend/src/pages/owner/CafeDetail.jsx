@@ -9,6 +9,7 @@ import {
 } from 'recharts';
 import { toast, ToastContainer } from 'react-toastify';
 import api from '../../services/api';
+import { Coffee } from 'lucide-react';
 
 export default function CafeDetail() {
   const { id } = useParams();
@@ -104,7 +105,7 @@ export default function CafeDetail() {
       <header className="bg-white shadow-sm border-b border-[#f3e0dc]">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-2xl">☕</span>
+            <span className="text-2xl"><Coffee className='w-10 h-10 text-primary text-[#8b1a1a]'/></span>
             <span className="text-2xl font-bold text-[#8b1a1a]">Cafe Finder</span>
           </div>
           <button 

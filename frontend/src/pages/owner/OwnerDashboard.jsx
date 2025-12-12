@@ -26,7 +26,7 @@ export default function OwnerDashboard() {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      
+
       // Fetch overview stats (ownerId lấy từ token)
       const overviewRes = await api.get('/owner/dashboard/overview');
       setStats(overviewRes.data.totals);
@@ -48,7 +48,7 @@ export default function OwnerDashboard() {
     window.location.href = '/signin';
   };
 
-  const filteredCafes = cafes.filter(cafe => 
+  const filteredCafes = cafes.filter(cafe =>
     cafe.name.toLowerCase().includes(searchKeyword.toLowerCase())
   );
 
@@ -66,10 +66,10 @@ export default function OwnerDashboard() {
       <header className="bg-white shadow-sm border-b border-[#f3e0dc]">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-2xl"><Coffee className='w-10 h-10 text-primary text-[#8b1a1a]'/></span>
+            <span className="text-2xl"><Coffee className='w-10 h-10 text-primary text-[#8b1a1a]' /></span>
             <span className="text-2xl font-bold text-[#8b1a1a]">Cafe Finder</span>
           </div>
-          <button 
+          <button
             onClick={handleLogout}
             className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:text-[#a8201a] transition"
           >
@@ -136,7 +136,7 @@ export default function OwnerDashboard() {
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d0574b]"
               />
             </div>
-            <button 
+            <button
               onClick={() => navigate('/owner/create-cafe')}
               className="ml-4 px-4 py-2 bg-[#a8201a] hover:bg-[#901a15] text-white rounded-lg text-sm font-medium transition shadow-sm flex items-center gap-2"
             >
@@ -171,26 +171,28 @@ export default function OwnerDashboard() {
                       <td className="px-4 py-3 font-medium text-gray-900">{cafe.name}</td>
                       <td className="px-4 py-3 text-gray-600">{cafe.address_line}, {cafe.city}</td>
                       <td className="px-4 py-3">
-                        <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${
-                          cafe.status === 'ACTIVE' 
-                            ? 'bg-green-100 text-green-700' 
+                        <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${cafe.status === 'ACTIVE'
+                            ? 'bg-green-100 text-green-700'
                             : cafe.status === 'PENDING'
-                            ? 'bg-yellow-100 text-yellow-700'
-                            : 'bg-gray-100 text-gray-600'
-                        }`}>
-                          {cafe.status === 'ACTIVE' ? '営業中' : 
-                           cafe.status === 'PENDING' ? '保留中' : '休止中'}
+                              ? 'bg-yellow-100 text-yellow-700'
+                              : cafe.status === 'REJECTED'
+                                ? 'bg-red-100 text-red-700'
+                                : 'bg-gray-100 text-gray-600'
+                          }`}>
+                          {cafe.status === 'ACTIVE' ? '営業中' :
+                            cafe.status === 'PENDING' ? '保留中' :
+                              cafe.status === 'REJECTED' ? '却下' : '休止中'}
                         </span>
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-center gap-2">
-                          <button 
+                          <button
                             onClick={() => navigate(`/owner/cafe/${cafe.id}`)}
                             className="px-3 py-1 text-xs text-white bg-[#8b1a1a] hover:bg-[#a8201a] rounded transition"
                           >
                             詳細
                           </button>
-                          <button 
+                          <button
                             onClick={() => navigate(`/owner/edit-cafe/${cafe.id}`)}
                             className="px-3 py-1 text-xs text-white bg-blue-600 hover:bg-blue-700 rounded transition"
                           >

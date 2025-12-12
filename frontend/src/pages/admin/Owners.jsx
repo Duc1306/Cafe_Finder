@@ -274,14 +274,6 @@ export default function AdminOwners() {
               >
                 承認
               </Button>
-
-              <Button
-                size="small"
-                style={{ background: "#f59e0b", color: "white" }}
-                onClick={() => changeStatus(r, "LOCKED")}
-              >
-                ロック
-              </Button>
             </>
           )}
 

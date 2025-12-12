@@ -1,4 +1,4 @@
-const { Cafe, User, OwnerProfile, CafePhoto, Review } = require('../models');
+const { User, OwnerProfile } = require('../models');
 const { Op } = require('sequelize');
 
 /**
@@ -69,34 +69,47 @@ const deleteAccount = async (id) => {
  */
 const toggleStatus = async (id) => {
   const user = await User.findByPk(id);
+
   if (!user) throw new Error("User not found");
 
-  user.status = user.status === "ACTIVE" ? "LOCKED" : "ACTIVE";
+  // 🚫 Owner chưa được duyệt thì không cho khóa/mở
+  if (
+    user.role === "OWNER" &&
+    user&&
+    user.status === "PENDING"
+  ) {
+    throw new Error("Owner must be approved before changing status");
+  }
+
+  else user.status = user.status === "ACTIVE" ? "LOCKED" : "ACTIVE";
   await user.save();
 
   return user;
 };
+
 
 /**
  * Duyệt tài khoản owner PENDING → ACTIVE
  */
 const approveOwner = async (id) => {
   const owner = await User.findOne({
-    where: { id, role: "OWNER" },
-    include: [{ model: OwnerProfile, as: "ownerProfile" }]
+    where: { id, role: "OWNER" }
   });
 
   if (!owner) throw new Error("Owner not found");
 
-  if (!owner.ownerProfile || owner.ownerProfile.approval_status !== "PENDING") {
+  if (!owner || owner.status !== "PENDING") {
+    console.log(owner.status);
     throw new Error("Owner is not pending approval");
   }
 
-  owner.ownerProfile.approval_status = "APPROVED";
-  await owner.ownerProfile.save();
+  // ✅ sau khi duyệt → ACTIVE
+  owner.status = "ACTIVE";
+  await owner.save();
 
   return owner;
 };
+
 
 
 module.exports = {

@@ -5,17 +5,16 @@ const jwt = require("jsonwebtoken");
 const authMiddleware = (req, res, next) => {
   try {
     const header = req.headers.authorization;
-    console.log('Auth header:', header); // Debug log
 
     if (!header) return res.status(401).json({ error: "No token provided" });
 
     const token = header.split(" ")[1];
-    console.log('Extracted token:', token?.substring(0, 20) + '...'); // Debug log (first 20 chars)
+    
 
     if (!token) return res.status(401).json({ error: "Invalid token format" });
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log('Decoded user:', decoded); // Debug log
+
     req.user = decoded; // decoded chứa { id, role }
 
     next();
