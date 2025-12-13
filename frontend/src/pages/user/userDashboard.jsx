@@ -9,10 +9,18 @@ import {
 } from "@ant-design/icons";
 import { useUserDashboard } from "../../contexts/UserDashboard/useUserDashboard.js";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function UserDashboard() {
-  const { dashboard, loading } = useUserDashboard();
+  const { dashboard, loading, refetch } = useUserDashboard();
   const navigate = useNavigate();
+
+  // Refetch data when component mounts or becomes visible
+  useEffect(() => {
+    if (refetch) {
+      refetch();
+    }
+  }, [refetch]);
 
   const statsConfig = [
     {

@@ -48,6 +48,40 @@ const favoriteService = {
 
     },
 
+    /**
+     * Thêm vào yêu thích
+     */
+    addFavorite: async (userId, cafeId) => {
+        const cafe = await Cafe.findByPk(cafeId);
+        if (!cafe) throw { status: 404, message: "Quán không tồn tại." };
+
+        const [favorite, created] = await Favorite.findOrCreate({
+            where: { user_id: userId, cafe_id: cafeId },
+            defaults: { user_id: userId, cafe_id: cafeId }
+        });
+
+        return { 
+            status: created ? 'added' : 'already_exists', 
+            message: created ? 'Đã thêm vào yêu thích' : 'Đã có trong yêu thích',
+            isFavorite: true
+        };
+    },
+
+    /**
+     * Xóa khỏi yêu thích
+     */
+    removeFavorite: async (userId, cafeId) => {
+        const deleted = await Favorite.destroy({
+            where: { user_id: userId, cafe_id: cafeId }
+        });
+
+        return { 
+            status: deleted > 0 ? 'removed' : 'not_found',
+            message: deleted > 0 ? 'Đã xóa khỏi yêu thích' : 'Không tìm thấy',
+            isFavorite: false
+        };
+    },
+
 
 
     /**

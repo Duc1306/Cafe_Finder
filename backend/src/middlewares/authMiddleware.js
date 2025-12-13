@@ -43,6 +43,35 @@ const authorize = (requiredRole) => {
   };
 };
 
+// Optional auth middleware - doesn't block if no token
+const optionalAuth = (req, res, next) => {
+  try {
+    const header = req.headers.authorization;
+
+    if (!header) {
+      req.user = null;
+      return next();
+    }
+
+    const token = header.split(" ")[1];
+    
+    if (!token) {
+      req.user = null;
+      return next();
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // decoded chứa { id, role }
+    
+    next();
+  } catch (err) {
+    console.error('Optional auth error:', err.message);
+    req.user = null;
+    next();
+  }
+};
+
 module.exports = authMiddleware;
 module.exports.authorize = authorize;
+module.exports.optionalAuth = optionalAuth;
 

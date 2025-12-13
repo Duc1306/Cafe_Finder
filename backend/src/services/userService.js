@@ -100,9 +100,15 @@ const userService = {
    * Get dashboard data for logged-in user
    */
   getDashboardData: async (userId) => {
-  // 1. Số lượng quán yêu thích
+  // 1. Số lượng quán yêu thích (chỉ đếm cafe ACTIVE)
   const favoriteCount = await Favorite.count({
-    where: { user_id: userId }
+    where: { user_id: userId },
+    include: [{
+      model: Cafe,
+      as: 'cafe',
+      where: { status: 'ACTIVE' },
+      attributes: []
+    }]
   });
 
   // 2. Số lượng review

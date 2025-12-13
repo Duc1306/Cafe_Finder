@@ -353,6 +353,13 @@ const userCafeService = {
       raw: true,
     });
 
+    // Add base URL to photos
+    const baseURL = process.env.BACKEND_URL || 'http://localhost:5000';
+    const photosWithFullUrls = photos.map(photo => ({
+      ...photo,
+      url: photo.url.startsWith('http') ? photo.url : `${baseURL}${photo.url}`
+    }));
+
     // 5. Promotions (đang/còn hiệu lực)
     const promotions = await Promotion.findAll({
       where: {
@@ -423,7 +430,7 @@ const userCafeService = {
       rating,
       reviewsCount,
       favoritesCount,
-      photos,
+      photos: photosWithFullUrls,
       promotions,
       isFavorite,
     };

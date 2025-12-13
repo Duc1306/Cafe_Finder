@@ -58,11 +58,11 @@ export const getFavorites = async (page = 1, limit = 10) => {
 };
 
 export const addFavorite = async (cafeId) => {
-    const response = await api.post('/user/favorites/toggle', { cafeId });
+    const response = await api.post('/user/favorites', { cafeId });
     return response.data;
 };
 
 export const removeFavorite = async (cafeId) => {
-    const response = await api.post('/user/favorites/toggle', { cafeId });
+    const response = await api.delete(`/user/favorites/${cafeId}`);
     return response.data;
 };

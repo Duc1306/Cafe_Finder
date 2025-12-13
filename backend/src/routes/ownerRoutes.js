@@ -55,4 +55,11 @@ router.get('/shops/:id/promotions', authMiddleware, ownerController.getCafePromo
  */
 router.put('/shops/:id', authMiddleware, upload.array('photos', 10), ownerController.updateCafe);
 
+/**
+ * DELETE /api/owner/shops/:id
+ * Soft delete cafe (change status to CLOSED)
+ * Protected route - requires authentication
+ */
+router.delete('/shops/:id', authMiddleware, ownerController.deleteCafe);
+
 module.exports = router;

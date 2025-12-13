@@ -10,6 +10,8 @@ export default function OwnerDashboard() {
   const [stats, setStats] = useState({ cafes: 0, favorites: 0, reviews: 0, avgRating: 0 });
   const [searchKeyword, setSearchKeyword] = useState('');
   const [loading, setLoading] = useState(true);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedCafeId, setSelectedCafeId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,6 +48,29 @@ export default function OwnerDashboard() {
     sessionStorage.clear();
     localStorage.clear();
     window.location.href = '/signin';
+  };
+
+  const handleDeleteClick = (cafeId) => {
+    setSelectedCafeId(cafeId);
+    setDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    try {
+      const response = await api.delete(`/owner/shops/${selectedCafeId}`);
+      
+      if (response.data.success) {
+        toast.success('カフェを削除しました');
+        // Refresh data
+        fetchDashboardData();
+      }
+    } catch (error) {
+      console.error('Failed to delete cafe:', error);
+      toast.error(`削除に失敗しました: ${error.response?.data?.message || error.message}`);
+    } finally {
+      setDeleteModalOpen(false);
+      setSelectedCafeId(null);
+    }
   };
 
   const filteredCafes = cafes.filter(cafe =>
@@ -198,7 +223,10 @@ export default function OwnerDashboard() {
                           >
                             編集
                           </button>
-                          <button className="px-3 py-1 text-xs text-white bg-gray-500 hover:bg-gray-600 rounded transition">
+                          <button 
+                            onClick={() => handleDeleteClick(cafe.id)}
+                            className="px-3 py-1 text-xs text-white bg-red-600 hover:bg-red-700 rounded transition"
+                          >
                             削除
                           </button>
                         </div>
@@ -211,6 +239,36 @@ export default function OwnerDashboard() {
           </div>
         </div>
       </main>
+
+      {/* Delete Confirmation Modal */}
+      {deleteModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full mx-4">
+            <h3 className="text-xl font-bold text-gray-900 mb-4">カフェを削除しますか？</h3>
+            <p className="text-gray-600 mb-6">
+              このカフェを削除すると、ステータスが「休止中」に変更されます。この操作は元に戻せません。
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => {
+                  setDeleteModalOpen(false);
+                  setSelectedCafeId(null);
+                }}
+                className="px-4 py-2 text-sm text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
+              >
+                キャンセル
+              </button>
+              <button
+                onClick={handleDeleteConfirm}
+                className="px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 rounded-lg transition"
+              >
+                削除する
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <ToastContainer
         position="top-right"
         autoClose={2000}

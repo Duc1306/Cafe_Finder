@@ -554,6 +554,30 @@ const ownerService = {
       await transaction.rollback();
       throw error;
     }
+  },
+
+  /**
+   * Delete cafe (soft delete - change status to CLOSED)
+   */
+  deleteCafe: async (ownerId, cafeId) => {
+    try {
+      // Verify ownership
+      const cafe = await Cafe.findOne({
+        where: { id: cafeId, owner_id: ownerId }
+      });
+
+      if (!cafe) {
+        throw new Error('Cafe not found or unauthorized');
+      }
+
+      // Soft delete: change status to CLOSED
+      cafe.status = 'CLOSED';
+      await cafe.save();
+
+      return { success: true, message: 'Cafe deleted successfully' };
+    } catch (error) {
+      throw error;
+    }
   }
 };
 

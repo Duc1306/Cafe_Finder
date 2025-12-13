@@ -67,8 +67,21 @@ const getAllCafes = async (filters = {}) => {
       distinct: true
     });
 
+    // Add base URL to cover photos
+    const baseURL = process.env.BACKEND_URL || 'http://localhost:5000';
+    const cafesWithFullUrls = rows.map(cafe => {
+      const cafeData = cafe.toJSON();
+      if (cafeData.photos && cafeData.photos.length > 0) {
+        cafeData.photos = cafeData.photos.map(photo => ({
+          ...photo,
+          url: `${baseURL}${photo.url}`
+        }));
+      }
+      return cafeData;
+    });
+
     return {
-      cafes: rows,
+      cafes: cafesWithFullUrls,
       total: count,
       totalPages: Math.ceil(count / limit),
       currentPage: parseInt(page)
@@ -123,8 +136,21 @@ const getPendingRequests = async (filters = {}) => {
       distinct: true
     });
 
+    // Add base URL to photos
+    const baseURL = process.env.BACKEND_URL || 'http://localhost:5000';
+    const requestsWithFullUrls = rows.map(cafe => {
+      const cafeData = cafe.toJSON();
+      if (cafeData.photos && cafeData.photos.length > 0) {
+        cafeData.photos = cafeData.photos.map(photo => ({
+          ...photo,
+          url: `${baseURL}${photo.url}`
+        }));
+      }
+      return cafeData;
+    });
+
     return {
-      requests: rows,
+      requests: requestsWithFullUrls,
       total: count,
       totalPages: Math.ceil(count / limit),
       currentPage: parseInt(page)
@@ -167,7 +193,18 @@ const getRequestDetail = async (cafeId) => {
       throw new Error('Request not found or already processed');
     }
 
-    return cafe;
+    // Add base URL to photos
+    const baseURL = process.env.BACKEND_URL || 'http://localhost:5000';
+    const cafeData = cafe.toJSON();
+    
+    if (cafeData.photos && cafeData.photos.length > 0) {
+      cafeData.photos = cafeData.photos.map(photo => ({
+        ...photo,
+        url: `${baseURL}${photo.url}`
+      }));
+    }
+
+    return cafeData;
   } catch (error) {
     throw new Error(`Service Error: ${error.message}`);
   }
@@ -300,8 +337,19 @@ const getCafeDetail = async (cafeId) => {
       ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
       : 0;
 
+    // Add base URL to photos
+    const baseURL = process.env.BACKEND_URL || 'http://localhost:5000';
+    const cafeData = cafe.toJSON();
+    
+    if (cafeData.photos && cafeData.photos.length > 0) {
+      cafeData.photos = cafeData.photos.map(photo => ({
+        ...photo,
+        url: `${baseURL}${photo.url}`
+      }));
+    }
+
     return {
-      ...cafe.toJSON(),
+      ...cafeData,
       avgRating: avgRating.toFixed(1),
       totalReviews: reviews.length
     };

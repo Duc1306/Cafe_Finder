@@ -330,6 +330,28 @@ const ownerController = {
       console.error('Update cafe error:', error);
       next(error);
     }
+  },
+
+  /**
+   * ============================================
+   * DELETE /api/owner/shops/:id
+   * Soft delete cafe (change status to CLOSED)
+   * ============================================
+   */
+  deleteCafe: async (req, res, next) => {
+    try {
+      const ownerId = req.user.id;
+      const cafeId = req.params.id;
+
+      const result = await ownerService.deleteCafe(ownerId, cafeId);
+
+      res.json({
+        success: true,
+        message: result.message
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 };
 

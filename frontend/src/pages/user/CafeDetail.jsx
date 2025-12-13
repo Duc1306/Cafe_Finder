@@ -39,8 +39,21 @@ export default function CafeDetail() {
             if (cafe.photos && cafe.photos.length > 0) {
                 // Find cover photo or use first photo
                 const coverPhoto = cafe.photos.find(p => p.is_cover || p.isCover) || cafe.photos[0];
-                cafe.coverUrl = coverPhoto.url;
+                cafe.coverUrl = coverPhoto?.url || null;
+            } else {
+                cafe.coverUrl = null;
             }
+
+            // Ensure isFavorite is properly set (default to false if undefined)
+            if (typeof cafe.isFavorite !== 'boolean') {
+                cafe.isFavorite = false;
+            }
+            
+            console.log('Cafe isFavorite status:', cafe.isFavorite);
+            console.log('Cover URL:', cafe.coverUrl);
+            console.log('Photos array:', cafe.photos);
+            console.log('Photos count:', cafe.photos?.length || 0);
+            console.log('Full cafe object:', cafe);
 
             setCafe(cafe);
             setReviews(reviews);
@@ -54,15 +67,27 @@ export default function CafeDetail() {
 
     const handleToggleFavorite = async () => {
         try {
+            console.log('Current isFavorite before toggle:', cafe.isFavorite);
+            
             if (cafe.isFavorite) {
                 await removeFavorite(id);
                 toast.success('お気に入りから削除しました');
-                setCafe({ ...cafe, isFavorite: false, favoritesCount: cafe.favoritesCount - 1 });
+                setCafe(prev => ({ 
+                    ...prev, 
+                    isFavorite: false, 
+                    favoritesCount: Math.max(0, prev.favoritesCount - 1)
+                }));
             } else {
                 await addFavorite(id);
                 toast.success('お気に入りに追加しました');
-                setCafe({ ...cafe, isFavorite: true, favoritesCount: cafe.favoritesCount + 1 });
+                setCafe(prev => ({ 
+                    ...prev, 
+                    isFavorite: true, 
+                    favoritesCount: prev.favoritesCount + 1
+                }));
             }
+            
+            console.log('isFavorite after toggle:', !cafe.isFavorite);
         } catch (err) {
             console.error('Toggle favorite error:', err);
             toast.error('お気に入りの更新に失敗しました: ' + err.message);
@@ -149,20 +174,40 @@ export default function CafeDetail() {
                     </button>
                     <button
                         onClick={handleToggleFavorite}
-                        className="flex items-center gap-2 px-4 py-2 rounded-lg border hover:bg-gray-50"
+                        className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${
+                            cafe.isFavorite 
+                                ? 'bg-red-50 border-red-300 text-red-600 hover:bg-red-100' 
+                                : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50'
+                        }`}
                     >
-                        <Heart className={`w-5 h-5 ${cafe.isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
-                        {cafe.isFavorite ? 'お気に入り済み' : 'お気に入りに追加'}
+                        <Heart 
+                            className={`w-5 h-5 transition-all ${
+                                cafe.isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-400'
+                            }`} 
+                        />
+                        <span className="font-medium">
+                            {cafe.isFavorite ? 'お気に入り済み' : 'お気に入りに追加'}
+                        </span>
                     </button>
                 </div>
 
                 {/* Cover Image */}
                 <div className="bg-white rounded-lg shadow-md overflow-hidden mb-6">
-                    <img
-                        src={cafe.coverUrl || '/placeholder-cafe.jpg'}
-                        alt={cafe.name}
-                        className="w-full h-96 object-cover"
-                    />
+                    {cafe.coverUrl ? (
+                        <img
+                            src={cafe.coverUrl}
+                            alt={cafe.name}
+                            className="w-full h-96 object-cover"
+                            onError={(e) => {
+                                console.error('Image load error:', cafe.coverUrl);
+                                e.target.src = 'https://via.placeholder.com/800x400?text=No+Image';
+                            }}
+                        />
+                    ) : (
+                        <div className="w-full h-96 bg-gray-200 flex items-center justify-center">
+                            <span className="text-gray-500 text-xl">画像なし</span>
+                        </div>
+                    )}
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -276,14 +321,18 @@ export default function CafeDetail() {
                         {/* Photos */}
                         {cafe.photos && cafe.photos.length > 0 && (
                             <div className="bg-white rounded-lg shadow-md p-6">
-                                <h3 className="font-bold mb-3">写真</h3>
+                                <h3 className="font-bold mb-3">写真 ({cafe.photos.length})</h3>
                                 <div className="grid grid-cols-2 gap-2">
                                     {cafe.photos.slice(0, 4).map((photo, idx) => (
                                         <img
-                                            key={idx}
+                                            key={photo.id || idx}
                                             src={photo.url}
                                             alt={`Photo ${idx + 1}`}
                                             className="w-full h-24 object-cover rounded-lg"
+                                            onError={(e) => {
+                                                console.error('Photo load error:', photo.url);
+                                                e.target.src = 'https://via.placeholder.com/200x150?text=No+Image';
+                                            }}
                                         />
                                     ))}
                                 </div>

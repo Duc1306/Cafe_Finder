@@ -18,11 +18,14 @@ router.use(authMiddleware);
 
 router.get('/', favoriteController.getList);
 
-
-
-// Thêm/Xóa
-
+// Thêm/Xóa toggle (giữ lại cho backward compatibility)
 router.post('/toggle', favoriteController.toggle);
+
+// POST /api/user/favorites - Thêm vào yêu thích
+router.post('/', favoriteController.add);
+
+// DELETE /api/user/favorites/:cafeId - Xóa khỏi yêu thích
+router.delete('/:cafeId', favoriteController.remove);
 
 
 

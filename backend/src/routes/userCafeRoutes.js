@@ -5,6 +5,7 @@
 const express = require('express');
 const userCafeController = require('../controllers/userCafeController');
 const authMiddleware = require('../middlewares/authMiddleware');
+const { optionalAuth } = require('../middlewares/authMiddleware');
 
 const router = express.Router();
 
@@ -14,8 +15,8 @@ router.get('/', userCafeController.getCafeList);
 
 router.get('/areas', userCafeController.getAreas);
 
-// GET /api/user/cafes/:id - Lấy chi tiết quán cafe
-router.get('/:id', userCafeController.getCafeDetail);
+// GET /api/user/cafes/:id - Lấy chi tiết quán cafe (optional auth để check favorite)
+router.get('/:id', optionalAuth, userCafeController.getCafeDetail);
 
 // GET /api/user/cafes/:id/reviews - Lấy danh sách reviews
 router.get('/:id/reviews', userCafeController.getCafeReviews);
