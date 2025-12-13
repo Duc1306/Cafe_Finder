@@ -48,7 +48,7 @@ export default function SignIn() {
     } catch (error) {
       const msg = error?.response?.data?.error || error?.response?.data?.message || "ログインに失敗しました。";
 
-      toast.info(msg);
+      toast.error(msg);
       setPassword("");
     } finally {
       setLoading(false);

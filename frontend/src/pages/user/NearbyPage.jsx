@@ -75,7 +75,7 @@ export default function NearbyPage() {
                 setTimeout(() => {
                     // Toast thành công
                     toast.success("現在地を更新しました！"); // Đã cập nhật vị trí!
-                }, 3000
+                }, 2700
                 )
 
                 fetchNearbyCafes(latitude, longitude, radius);
