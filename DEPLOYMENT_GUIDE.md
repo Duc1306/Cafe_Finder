@@ -22,13 +22,23 @@
 5. Sau khi tạo xong, vào tab **Info** và lưu lại các thông tin sau:
    ```
    PGDATABASE=cafe_finder
-   PGHOST=dpg-d4velq9r0fns739k60v0-a
+   PGHOST=dpg-d4velq9r0fns739k60v0-a.singapore-postgres.render.com
    PGPASSWORD=3DLxxLaM1aiTAPqiHRDBkE1F98A8yJlF
    PGPORT=5432
    PGUSER=cafe_finder_user
-   Internal Database URL=postgresql://cafe_finder_user:3DLxxLaM1aiTAPqiHRDBkE1F98A8yJlF@dpg-d4velq9r0fns739k60v0-a/cafe_finder
+   Internal Database URL=postgresql://...
    External Database URL=postgresql://cafe_finder_user:3DLxxLaM1aiTAPqiHRDBkE1F98A8yJlF@dpg-d4velq9r0fns739k60v0-a.singapore-postgres.render.com/cafe_finder
    ```
+
+   **⚠️ QUAN TRỌNG - Mapping tên biến:**
+   
+   Render hiển thị | Tên trong .env backend
+   ----------------|----------------------
+   PGDATABASE      | DB_NAME
+   PGHOST          | DB_HOST (dùng External URL với .singapore-postgres.render.com)
+   PGUSER          | DB_USER
+   PGPASSWORD      | DB_PASSWORD
+   PGPORT          | DB_PORT
 
 ### Bước 2: Deploy Backend Service
 
@@ -46,31 +56,34 @@
 
 ### Bước 3: Cấu hình Environment Variables cho Backend
 
-Trong phần **Environment Variables**, thêm các biến sau:
+Trong phần **Environment Variables**, thêm các biến sau (copy từ thông tin database ở Bước 1):
 
 ```bash
 NODE_ENV=production
 PORT=5000
 
-# Database - Copy từ PostgreSQL Database bạn vừa tạo ở Bước 1
-DB_HOST=<PGHOST từ database>
+# Database - Điền thông tin từ Render PostgreSQL
+DB_HOST=dpg-d4velq9r0fns739k60v0-a.singapore-postgres.render.com
 DB_PORT=5432
-DB_NAME=<PGDATABASE từ database>
-DB_USER=<PGUSER từ database>
-DB_PASSWORD=<PGPASSWORD từ database>
+DB_NAME=cafe_finder
+DB_USER=cafe_finder_user
+DB_PASSWORD=3DLxxLaM1aiTAPqiHRDBkE1F98A8yJlF
 
-# JWT Secret - Tạo chuỗi ngẫu nhiên mạnh
-JWT_SECRET=<string_random_rat_manh_it_nhat_32_ky_tu>
+# JWT Secret - Tạo chuỗi mạnh bằng: node scripts/generate-jwt-secret.js
+JWT_SECRET=JWT_SECRET=594c891d99ac937c512aed23ef062de0d9fa723157ef5baf807153007a94c71f11c82496c4aba80fd5ad5e21bddb9109ea7df290afd8a88df32c7cc271fe66ff
 JWT_EXPIRES_IN=7d
 
 # Google Maps API (nếu có)
-GOOGLE_MAPS_API_KEY=<your_google_maps_api_key>
+GOOGLE_MAPS_API_KEY=<your_google_maps_api_key_hoac_bo_qua>
 
-# Frontend URL - SẼ CẬP NHẬT SAU KHI DEPLOY FRONTEND
-FRONTEND_URL=https://your-frontend-app.vercel.app
+# Frontend URL - Tạm thời để localhost, sẽ cập nhật sau
+FRONTEND_URL=https://cafe-finder-wdoe-8k0g9t5ye-duc1306s-projects.vercel.app
 ```
 
-> **Lưu ý**: Chưa có FRONTEND_URL thì tạm thời để `https://localhost:3000`, sau khi deploy frontend xong sẽ cập nhật lại.
+> **💡 Mẹo**: 
+> - Thêm từng biến một bằng nút **Add Environment Variable**
+> - Chỉ cần key và value, không cần dấu `=`
+> - Có thể bỏ qua GOOGLE_MAPS_API_KEY nếu chưa có
 
 ### Bước 4: Chạy Database Migrations
 
