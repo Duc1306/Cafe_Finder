@@ -4,7 +4,7 @@ import UserDashboardPage from "../pages/user/userDashboard";
 import UserProfile from "../pages/user/userProfile";
 import CafeSearch from "../pages/user/CafeSearch";
 import CafeDetail from "../pages/user/CafeDetail";
-import NearbyPage from "../pages/user/nearbyPage";
+import NearbyPage from "../pages/user/NearbyPage";
 import FavoritesPage from "../pages/user/FavoritesPage";
 
 

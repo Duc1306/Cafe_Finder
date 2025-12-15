@@ -4,8 +4,8 @@ import Register from "../pages/Register";
 import SignIn from "../pages/SignIn";
 import OwnerDashboard from "../pages/owner/OwnerDashboard";
 import CreateCafe from "../pages/owner/CreateCafe";
-import CafeDetail from "../pages/Owner/CafeDetail";
-import EditCafe from '../pages/Owner/EditCafe';
+import CafeDetail from "../pages/owner/CafeDetail";
+import EditCafe from '../pages/owner/EditCafe';
 import { UserRoutes } from "./userRoutes";
 import { AdminRoutes } from "./adminRoutes";
 
