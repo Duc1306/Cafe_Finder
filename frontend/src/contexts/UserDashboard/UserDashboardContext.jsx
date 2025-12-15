@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
-import { getUserDashboard } from "../../services/userDashboardService.js";
+import { getUserDashboard } from "../../services/UserDashBoardService";
 import { message } from "antd";
-import { UserDashboardContext } from "./UserDashboardContext.js"; 
+import { UserDashboardContext } from "./UserDashboardContext"; 
 
 export function UserDashboardProvider({ children }) {
   const [dashboard, setDashboard] = useState(null);

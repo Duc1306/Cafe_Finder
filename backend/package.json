@@ -7,16 +7,21 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
+    "build": "npm run migrate && npm run seed",
     "test:db": "node test-db.js",
+    "migrate": "npx sequelize-cli db:migrate",
+    "migrate:undo": "npx sequelize-cli db:migrate:undo",
+    "seed": "npx sequelize-cli db:seed:all",
+    "seed:undo": "npx sequelize-cli db:seed:undo:all",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [
-    "nodejs",
-    "express",
-    "api"
-  ],
-  "author": "",
+  "keywords": ["nodejs", "express", "api"],
   "license": "ISC",
+
+  "engines": {
+    "node": "18.x"
+  },
+
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",

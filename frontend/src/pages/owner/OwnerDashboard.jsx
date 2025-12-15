@@ -61,8 +61,15 @@ export default function OwnerDashboard() {
       
       if (response.data.success) {
         toast.success('カフェを削除しました');
-        // Refresh data
-        fetchDashboardData();
+        
+        // Cập nhật state trực tiếp thay vì reload tất cả
+        setCafes(prevCafes => prevCafes.filter(cafe => cafe.id !== selectedCafeId));
+        
+        // Cập nhật stats
+        setStats(prevStats => ({
+          ...prevStats,
+          cafes: prevStats.cafes - 1
+        }));
       }
     } catch (error) {
       console.error('Failed to delete cafe:', error);
