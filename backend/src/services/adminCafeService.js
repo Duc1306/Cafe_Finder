@@ -68,13 +68,14 @@ const getAllCafes = async (filters = {}) => {
     });
 
     // Add base URL to cover photos
+    const useCloudinary = process.env.NODE_ENV === 'production' || process.env.USE_CLOUDINARY === 'true';
     const baseURL = process.env.BACKEND_URL || 'http://localhost:5000';
     const cafesWithFullUrls = rows.map(cafe => {
       const cafeData = cafe.toJSON();
       if (cafeData.photos && cafeData.photos.length > 0) {
         cafeData.photos = cafeData.photos.map(photo => ({
           ...photo,
-          url: `${baseURL}${photo.url}`
+          url: useCloudinary || photo.url.startsWith('http') ? photo.url : `${baseURL}${photo.url}`
         }));
       }
       return cafeData;
@@ -137,13 +138,14 @@ const getPendingRequests = async (filters = {}) => {
     });
 
     // Add base URL to photos
+    const useCloudinary = process.env.NODE_ENV === 'production' || process.env.USE_CLOUDINARY === 'true';
     const baseURL = process.env.BACKEND_URL || 'http://localhost:5000';
     const requestsWithFullUrls = rows.map(cafe => {
       const cafeData = cafe.toJSON();
       if (cafeData.photos && cafeData.photos.length > 0) {
         cafeData.photos = cafeData.photos.map(photo => ({
           ...photo,
-          url: `${baseURL}${photo.url}`
+          url: useCloudinary || photo.url.startsWith('http') ? photo.url : `${baseURL}${photo.url}`
         }));
       }
       return cafeData;
@@ -194,13 +196,14 @@ const getRequestDetail = async (cafeId) => {
     }
 
     // Add base URL to photos
+    const useCloudinary = process.env.NODE_ENV === 'production' || process.env.USE_CLOUDINARY === 'true';
     const baseURL = process.env.BACKEND_URL || 'http://localhost:5000';
     const cafeData = cafe.toJSON();
     
     if (cafeData.photos && cafeData.photos.length > 0) {
       cafeData.photos = cafeData.photos.map(photo => ({
         ...photo,
-        url: `${baseURL}${photo.url}`
+        url: useCloudinary || photo.url.startsWith('http') ? photo.url : `${baseURL}${photo.url}`
       }));
     }
 
@@ -338,13 +341,14 @@ const getCafeDetail = async (cafeId) => {
       : 0;
 
     // Add base URL to photos
+    const useCloudinary = process.env.NODE_ENV === 'production' || process.env.USE_CLOUDINARY === 'true';
     const baseURL = process.env.BACKEND_URL || 'http://localhost:5000';
     const cafeData = cafe.toJSON();
     
     if (cafeData.photos && cafeData.photos.length > 0) {
       cafeData.photos = cafeData.photos.map(photo => ({
         ...photo,
-        url: `${baseURL}${photo.url}`
+        url: useCloudinary || photo.url.startsWith('http') ? photo.url : `${baseURL}${photo.url}`
       }));
     }
 

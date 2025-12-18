@@ -78,8 +78,22 @@ app.use("/uploads", express.static("uploads"));
 
 // Error handling middleware (đặt sau các route)
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Something went wrong!' });
+  console.error('Error:', err.message);
+  
+  // Multer errors
+  if (err.name === 'MulterError') {
+    return res.status(400).json({ 
+      success: false,
+      error: 'File upload error: ' + err.message,
+      code: err.code
+    });
+  }
+  
+  // Cloudinary or other errors
+  res.status(500).json({ 
+    success: false,
+    error: err.message || 'Something went wrong!' 
+  });
 });
 
 

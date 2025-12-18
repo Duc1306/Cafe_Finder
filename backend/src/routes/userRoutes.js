@@ -8,6 +8,7 @@ const router = express.Router();
 
 const multer = require("multer");
 const path = require("path");
+const { avatarStorage } = require("../config/cloudinary");
 
 // Lấy profile của user đang đăng nhập
 router.get("/profile", authMiddleware, userController.getProfile);
@@ -17,17 +18,30 @@ router.put("/profile", authMiddleware, userController.updateProfile);
 
 router.get("/dashboard", authMiddleware, userController.getDashboard);
 
-// Cấu hình lưu file
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/avatars/");
-  },
-  filename: function (req, file, cb) {
-    const ext = path.extname(file.originalname);
-    cb(null, req.user.id + "_" + Date.now() + ext);
-  },
-});
-const upload = multer({ storage });
+// Check if we're using Cloudinary or local storage
+const useCloudinary = process.env.NODE_ENV === 'production' || process.env.USE_CLOUDINARY === 'true';
+
+let upload;
+
+if (useCloudinary) {
+  // Use Cloudinary for production
+  upload = multer({ 
+    storage: avatarStorage,
+    limits: { fileSize: 5 * 1024 * 1024 } // 5MB
+  });
+} else {
+  // Use local storage for development
+  const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, "uploads/avatars/");
+    },
+    filename: function (req, file, cb) {
+      const ext = path.extname(file.originalname);
+      cb(null, req.user.id + "_" + Date.now() + ext);
+    },
+  });
+  upload = multer({ storage });
+}
 
 // Route upload avatar
 router.post(
@@ -37,10 +51,16 @@ router.post(
   async (req, res) => {
     if (!req.file)
       return res.status(400).json({ error: "ファイルがありません。" });
-    // Lưu đường dẫn vào DB
-    const avatarUrl = `${req.protocol}://${req.get("host")}/uploads/avatars/${
-      req.file.filename
-    }`;
+    
+    // Get avatar URL - different for Cloudinary vs local
+    let avatarUrl;
+    if (useCloudinary) {
+      // Cloudinary returns full URL in req.file.path
+      avatarUrl = req.file.path;
+    } else {
+      // Local storage needs to construct URL
+      avatarUrl = `${req.protocol}://${req.get("host")}/uploads/avatars/${req.file.filename}`;
+    }
 
     await userService.updateUser(req.user.id, {
       avatar_url: avatarUrl,

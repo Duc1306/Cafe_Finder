@@ -1,26 +1,36 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const { cafeStorage } = require('../config/cloudinary');
 
-// Đảm bảo folder uploads/cafes tồn tại
-const uploadDir = path.join(__dirname, '../../uploads/cafes');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
+// Check if we're using Cloudinary (production) or local storage (development)
+const useCloudinary = process.env.NODE_ENV === 'production' || process.env.USE_CLOUDINARY === 'true';
 
-// Cấu hình storage
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    // Tạo tên file unique: timestamp-randomnumber-originalname
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const ext = path.extname(file.originalname);
-    const nameWithoutExt = path.basename(file.originalname, ext);
-    cb(null, nameWithoutExt + '-' + uniqueSuffix + ext);
+let storage;
+
+if (useCloudinary) {
+  // Use Cloudinary storage for production
+  storage = cafeStorage;
+} else {
+  // Use local disk storage for development
+  const uploadDir = path.join(__dirname, '../../uploads/cafes');
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
   }
-});
+
+  storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, uploadDir);
+    },
+    filename: function (req, file, cb) {
+      // Tạo tên file unique: timestamp-randomnumber-originalname
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      const ext = path.extname(file.originalname);
+      const nameWithoutExt = path.basename(file.originalname, ext);
+      cb(null, nameWithoutExt + '-' + uniqueSuffix + ext);
+    }
+  });
+}
 
 // Filter file type
 const fileFilter = (req, file, cb) => {

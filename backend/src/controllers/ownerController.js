@@ -145,8 +145,11 @@ const ownerController = {
       });
 
     } catch (error) {
-      console.error('Create cafe error:', error);
-      next(error);
+      console.error('Create cafe error:', error.message);
+      res.status(500).json({
+        success: false,
+        message: error.message || 'カフェの作成に失敗しました'
+      });
     }
   },
 

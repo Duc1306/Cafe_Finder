@@ -177,11 +177,17 @@ const ownerService = {
     }
 
     // Base URL for images
+    const useCloudinary = process.env.NODE_ENV === 'production' || process.env.USE_CLOUDINARY === 'true';
     const baseURL = process.env.BACKEND_URL || 'http://localhost:5000';
 
     // Combine results
     const data = cafes.map(cafe => {
       const agg = aggregateMap[cafe.id] || {};
+      let cover_url = null;
+      if (agg.cover_url) {
+        // If Cloudinary or already full URL, use as is. Otherwise prepend baseURL
+        cover_url = useCloudinary || agg.cover_url.startsWith('http') ? agg.cover_url : `${baseURL}${agg.cover_url}`;
+      }
       return {
         id: cafe.id,
         name: cafe.name,
@@ -195,7 +201,7 @@ const ownerService = {
         favorites_count: Number(agg.favorites_count || 0),
         reviews_count: Number(agg.reviews_count || 0),
         avg_rating: Number(agg.avg_rating || 0),
-        cover_url: agg.cover_url ? `${baseURL}${agg.cover_url}` : null // ADD baseURL
+        cover_url
       };
     });
 
@@ -240,9 +246,13 @@ const ownerService = {
 
       // Nếu có ảnh, lưu vào CafePhotos
       if (photoFiles && photoFiles.length > 0) {
+        // Check if using Cloudinary or local storage
+        const useCloudinary = process.env.NODE_ENV === 'production' || process.env.USE_CLOUDINARY === 'true';
+        
         const photoRecords = photoFiles.map((file, index) => ({
           cafe_id: newCafe.id,
-          url: `/uploads/cafes/${file.filename}`, // Path bắt đầu với /
+          // Cloudinary stores full URL in file.path, local storage uses filename
+          url: useCloudinary ? file.path : `/uploads/cafes/${file.filename}`,
           photo_type: 'INTERIOR',
           is_cover: index === 0
         }));
@@ -294,14 +304,16 @@ const ownerService = {
     // Convert to plain object
     const cafeData = cafe.toJSON();
     
-    // Base URL for images
+    // Check if using Cloudinary
+    const useCloudinary = process.env.NODE_ENV === 'production' || process.env.USE_CLOUDINARY === 'true';
     const baseURL = process.env.BACKEND_URL || 'http://localhost:5000';
     
     // Add full URL to photos
     if (cafeData.photos && cafeData.photos.length > 0) {
       cafeData.photos = cafeData.photos.map(photo => ({
         ...photo,
-        url: `${baseURL}${photo.url}`
+        // If Cloudinary, URL is already full. If local, prepend baseURL
+        url: useCloudinary || photo.url.startsWith('http') ? photo.url : `${baseURL}${photo.url}`
       }));
       
       // Find cover photo
@@ -494,6 +506,8 @@ const ownerService = {
       if (photosToDelete && photosToDelete.length > 0) {
         const fs = require('fs');
         const path = require('path');
+        const { cloudinary } = require('../config/cloudinary');
+        const useCloudinary = process.env.NODE_ENV === 'production' || process.env.USE_CLOUDINARY === 'true';
 
         // Get photos from database
         const photosToRemove = await CafePhoto.findAll({
@@ -503,11 +517,25 @@ const ownerService = {
           }
         });
 
-        // Delete files from filesystem
+        // Delete files
         for (const photo of photosToRemove) {
-          const filePath = path.join(__dirname, '../../', photo.url);
-          if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
+          if (useCloudinary && photo.url.includes('cloudinary')) {
+            // Extract public_id from Cloudinary URL and delete from Cloudinary
+            try {
+              const urlParts = photo.url.split('/');
+              const filename = urlParts[urlParts.length - 1].split('.')[0];
+              const folder = 'cafe_finder/cafes';
+              const publicId = `${folder}/${filename}`;
+              await cloudinary.uploader.destroy(publicId);
+            } catch (err) {
+              console.error('Error deleting from Cloudinary:', err);
+            }
+          } else {
+            // Delete from local filesystem
+            const filePath = path.join(__dirname, '../../', photo.url);
+            if (fs.existsSync(filePath)) {
+              fs.unlinkSync(filePath);
+            }
           }
         }
 
@@ -523,6 +551,9 @@ const ownerService = {
 
       // Add new photos
       if (newPhotoFiles && newPhotoFiles.length > 0) {
+        // Check if using Cloudinary or local storage
+        const useCloudinary = process.env.NODE_ENV === 'production' || process.env.USE_CLOUDINARY === 'true';
+        
         // Check if there are existing photos
         const remainingPhotosCount = await CafePhoto.count({
           where: { cafe_id: cafeId }
@@ -530,7 +561,8 @@ const ownerService = {
 
         const photoRecords = newPhotoFiles.map((file, index) => ({
           cafe_id: cafeId,
-          url: `/uploads/cafes/${file.filename}`,
+          // Cloudinary stores full URL in file.path, local storage uses filename
+          url: useCloudinary ? file.path : `/uploads/cafes/${file.filename}`,
           photo_type: 'INTERIOR',
           is_cover: remainingPhotosCount === 0 && index === 0 // Set first new photo as cover if no photos remain
         }));
