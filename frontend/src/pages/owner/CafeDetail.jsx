@@ -269,7 +269,10 @@ export default function CafeDetail() {
         <div className="bg-white rounded-xl shadow-md border border-[#f3e0dc] p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-[#8b1a1a]">プロモーション管理</h2>
-            <button className="flex items-center gap-2 px-4 py-2 bg-[#a8201a] hover:bg-[#901a15] text-white rounded-lg text-sm font-medium transition">
+            <button 
+              onClick={() => navigate(`/owner/cafes/${id}/promotions/create`)}
+              className="flex items-center gap-2 px-4 py-2 bg-[#a8201a] hover:bg-[#901a15] text-white rounded-lg text-sm font-medium transition"
+            >
               <FaPlus />
               <span>新規プロモーション作成</span>
             </button>

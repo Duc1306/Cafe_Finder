@@ -6,6 +6,7 @@ import OwnerDashboard from "../pages/owner/OwnerDashboard";
 import CreateCafe from "../pages/owner/CreateCafe";
 import CafeDetail from "../pages/owner/CafeDetail";
 import EditCafe from '../pages/owner/EditCafe';
+import CreatePromotion from '../pages/owner/CreatePromotion';
 import { UserRoutes } from "./userRoutes";
 import { AdminRoutes } from "./adminRoutes";
 
@@ -19,7 +20,9 @@ export default function AppRoutes() {
       <Route path="/owner/dashboard" element={<OwnerDashboard />} />
       <Route path="/owner/create-cafe" element={<CreateCafe />} />
       <Route path="/owner/cafe/:id" element={<CafeDetail />} />
+      <Route path="/owner/cafes/:id" element={<CafeDetail />} />
       <Route path="/owner/edit-cafe/:id" element={<EditCafe />} />
+      <Route path="/owner/cafes/:id/promotions/create" element={<CreatePromotion />} />
 
 
       {UserRoutes()}

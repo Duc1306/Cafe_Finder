@@ -1,5 +1,5 @@
 const { sequelize } = require('../config/database');
-const { Cafe, Review, Favorite, CafePhoto } = require('../models');
+const { Cafe, Review, Favorite, CafePhoto, Promotion } = require('../models');
 const { Op } = require('sequelize');
 
 const ownerService = {
@@ -610,6 +610,35 @@ const ownerService = {
     } catch (error) {
       throw error;
     }
+  },
+
+  /**
+   * Create new promotion for cafe
+   */
+  createPromotion: async (ownerId, cafeId, promotionData) => {
+    // Verify cafe ownership
+    const cafe = await Cafe.findOne({
+      where: { id: cafeId, owner_id: ownerId },
+      attributes: ['id']
+    });
+
+    if (!cafe) {
+      throw new Error('Cafe not found or unauthorized');
+    }
+
+    // Create promotion
+    const newPromotion = await Promotion.create({
+      cafe_id: cafeId,
+      title: promotionData.title,
+      description: promotionData.description,
+      discount_type: promotionData.discount_type,
+      discount_value: promotionData.discount_value,
+      start_date: promotionData.start_date,
+      end_date: promotionData.end_date,
+      is_active: promotionData.is_active !== undefined ? promotionData.is_active : true
+    });
+
+    return newPromotion;
   }
 };
 
