@@ -62,4 +62,11 @@ router.put('/shops/:id', authMiddleware, upload.array('photos', 10), ownerContro
  */
 router.delete('/shops/:id', authMiddleware, ownerController.deleteCafe);
 
+/**
+ * POST /api/owner/shops/:id/promotions
+ * Create new promotion for cafe
+ * Protected route - requires authentication
+ */
+router.post('/shops/:id/promotions', authMiddleware, ownerController.createPromotion);
+
 module.exports = router;

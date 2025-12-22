@@ -355,6 +355,72 @@ const ownerController = {
     } catch (error) {
       next(error);
     }
+  },
+
+  /**
+   * ============================================
+   * POST /api/owner/shops/:id/promotions
+   * Create new promotion for cafe
+   * ============================================
+   */
+  createPromotion: async (req, res, next) => {
+    try {
+      const ownerId = req.user.id;
+      const cafeId = req.params.id;
+      const promotionData = req.body;
+
+      // Validate required fields
+      if (!promotionData.title || !promotionData.description) {
+        return res.status(400).json({
+          success: false,
+          message: 'プロモーション名と説明は必須です'
+        });
+      }
+
+      if (!promotionData.discount_type || !promotionData.discount_value) {
+        return res.status(400).json({
+          success: false,
+          message: '割引設定は必須です'
+        });
+      }
+
+      if (!promotionData.start_date || !promotionData.end_date) {
+        return res.status(400).json({
+          success: false,
+          message: '実施期間は必須です'
+        });
+      }
+
+      // Validate date range
+      const startDate = new Date(promotionData.start_date);
+      const endDate = new Date(promotionData.end_date);
+      
+      if (endDate < startDate) {
+        return res.status(400).json({
+          success: false,
+          message: '終了日は開始日より後の日付を指定してください'
+        });
+      }
+
+      // Create promotion
+      const newPromotion = await ownerService.createPromotion(ownerId, cafeId, promotionData);
+
+      res.status(201).json({
+        success: true,
+        message: 'プロモーションを作成しました',
+        data: newPromotion
+      });
+
+    } catch (error) {
+      if (error.message === 'Cafe not found or unauthorized') {
+        return res.status(404).json({
+          success: false,
+          message: 'カフェが見つからないか、アクセス権限がありません'
+        });
+      }
+      console.error('Create promotion error:', error);
+      next(error);
+    }
   }
 };
 
