@@ -773,6 +773,174 @@ const userCafeService = {
       isUpdated: false,
     };
   },
+
+  // ====================== PROMOTIONS ======================
+  /**
+   * GET /promotions
+   * Tìm kiếm, lọc và sắp xếp chương trình ưu đãi
+   * @param {Object} filters - Các tham số lọc
+   * @param {string} filters.keyword - Từ khóa tìm kiếm (title, description)
+   * @param {string} filters.discountType - Loại giảm giá (PERCENT, FIXED_AMOUNT)
+   * @param {string} filters.cafeId - ID của quán cafe
+   * @param {string} filters.cafeName - Tên quán cafe (fuzzy search)
+   * @param {string} filters.city - Thành phố (fuzzy search)
+   * @param {string} filters.district - Quận/huyện (fuzzy search)
+   * @param {string} filters.status - Trạng thái: 'active' | 'expired' | 'upcoming' | 'all'
+   * @param {string} filters.sortBy - Sắp xếp theo: 'end_date' | 'start_date' | 'discount_value'
+   * @param {string} filters.sortOrder - Thứ tự: 'ASC' | 'DESC'
+   * @param {number} filters.page - Trang hiện tại
+   * @param {number} filters.limit - Số lượng mỗi trang
+   */
+  getPromotions: async (filters) => {
+    const {
+      keyword = '',
+      discountType,
+      cafeId,
+      cafeName = '',
+      city = '',
+      district = '',
+      status = 'active', // 'active' | 'expired' | 'upcoming' | 'all'
+      sortBy = 'end_date',
+      sortOrder = 'ASC',
+      page = 1,
+      limit = 10,
+    } = filters;
+
+    const actualPage = Math.max(1, Number(page) || 1);
+    const actualLimit = Math.min(50, Math.max(1, Number(limit) || 10));
+    const offset = (actualPage - 1) * actualLimit;
+    
+    const wherePromotion = {};
+    const andConds = [];
+
+    // Từ khóa tìm kiếm
+    if (keyword && keyword.trim()) {
+      wherePromotion[Op.or] = [
+        { title: { [Op.iLike]: `%${keyword.trim()}%` } },
+        { description: { [Op.iLike]: `%${keyword.trim()}%` } },
+      ];
+    }
+
+    // Lọc theo loại giảm giá
+    if (discountType && ['PERCENT', 'FIXED_AMOUNT'].includes(discountType.toUpperCase())) {
+      wherePromotion.discount_type = discountType.toUpperCase();
+    }
+
+    // Lọc theo cafe ID
+    if (cafeId) {
+      wherePromotion.cafe_id = cafeId;
+    }
+
+    const whereCafe = { status: 'ACTIVE' };
+
+    // Fuzzy search theo tên quán cafe
+    if (cafeName && cafeName.trim()) {
+      whereCafe.name = { [Op.iLike]: `%${cafeName.trim()}%` };
+    }
+
+    // Fuzzy search theo thành phố
+    if (city && city.trim()) {
+      whereCafe.city = { [Op.iLike]: `%${city.trim()}%` };
+    }
+
+    // Fuzzy search theo quận/huyện
+    if (district && district.trim()) {
+      whereCafe.district = { [Op.iLike]: `%${district.trim()}%` };
+    }
+
+    // Lọc theo trạng thái dựa trên ngày
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+
+    if (status === 'active') {
+      // Đang hiệu lực: start_date <= today AND (end_date >= today OR end_date IS NULL) AND is_active = true
+      andConds.push({
+        [Op.or]: [
+          { start_date: { [Op.lte]: today } },
+          { start_date: null },
+        ],
+      });
+      andConds.push({
+        [Op.or]: [
+          { end_date: { [Op.gte]: today } },
+          { end_date: null },
+        ],
+      });
+      wherePromotion.is_active = true;
+    } else if (status === 'expired') {
+      // Đã hết hạn: end_date < today
+      andConds.push({
+        end_date: { [Op.lt]: today },
+      });
+    } else if (status === 'upcoming') {
+      // Sắp diễn ra: start_date > today
+      andConds.push({
+        start_date: { [Op.gt]: today },
+      });
+    }
+    // 'all': không lọc theo ngày
+
+    if (andConds.length > 0) {
+      wherePromotion[Op.and] = andConds;
+    }
+
+    // ====== ORDER ======
+    const validSortBy = ['end_date', 'start_date', 'discount_value', 'created_at'];
+    const actualSortBy = validSortBy.includes(sortBy) ? sortBy : 'end_date';
+    const actualSortOrder = sortOrder?.toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
+
+    // Handle NULL values in sorting - NULLs last for ASC, first for DESC
+    const order = [[actualSortBy, actualSortOrder]];
+
+    // ====== Query: count & fetch ======
+    const { count: total, rows } = await Promotion.findAndCountAll({
+      where: wherePromotion,
+      include: [
+        {
+          model: Cafe,
+          as: 'cafe',
+          attributes: ['id', 'name', 'address_line', 'district', 'city'],
+          where: whereCafe,
+          required: true,
+        },
+      ],
+      order,
+      limit: actualLimit,
+      offset,
+    });
+
+    // Build response data
+    const data = rows.map((promo) => {
+      const plain = promo.get({ plain: true });
+      return {
+        id: plain.id,
+        title: plain.title,
+        description: plain.description,
+        discountType: plain.discount_type,
+        discountValue: plain.discount_value,
+        startDate: plain.start_date,
+        endDate: plain.end_date,
+        isActive: plain.is_active,
+        createdAt: plain.created_at,
+        updatedAt: plain.updated_at,
+        cafe: plain.cafe
+          ? {
+            id: plain.cafe.id,
+            name: plain.cafe.name,
+            addressLine: plain.cafe.address_line,
+            district: plain.cafe.district,
+            city: plain.cafe.city,
+          }
+          : null,
+      };
+    });
+
+    return {
+      page: actualPage,
+      limit: actualLimit,
+      total,
+      data,
+    };
+  },
 };
 
 module.exports = userCafeService;
