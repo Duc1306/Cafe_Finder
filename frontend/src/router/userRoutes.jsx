@@ -6,6 +6,7 @@ import CafeSearch from "../pages/user/CafeSearch";
 import CafeDetail from "../pages/user/CafeDetail";
 import NearbyPage from "../pages/user/NearbyPage";
 import FavoritesPage from "../pages/user/FavoritesPage";
+import PromotionsPage from "../pages/user/PromotionsPage";
 
 
 
@@ -18,6 +19,8 @@ export function UserRoutes() {
       <Route path="/cafes/:id" element={<CafeDetail />} />
       <Route path="/nearby" element={<NearbyPage />} />
       <Route path="/favorites" element={<FavoritesPage />} />
+      <Route path="/promotions" element={<PromotionsPage />} />
     </Route>
   );
 }
+

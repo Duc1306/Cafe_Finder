@@ -48,7 +48,7 @@ export default function CafeDetail() {
             if (typeof cafe.isFavorite !== 'boolean') {
                 cafe.isFavorite = false;
             }
-            
+
             console.log('Cafe isFavorite status:', cafe.isFavorite);
             console.log('Cover URL:', cafe.coverUrl);
             console.log('Photos array:', cafe.photos);
@@ -68,25 +68,25 @@ export default function CafeDetail() {
     const handleToggleFavorite = async () => {
         try {
             console.log('Current isFavorite before toggle:', cafe.isFavorite);
-            
+
             if (cafe.isFavorite) {
                 await removeFavorite(id);
                 toast.success('お気に入りから削除しました');
-                setCafe(prev => ({ 
-                    ...prev, 
-                    isFavorite: false, 
+                setCafe(prev => ({
+                    ...prev,
+                    isFavorite: false,
                     favoritesCount: Math.max(0, prev.favoritesCount - 1)
                 }));
             } else {
                 await addFavorite(id);
                 toast.success('お気に入りに追加しました');
-                setCafe(prev => ({ 
-                    ...prev, 
-                    isFavorite: true, 
+                setCafe(prev => ({
+                    ...prev,
+                    isFavorite: true,
                     favoritesCount: prev.favoritesCount + 1
                 }));
             }
-            
+
             console.log('isFavorite after toggle:', !cafe.isFavorite);
         } catch (err) {
             console.error('Toggle favorite error:', err);
@@ -174,16 +174,14 @@ export default function CafeDetail() {
                     </button>
                     <button
                         onClick={handleToggleFavorite}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${
-                            cafe.isFavorite 
-                                ? 'bg-red-50 border-red-300 text-red-600 hover:bg-red-100' 
+                        className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${cafe.isFavorite
+                                ? 'bg-red-50 border-red-300 text-red-600 hover:bg-red-100'
                                 : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50'
-                        }`}
+                            }`}
                     >
-                        <Heart 
-                            className={`w-5 h-5 transition-all ${
-                                cafe.isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-400'
-                            }`} 
+                        <Heart
+                            className={`w-5 h-5 transition-all ${cafe.isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-400'
+                                }`}
                         />
                         <span className="font-medium">
                             {cafe.isFavorite ? 'お気に入り済み' : 'お気に入りに追加'}
@@ -346,9 +344,6 @@ export default function CafeDetail() {
                                 className="w-full px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium"
                             >
                                 レビューを書く
-                            </button>
-                            <button className="w-full px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium">
-                                地図で見る
                             </button>
                         </div>
                     </div>

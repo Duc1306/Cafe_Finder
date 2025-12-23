@@ -135,7 +135,15 @@ const userCafeController = {
             console.error(error);
             res.status(500).json({ error: "Lỗi lấy danh sách khu vực" });
         }
-    }
+    },
+
+    /**
+     * GET /api/user/promotions - Tìm kiếm, lọc và sắp xếp chương trình ưu đãi
+     */    
+    getPromotions: asyncHandler(async (req, res) => {
+        const result = await userCafeService.getPromotions(req.query);
+        res.json(result);
+    })
 };
 
 module.exports = userCafeController;

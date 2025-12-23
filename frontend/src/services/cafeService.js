@@ -66,3 +66,18 @@ export const removeFavorite = async (cafeId) => {
     const response = await api.delete(`/user/favorites/${cafeId}`);
     return response.data;
 };
+
+// ==================== PROMOTIONS APIs ====================
+
+export const getPromotions = async (params = {}) => {
+    const queryParams = new URLSearchParams();
+
+    Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+            queryParams.append(key, value);
+        }
+    });
+
+    const response = await api.get(`/user/cafes/promotions?${queryParams}`);
+    return response.data;
+};

@@ -13,6 +13,9 @@ const router = express.Router();
 // GET /api/user/cafes - Lấy danh sách quán cafe (tìm kiếm, lọc, phân trang)
 router.get('/', userCafeController.getCafeList);
 
+// GET /api/user/cafes/promotions - Tìm kiếm, lọc và sắp xếp chương trình ưu đãi
+router.get('/promotions', userCafeController.getPromotions);
+
 router.get('/areas', userCafeController.getAreas);
 
 // GET /api/user/cafes/:id - Lấy chi tiết quán cafe (optional auth để check favorite)
