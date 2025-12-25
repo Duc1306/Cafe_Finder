@@ -18,6 +18,7 @@ export const updateUserProfile = async (data) => {
   return res.data.data;
 };
 
+// Upload avatar
 export const uploadUserAvatar = async (file) => {
   const formData = new FormData();
   formData.append("avatar", file);
@@ -25,4 +26,22 @@ export const uploadUserAvatar = async (file) => {
     headers: { "Content-Type": "multipart/form-data" },
   });
   return res.data.avatar_url;
+};
+
+// Lấy danh sách review của user
+export const getMyReviews = async (params) => {
+  const res = await api.get("/users/reviews", { params });
+  return res.data;
+};
+
+// Update review
+export const updateMyReview = async (id, data) => {
+  const res = await api.put(`/users/reviews/${id}`, data);
+  return res.data;
+};
+
+// Delete review
+export const deleteMyReview = async (id) => {
+  const res = await api.delete(`/users/reviews/${id}`);
+  return res.data;
 };

@@ -113,4 +113,56 @@ userController.updateProfile = async (req, res) => {
     res.status(500).json({ error: "サーバーエラーが発生しました。" });
   }
 };
+
+/**
+ * GET /api/users/reviews
+ * Lấy danh sách review của user đang đăng nhập
+ */
+userController.getUserReviews = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { page, limit } = req.query;
+    const result = await userService.getUserReviews(userId, { page, limit });
+    res.json({ success: true, ...result });
+  } catch (error) {
+    console.error('Get user reviews error:', error);
+    res.status(500).json({ error: "レビュー一覧の取得に失敗しました。" });
+  }
+};
+
+/**
+ * PUT /api/users/reviews/:id
+ * Update review (chỉ owner)
+ */
+userController.updateReview = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const reviewId = req.params.id;
+    const { rating, comment, image_url } = req.body;
+    const updated = await userService.updateReview(reviewId, userId, { rating, comment, image_url });
+    res.json({ success: true, data: updated });
+  } catch (error) {
+    const status = error.status || 500;
+    const message = error.message || "レビューの更新に失敗しました。";
+    res.status(status).json({ error: message });
+  }
+};
+
+/**
+ * DELETE /api/users/reviews/:id
+ * Delete review (chỉ owner)
+ */
+userController.deleteReview = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const reviewId = req.params.id;
+    const result = await userService.deleteReview(reviewId, userId);
+    res.json({ success: true, message: result.message });
+  } catch (error) {
+    const status = error.status || 500;
+    const message = error.message || "レビューの削除に失敗しました。";
+    res.status(status).json({ error: message });
+  }
+};
+
 module.exports = userController;

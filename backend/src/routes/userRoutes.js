@@ -16,6 +16,16 @@ router.get("/profile", authMiddleware, userController.getProfile);
 // Cập nhật profile
 router.put("/profile", authMiddleware, userController.updateProfile);
 
+// Lấy danh sách review của user đang đăng nhập
+router.get("/reviews", authMiddleware, userController.getUserReviews);
+
+// Update review (chỉ owner)
+router.put("/reviews/:id", authMiddleware, userController.updateReview);
+
+// Delete review (chỉ owner)
+router.delete("/reviews/:id", authMiddleware, userController.deleteReview);
+
+// Dashboard
 router.get("/dashboard", authMiddleware, userController.getDashboard);
 
 // Check if we're using Cloudinary or local storage

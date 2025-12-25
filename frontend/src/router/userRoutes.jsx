@@ -7,7 +7,7 @@ import CafeDetail from "../pages/user/CafeDetail";
 import NearbyPage from "../pages/user/NearbyPage";
 import FavoritesPage from "../pages/user/FavoritesPage";
 import PromotionsPage from "../pages/user/PromotionsPage";
-
+import MyReviews from "../pages/user/MyReviews";
 
 
 export function UserRoutes() {
@@ -20,6 +20,7 @@ export function UserRoutes() {
       <Route path="/nearby" element={<NearbyPage />} />
       <Route path="/favorites" element={<FavoritesPage />} />
       <Route path="/promotions" element={<PromotionsPage />} />
+      <Route path="/reviews" element={<MyReviews/>}/>
     </Route>
   );
 }
