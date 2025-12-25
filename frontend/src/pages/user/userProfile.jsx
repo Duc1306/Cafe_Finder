@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import {
   getUserProfile,
   updateUserProfile,
-} from "../../services/userDashboardService";
+} from "../../services/userDashBoardService";
 import { Input, Button, message, Spin, Avatar } from "antd";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeftOutlined, UploadOutlined } from "@ant-design/icons";
-import { uploadUserAvatar } from "../../services/userDashboardService";
+import { uploadUserAvatar } from "../../services/userDashBoardService";
 export default function UserProfile() {
   const [profile, setProfile] = useState(null);
   const [fullName, setFullName] = useState("");
