@@ -1,7 +1,7 @@
 // backend/src/services/userCafeService.js
-const db = require('../models');
+const db = require("../models");
 const { Cafe, Review, Favorite, CafePhoto, Promotion, User, sequelize } = db;
-const { Op, fn, col, literal } = require('sequelize');
+const { Op, fn, col, literal } = require("sequelize");
 
 /**
  * Helper: map cafe raw record + stats thành shape response list
@@ -38,7 +38,7 @@ const userCafeService = {
     const {
       page = 1,
       limit = 10,
-      keyword = '',
+      keyword = "",
       city,
       district,
       priceMin,
@@ -58,20 +58,19 @@ const userCafeService = {
     const offset = (actualPage - 1) * actualLimit;
 
     const priceMinNum =
-      priceMin != null && priceMin !== '' ? Number(priceMin) : null;
+      priceMin != null && priceMin !== "" ? Number(priceMin) : null;
     const priceMaxNum =
-      priceMax != null && priceMax !== '' ? Number(priceMax) : null;
-    const ratingNum =
-      rating != null && rating !== '' ? Number(rating) : null;
+      priceMax != null && priceMax !== "" ? Number(priceMax) : null;
+    const ratingNum = rating != null && rating !== "" ? Number(rating) : null;
     const openNowFlag =
       openNow === true ||
-      openNow === 'true' ||
-      openNow === '1' ||
+      openNow === "true" ||
+      openNow === "1" ||
       openNow === 1;
 
     // ====== WHERE cơ bản cho bảng Cafes ======
     const whereCafe = {
-      status: 'ACTIVE',
+      status: "ACTIVE",
     };
 
     // Từ khóa
@@ -95,22 +94,22 @@ const userCafeService = {
     }
 
     // Amenities filters
-    if (hasWifi === true || hasWifi === 'true') {
+    if (hasWifi === true || hasWifi === "true") {
       whereCafe.has_wifi = true;
     }
-    if (hasAc === true || hasAc === 'true') {
+    if (hasAc === true || hasAc === "true") {
       whereCafe.has_ac = true;
     }
-    if (isQuiet === true || isQuiet === 'true') {
+    if (isQuiet === true || isQuiet === "true") {
       whereCafe.is_quiet = true;
     }
-    if (hasParking === true || hasParking === 'true') {
+    if (hasParking === true || hasParking === "true") {
       whereCafe.has_parking = true;
     }
-    if (allowPets === true || allowPets === 'true') {
+    if (allowPets === true || allowPets === "true") {
       whereCafe.allow_pets = true;
     }
-    if (allowSmoking === true || allowSmoking === 'true') {
+    if (allowSmoking === true || allowSmoking === "true") {
       whereCafe.allow_smoking = true;
     }
 
@@ -134,7 +133,7 @@ const userCafeService = {
       andConds.push(
         literal(
           `"Cafe"."open_time" IS NOT NULL AND "Cafe"."close_time" IS NOT NULL ` +
-          `AND CURRENT_TIME BETWEEN "Cafe"."open_time" AND "Cafe"."close_time"`
+            `AND CURRENT_TIME BETWEEN "Cafe"."open_time" AND "Cafe"."close_time"`
         )
       );
     }
@@ -162,18 +161,18 @@ const userCafeService = {
     const cafes = await Cafe.findAll({
       where: whereCafe,
       attributes: [
-        'id',
-        'name',
-        'address_line',
-        'district',
-        'city',
-        'avg_price_min',
-        'avg_price_max',
-        'open_time',
-        'close_time',
-        'updated_at',
+        "id",
+        "name",
+        "address_line",
+        "district",
+        "city",
+        "avg_price_min",
+        "avg_price_max",
+        "open_time",
+        "close_time",
+        "updated_at",
       ],
-      order: [['updated_at', 'DESC']],
+      order: [["updated_at", "DESC"]],
       limit: actualLimit,
       offset,
     });
@@ -196,11 +195,11 @@ const userCafeService = {
         },
       },
       attributes: [
-        'cafe_id',
-        [fn('COUNT', col('id')), 'reviewsCount'],
-        [fn('COALESCE', fn('AVG', col('rating')), 0), 'rating'],
+        "cafe_id",
+        [fn("COUNT", col("id")), "reviewsCount"],
+        [fn("COALESCE", fn("AVG", col("rating")), 0), "rating"],
       ],
-      group: ['cafe_id'],
+      group: ["cafe_id"],
     });
 
     const ratingMap = {};
@@ -241,10 +240,10 @@ const userCafeService = {
         },
       },
       attributes: [
-        'cafe_id',
-        [fn('COUNT', fn('DISTINCT', col('user_id'))), 'favoritesCount'],
+        "cafe_id",
+        [fn("COUNT", fn("DISTINCT", col("user_id"))), "favoritesCount"],
       ],
-      group: ['cafe_id'],
+      group: ["cafe_id"],
     });
 
     const favCountMap = {};
@@ -263,7 +262,7 @@ const userCafeService = {
         },
         is_cover: true,
       },
-      attributes: ['cafe_id', 'url'],
+      attributes: ["cafe_id", "url"],
     });
 
     const coverMap = {};
@@ -302,7 +301,7 @@ const userCafeService = {
     const cafe = await Cafe.findOne({
       where: {
         id: cafeId,
-        status: 'ACTIVE',
+        status: "ACTIVE",
       },
     });
 
@@ -316,8 +315,8 @@ const userCafeService = {
     const reviewStat = await Review.findOne({
       where: { cafe_id: cafeId },
       attributes: [
-        [fn('COALESCE', fn('AVG', col('rating')), 0), 'rating'],
-        [fn('COUNT', col('id')), 'reviewsCount'],
+        [fn("COALESCE", fn("AVG", col("rating")), 0), "rating"],
+        [fn("COUNT", col("id")), "reviewsCount"],
       ],
       raw: true,
     });
@@ -329,7 +328,7 @@ const userCafeService = {
     const favStat = await Favorite.findOne({
       where: { cafe_id: cafeId },
       attributes: [
-        [fn('COUNT', fn('DISTINCT', col('user_id'))), 'favoritesCount'],
+        [fn("COUNT", fn("DISTINCT", col("user_id"))), "favoritesCount"],
       ],
       raw: true,
     });
@@ -339,25 +338,19 @@ const userCafeService = {
     // 4. Photos
     const photos = await CafePhoto.findAll({
       where: { cafe_id: cafeId },
-      attributes: [
-        'id',
-        'url',
-        'photo_type',
-        'is_cover',
-        'created_at',
-      ],
+      attributes: ["id", "url", "photo_type", "is_cover", "created_at"],
       order: [
-        ['is_cover', 'DESC'],
-        ['created_at', 'ASC'],
+        ["is_cover", "DESC"],
+        ["created_at", "ASC"],
       ],
       raw: true,
     });
 
     // Add base URL to photos
-    const baseURL = process.env.BACKEND_URL || 'http://localhost:5000';
-    const photosWithFullUrls = photos.map(photo => ({
+    const baseURL = process.env.BACKEND_URL || "http://localhost:5000";
+    const photosWithFullUrls = photos.map((photo) => ({
       ...photo,
-      url: photo.url.startsWith('http') ? photo.url : `${baseURL}${photo.url}`
+      url: photo.url.startsWith("http") ? photo.url : `${baseURL}${photo.url}`,
     }));
 
     // 5. Promotions (đang/còn hiệu lực)
@@ -367,25 +360,25 @@ const userCafeService = {
         [Op.or]: [
           { is_active: true },
           {
-            start_date: { [Op.lte]: literal('CURRENT_DATE') },
+            start_date: { [Op.lte]: literal("CURRENT_DATE") },
             [Op.or]: [
               { end_date: null },
-              { end_date: { [Op.gte]: literal('CURRENT_DATE') } },
+              { end_date: { [Op.gte]: literal("CURRENT_DATE") } },
             ],
           },
         ],
       },
       attributes: [
-        'id',
-        'title',
-        'description',
-        'discount_type',
-        'discount_value',
-        'start_date',
-        'end_date',
-        'is_active',
+        "id",
+        "title",
+        "description",
+        "discount_type",
+        "discount_value",
+        "start_date",
+        "end_date",
+        "is_active",
       ],
-      order: [['start_date', 'DESC']],
+      order: [["start_date", "DESC"]],
       raw: true,
     });
 
@@ -452,9 +445,9 @@ const userCafeService = {
       include: [
         {
           model: Cafe,
-          as: 'cafe',
+          as: "cafe",
           required: true,
-          where: { status: 'ACTIVE' },
+          where: { status: "ACTIVE" },
         },
       ],
     });
@@ -474,23 +467,23 @@ const userCafeService = {
       include: [
         {
           model: Cafe,
-          as: 'cafe',
+          as: "cafe",
           required: true,
-          where: { status: 'ACTIVE' },
+          where: { status: "ACTIVE" },
           attributes: [
-            'id',
-            'name',
-            'address_line',
-            'district',
-            'city',
-            'avg_price_min',
-            'avg_price_max',
-            'open_time',
-            'close_time',
+            "id",
+            "name",
+            "address_line",
+            "district",
+            "city",
+            "avg_price_min",
+            "avg_price_max",
+            "open_time",
+            "close_time",
           ],
         },
       ],
-      order: [['created_at', 'DESC']],
+      order: [["created_at", "DESC"]],
       limit: actualLimit,
       offset,
     });
@@ -513,11 +506,11 @@ const userCafeService = {
         },
       },
       attributes: [
-        'cafe_id',
-        [fn('COUNT', col('id')), 'reviewsCount'],
-        [fn('COALESCE', fn('AVG', col('rating')), 0), 'rating'],
+        "cafe_id",
+        [fn("COUNT", col("id")), "reviewsCount"],
+        [fn("COALESCE", fn("AVG", col("rating")), 0), "rating"],
       ],
-      group: ['cafe_id'],
+      group: ["cafe_id"],
     });
 
     const ratingMap = {};
@@ -537,10 +530,10 @@ const userCafeService = {
         },
       },
       attributes: [
-        'cafe_id',
-        [fn('COUNT', fn('DISTINCT', col('user_id'))), 'favoritesCount'],
+        "cafe_id",
+        [fn("COUNT", fn("DISTINCT", col("user_id"))), "favoritesCount"],
       ],
-      group: ['cafe_id'],
+      group: ["cafe_id"],
     });
 
     const favCountMap = {};
@@ -559,7 +552,7 @@ const userCafeService = {
         },
         is_cover: true,
       },
-      attributes: ['cafe_id', 'url'],
+      attributes: ["cafe_id", "url"],
     });
 
     const coverMap = {};
@@ -617,11 +610,11 @@ const userCafeService = {
       include: [
         {
           model: User,
-          as: 'author',
-          attributes: ['id', 'full_name'],
+          as: "author",
+          attributes: ["id", "full_name"],
         },
       ],
-      order: [['created_at', 'DESC']],
+      order: [["created_at", "DESC"]],
       limit: actualLimit,
       offset,
     });
@@ -633,8 +626,8 @@ const userCafeService = {
         rating: plain.rating,
         comment: plain.comment,
         imageUrl: plain.image_url,
-        createdAt: plain.created_at,
-        updatedAt: plain.updated_at,
+        createdAt: plain.createdAt,
+        updatedAt: plain.updatedAt,
         userId: plain.user_id,
         userName: plain.author?.full_name || null,
       };
@@ -654,7 +647,7 @@ const userCafeService = {
    */
   addFavorite: async ({ cafeId, userId }) => {
     const cafe = await Cafe.findOne({
-      where: { id: cafeId, status: 'ACTIVE' },
+      where: { id: cafeId, status: "ACTIVE" },
     });
 
     if (!cafe) {
@@ -713,7 +706,7 @@ const userCafeService = {
   createReview: async ({ cafeId, userId, rating, comment, imageUrl }) => {
     // 1. Kiểm tra quán tồn tại và ACTIVE
     const cafe = await Cafe.findOne({
-      where: { id: cafeId, status: 'ACTIVE' },
+      where: { id: cafeId, status: "ACTIVE" },
     });
 
     if (!cafe) {
@@ -793,15 +786,15 @@ const userCafeService = {
    */
   getPromotions: async (filters) => {
     const {
-      keyword = '',
+      keyword = "",
       discountType,
       cafeId,
-      cafeName = '',
-      city = '',
-      district = '',
-      status = 'active', // 'active' | 'expired' | 'upcoming' | 'all'
-      sortBy = 'end_date',
-      sortOrder = 'ASC',
+      cafeName = "",
+      city = "",
+      district = "",
+      status = "active", // 'active' | 'expired' | 'upcoming' | 'all'
+      sortBy = "end_date",
+      sortOrder = "ASC",
       page = 1,
       limit = 10,
     } = filters;
@@ -809,7 +802,7 @@ const userCafeService = {
     const actualPage = Math.max(1, Number(page) || 1);
     const actualLimit = Math.min(50, Math.max(1, Number(limit) || 10));
     const offset = (actualPage - 1) * actualLimit;
-    
+
     const wherePromotion = {};
     const andConds = [];
 
@@ -822,7 +815,10 @@ const userCafeService = {
     }
 
     // Lọc theo loại giảm giá
-    if (discountType && ['PERCENT', 'FIXED_AMOUNT'].includes(discountType.toUpperCase())) {
+    if (
+      discountType &&
+      ["PERCENT", "FIXED_AMOUNT"].includes(discountType.toUpperCase())
+    ) {
       wherePromotion.discount_type = discountType.toUpperCase();
     }
 
@@ -831,7 +827,7 @@ const userCafeService = {
       wherePromotion.cafe_id = cafeId;
     }
 
-    const whereCafe = { status: 'ACTIVE' };
+    const whereCafe = { status: "ACTIVE" };
 
     // Fuzzy search theo tên quán cafe
     if (cafeName && cafeName.trim()) {
@@ -849,29 +845,23 @@ const userCafeService = {
     }
 
     // Lọc theo trạng thái dựa trên ngày
-    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
 
-    if (status === 'active') {
+    if (status === "active") {
       // Đang hiệu lực: start_date <= today AND (end_date >= today OR end_date IS NULL) AND is_active = true
       andConds.push({
-        [Op.or]: [
-          { start_date: { [Op.lte]: today } },
-          { start_date: null },
-        ],
+        [Op.or]: [{ start_date: { [Op.lte]: today } }, { start_date: null }],
       });
       andConds.push({
-        [Op.or]: [
-          { end_date: { [Op.gte]: today } },
-          { end_date: null },
-        ],
+        [Op.or]: [{ end_date: { [Op.gte]: today } }, { end_date: null }],
       });
       wherePromotion.is_active = true;
-    } else if (status === 'expired') {
+    } else if (status === "expired") {
       // Đã hết hạn: end_date < today
       andConds.push({
         end_date: { [Op.lt]: today },
       });
-    } else if (status === 'upcoming') {
+    } else if (status === "upcoming") {
       // Sắp diễn ra: start_date > today
       andConds.push({
         start_date: { [Op.gt]: today },
@@ -884,9 +874,15 @@ const userCafeService = {
     }
 
     // ====== ORDER ======
-    const validSortBy = ['end_date', 'start_date', 'discount_value', 'created_at'];
-    const actualSortBy = validSortBy.includes(sortBy) ? sortBy : 'end_date';
-    const actualSortOrder = sortOrder?.toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
+    const validSortBy = [
+      "end_date",
+      "start_date",
+      "discount_value",
+      "created_at",
+    ];
+    const actualSortBy = validSortBy.includes(sortBy) ? sortBy : "end_date";
+    const actualSortOrder =
+      sortOrder?.toUpperCase() === "DESC" ? "DESC" : "ASC";
 
     // Handle NULL values in sorting - NULLs last for ASC, first for DESC
     const order = [[actualSortBy, actualSortOrder]];
@@ -897,8 +893,8 @@ const userCafeService = {
       include: [
         {
           model: Cafe,
-          as: 'cafe',
-          attributes: ['id', 'name', 'address_line', 'district', 'city'],
+          as: "cafe",
+          attributes: ["id", "name", "address_line", "district", "city"],
           where: whereCafe,
           required: true,
         },
@@ -924,12 +920,12 @@ const userCafeService = {
         updatedAt: plain.updated_at,
         cafe: plain.cafe
           ? {
-            id: plain.cafe.id,
-            name: plain.cafe.name,
-            addressLine: plain.cafe.address_line,
-            district: plain.cafe.district,
-            city: plain.cafe.city,
-          }
+              id: plain.cafe.id,
+              name: plain.cafe.name,
+              addressLine: plain.cafe.address_line,
+              district: plain.cafe.district,
+              city: plain.cafe.city,
+            }
           : null,
       };
     });
