@@ -281,7 +281,7 @@ export default function CreatePromotion() {
                 {errors.end_date && <p className="mt-1 text-sm text-red-500">{errors.end_date}</p>}
               </div>
 
-              {/* Active Status */}
+              {/* Active Status
               <div>
                 <label className="flex items-center">
                   <input
@@ -295,7 +295,7 @@ export default function CreatePromotion() {
                     作成後すぐに適用する
                   </span>
                 </label>
-              </div>
+              </div> */}
 
               {/* Buttons */}
               <div className="flex gap-4 pt-4">
