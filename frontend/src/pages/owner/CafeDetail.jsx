@@ -321,7 +321,7 @@ export default function CafeDetail() {
                     <th className="px-4 py-3 text-left text-gray-600 font-medium">開始日</th>
                     <th className="px-4 py-3 text-left text-gray-600 font-medium">終了日</th>
                     <th className="px-4 py-3 text-left text-gray-600 font-medium">閲覧数</th>
-                    <th className="px-4 py-3 text-center text-gray-600 font-medium">操作</th>
+                    {/* <th className="px-4 py-3 text-center text-gray-600 font-medium">操作</th> */}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -348,12 +348,12 @@ export default function CafeDetail() {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-center gap-2">
-                          <button className="p-2 text-blue-600 hover:bg-blue-50 rounded transition">
+                          {/* <button className="p-2 text-blue-600 hover:bg-blue-50 rounded transition">
                             <FaEdit />
                           </button>
                           <button className="p-2 text-red-600 hover:bg-red-50 rounded transition">
                             <FaTrash />
-                          </button>
+                          </button> */}
                         </div>
                       </td>
                     </tr>

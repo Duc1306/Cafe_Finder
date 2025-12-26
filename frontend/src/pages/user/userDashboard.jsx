@@ -152,12 +152,12 @@ export default function UserDashboard() {
                       >
                         詳細へ
                       </Button>
-                      <Button
+                      {/* <Button
                         icon={<EnvironmentOutlined />}
                         onClick={() => navigate(`/cafes/${cafe.id}/map`)}
                       >
                         地図
-                      </Button>
+                      </Button> */}
                     </div>
                   </Card>
                 ))

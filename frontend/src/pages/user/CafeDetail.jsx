@@ -270,9 +270,9 @@ export default function CafeDetail() {
                         <div className="bg-white rounded-lg shadow-md p-6">
                             <div className="flex items-center justify-between mb-4">
                                 <h2 className="text-xl font-bold">レビュー</h2>
-                                <button className="text-red-600 hover:text-red-700 font-medium">
+                                {/* <button className="text-red-600 hover:text-red-700 font-medium">
                                     すべて見る →
-                                </button>
+                                </button> */}
                             </div>
 
                             {reviews.length === 0 ? (
