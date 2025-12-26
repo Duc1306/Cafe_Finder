@@ -72,11 +72,11 @@ export default function MyReviews() {
           icon={<ArrowLeftOutlined />}
           onClick={() => window.history.back()}
         />
-        <h1 className="text-2xl font-bold">My Reviews</h1>
+        <h1 className="text-2xl font-bold">私のレビュー</h1>
       </div>
       <div className="bg-white rounded-xl shadow p-4 mb-6 flex flex-wrap gap-4">
         <Input
-          placeholder="Search by café name"
+          placeholder="カフェ名で検索"
           className="w-64"
           value={search}
           onChange={e => setSearch(e.target.value)}
@@ -97,8 +97,8 @@ export default function MyReviews() {
           value={sort}
           onChange={setSort}
         >
-          <Select.Option value="newest">Newest</Select.Option>
-          <Select.Option value="oldest">Oldest</Select.Option>
+          <Select.Option value="newest">新しい順</Select.Option>
+          <Select.Option value="oldest">古い順</Select.Option>
         </Select>
       </div>
       {filtered.map(r => (
