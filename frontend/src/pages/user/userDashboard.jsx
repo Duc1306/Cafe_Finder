@@ -116,7 +116,7 @@ export default function UserDashboard() {
             <div className="font-bold text-lg mb-4">おすすめカフェ</div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {dashboard?.recommendedCafes?.length === 0 ||
-                !dashboard?.recommendedCafes ? (
+              !dashboard?.recommendedCafes ? (
                 <div className="col-span-3 text-gray-400">
                   おすすめカフェがありません。
                 </div>
@@ -170,7 +170,7 @@ export default function UserDashboard() {
             <div className="font-bold text-lg mb-4">最近の活動</div>
             <div className="flex flex-col gap-2">
               {!dashboard?.recentActivities ||
-                dashboard.recentActivities.length === 0 ? (
+              dashboard.recentActivities.length === 0 ? (
                 <div className="text-gray-400">最近の活動はありません。</div>
               ) : (
                 dashboard.recentActivities.map((act, idx) => {
@@ -189,7 +189,8 @@ export default function UserDashboard() {
                           </span>
                         )}
                         <span className="ml-4 text-xs text-gray-400">
-                          {act.date}
+                          {act.createdAt &&
+                            new Date(act.createdAt).toLocaleDateString("ja-JP")}
                         </span>
                       </div>
                     </Card>
